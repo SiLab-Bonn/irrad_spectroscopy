@@ -1,0 +1,10 @@
+meta_data:
+  Peaks of background spectrum measured with nitrogen-cooled Germanium gamma spectroscopy detector of HISKP P5 room. Literature values for energy in keV from http://nucleardata.nuclear.lu.se/toi/radSearch.asp (11.07.2018)
+lines:
+  214_Bi_0: 1120.287
+  214_Bi_1: 609.312
+  228_Ac_1: 911.204
+  40_K_0: 1460.83
+  208_Tl_0: 583.191
+  208_Tl_1: 510.771
+  228_Ac_0: 968.971

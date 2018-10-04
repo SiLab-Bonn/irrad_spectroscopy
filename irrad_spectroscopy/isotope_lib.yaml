@@ -1,0 +1,68 @@
+meta_data: Library of previously observed isotopes in samples irradiated with 13 MeV protons at HISKP Bonnn cyclotron. Cross sections are referring to 13 MeV protons. Lines are given in keV.
+isotopes:
+  Be:
+    name: Beryllium
+    Z: 4
+    A:
+      7:
+        reaction: 14N (p, 2a) 7Be
+        cross_section: 10 mb
+        half_life: 53.12 d
+        decay_mode: electron capture
+        lines:
+          - 477.595
+        probability:
+          - 0.1052
+  Zn:
+    name: Zinc
+    Z: 30
+    A:
+      65:
+        reaction: 65Cu (p, n) 65Zn
+        cross_section: 500 mb
+        half_life: 244.26 d
+        decay_mode: electron capture / beta +
+        lines:
+          - 1115.546
+        probability:
+          - 0.506
+  V:
+    name: Vanadium
+    Z: 23
+    A:
+      48:
+        reaction: 48Ti (p, n) 48V
+        cross_section: 500 mb
+        half_life: 15.97 d
+        decay_mode: electron capture / beta +
+        lines:
+          - 983.517
+          - 1312.096
+        probability:
+          - 0.999
+          - 0.975
+  Kr:
+    name: Krypton
+    Z: 36
+    A:
+      79:
+        reaction: 79Br (p, n) 79Kr
+        cross_section: 500 mb
+        half_life: 35.04 h
+        decay_mode: electron capture / beta +
+        lines:
+          - 261.35
+          - 397.54
+          - 606.09
+          - 306.47
+          - 217.07
+          - 299.53
+          - 208.48
+        probability:
+          - 0.13
+          - 0.093
+          - 0.0812
+          - 0.026
+          - 0.0237
+          - 0.0154
+          - 0.00775

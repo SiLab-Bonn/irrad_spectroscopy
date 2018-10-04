@@ -1,0 +1,29 @@
+meta_data: Calibrated source specifications of point-like 22-Na source. Spectrum measured with compressor-cooled Germanium gamma spectroscopy detector at HISKP P5 room with approx. 20 cm distance between detector and source. 
+activity:
+  - 378500.0
+  - 2700.0
+datetime_calibration:
+  - 2017
+  - 11
+  - 1
+  - 0
+  - 0
+  - 0
+datetime_measurement:
+  - 2018
+  - 8
+  - 16
+  - 13
+  - 26
+  - 53
+lines:
+  - 1274.532
+probability:
+  - 0.9994414
+timestamp_calibration: 1509490800.0
+timestamp_measurement: 1534418813.0
+half_life: 82053518.4
+t_measurement: 601.629
+symbol: Na
+A: 22
+name: Sodium

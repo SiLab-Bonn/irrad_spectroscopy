@@ -1,0 +1,43 @@
+meta_data: Calibrated source specifications of point-like 152-Eu source. Spectrum measured with compressor-cooled Germanium gamma spectroscopy detector at HISKP P5 room with approx. 20 cm distance between detector and source. 
+activity:
+  - 484000.0
+  - 7000.0
+datetime_calibration:
+  - 2017
+  - 11
+  - 1
+  - 0
+  - 0
+  - 0
+datetime_measurement:
+  - 2018
+  - 8
+  - 16
+  - 13
+  - 4
+  - 5
+lines:
+  - 121.78
+  - 344.28
+  - 1408.01
+  - 964.08
+  - 1112.07
+  - 778.9
+  - 1085.87
+  - 244.7
+probability:
+  - 0.2858
+  - 0.265
+  - 0.21005
+  - 0.14605
+  - 0.13644
+  - 0.12942
+  - 0.10207
+  - 0.07583
+timestamp_calibration: 1509490800.0
+timestamp_measurement: 1534417445.0
+half_life: 427075200.0
+t_measurement: 615.109
+symbol: Eu
+A: 152
+name: Europium

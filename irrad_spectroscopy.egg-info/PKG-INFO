@@ -1,0 +1,13 @@
+Metadata-Version: 1.2
+Name: irrad-spectroscopy
+Version: 0.0.1
+Summary: Gamma spectroscopy of irradiated sensors, chips and PCBs.
+Home-page: https://github.com/leloup314/irrad_spectroscopy
+Author: Pascal Wolf
+Author-email: wolf@physik.uni-bonn.de
+Maintainer: Pascal Wolf
+Maintainer-email: wolf@physik.uni-bonn.de
+License: MIT License
+Description: UNKNOWN
+Keywords: silicon,irradiation,radioactivity,gamma,spectroscopy
+Platform: any

@@ -1,0 +1,50 @@
+REPORT-FILE from 08/16/2018 13:15:42.500 - 13:25:57.171  written 08/16/2018 13:26:15
+REALTIME: 614.690     
+TOTALSUM: 409954      
+ROISUM: 409954      
+MAXVAL: 9502        
+LIVETIME: 610.045     
+cmline0=08/16/2018 13:15:42.500 - 13:25:57.171 
+range=8192
+prena=0
+mcsmode=4
+roimin=0
+roimax=8192
+rtpreset=43200.000   
+ltpreset=43200.000   
+evpreset=0           
+swpreset=1           
+rampmode=0
+rampstart=1024
+rampstep=1
+rampbin=1
+ramplen=1024
+qdacuse=0
+qdac=2048
+dac1use=0
+dac1val=0
+impsel=f
+thrstart=1716
+thr1=1716
+thr2=1716
+thrclk=2015
+diguse=8
+digval=0
+cycles=128
+sequences=1
+mempart=0
+dwelltime=3
+dwellunit=0
+syncout=909
+histlen=0
+autoinc=0 
+;datname=C:\Dokumente und Einstellungen\admin\Desktop\SiLab\Ba133_point.mcd
+savedata=0
+fmt=txt
+smoothpts=5 
+caluse=0 
+caloff=0.000000
+calfact=1.000000
+calfact2=0
+calfact3=0
+calunit=keV

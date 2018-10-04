@@ -1,0 +1,19 @@
+meta_data: Peaks of 152Eu spectrum measured with compressor-cooled Germanium gamma spectroscopy detector of HISKP P5 room with approx. 20 cm distance between detector and source. Literature values for energy in keV from http://nucleardata.nuclear.lu.se/toi/radSearch.asp (11.07.2018)
+energy:
+  152Eu_0: 121.78
+  152Eu_1: 244.70
+  152Eu_2: 344.24
+  152Eu_3: 778.90
+  152Eu_4: 964.08
+  152Eu_5: 1085.87
+  152Eu_6: 1112.07
+  152Eu_7: 1408.01
+channel:
+  152Eu_0: 592.0 
+  152Eu_1: 1214.0 
+  152Eu_2: 1716.5 
+  152Eu_3: 3909.0 
+  152Eu_4: 4845.0 
+  152Eu_5: 5460.0
+  152Eu_6: 5593.0
+  152Eu_7: 7086.5

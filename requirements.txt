@@ -1,0 +1,6 @@
+# Core functionality
+numpy
+scipy
+matplotlib
+pyyaml
+jupyter  # examples

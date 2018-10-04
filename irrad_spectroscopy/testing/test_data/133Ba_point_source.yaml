@@ -1,0 +1,37 @@
+meta_data: Calibrated source specifications of point-like 133-Ba source. Spectrum measured with compressor-cooled Germanium gamma spectroscopy detector at HISKP P5 room with approx. 20 cm distance between detector and source. 
+activity:
+  - 210900.0
+  - 2100.0
+datetime_calibration:
+  - 2017
+  - 11
+  - 1
+  - 0
+  - 0
+  - 0
+datetime_measurement:
+  - 2018
+  - 8
+  - 16
+  - 13
+  - 15
+  - 42
+lines:
+  - 356.0172
+  - 80.9971
+  - 302.8531
+  - 383.8513
+  - 276.3982
+probability:
+  - 0.620519
+  - 0.340627
+  - 0.18336
+  - 0.08943
+  - 0.071642
+timestamp_calibration: 1509490800.0
+timestamp_measurement: 1534418142.0
+half_life: 331443360.0
+t_measurement: 610.045
+symbol: Ba
+A: 133
+name: Barium
