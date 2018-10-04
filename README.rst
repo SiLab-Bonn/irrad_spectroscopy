@@ -53,6 +53,6 @@ two calibrated, radioactive sources, namely 22-Na and 133-Ba. The activity recon
 tested data sets are tested to be above 93% and 97% for 22-Na (1 line) and 133-Ba respectively.
  
 
-.. |travis-status| image:: https://api.travis-ci.com/leloup314/irrad_spectroscopy.svg?branch=master
-    :target: https://travis-ci.com/leloup314/irrad_spectroscopy
+.. |travis-status| image:: https://api.travis-ci.com/SiLab-Bonn/irrad_spectroscopy.svg?branch=master
+    :target: https://travis-ci.com/SiLab-Bonn/irrad_spectroscopy
     :alt: Build status
