@@ -20,8 +20,11 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda update --yes conda
   - conda install --yes numpy scipy pyyaml matplotlib nose jupyter
+# https://stackoverflow.com/questions/52582563/pip-install-attributeerror-distinfodistribution-dep-map
+# https://github.com/conda-forge/testpath-feedstock/issues/7
+  - conda install --yes 'testpath<0.4' 
   - conda info -a
-#  - pip install --upgrade pip
+  - pip install --upgrade pip
   - pip install -r requirements.txt
   - python setup.py develop
 
