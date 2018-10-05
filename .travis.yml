@@ -1,7 +1,7 @@
 language: python
 python:
 - 2.7
-- 3.5
+#- 3.5
 
 sudo: false
 
@@ -22,7 +22,7 @@ install:
   - conda install --yes numpy scipy pyyaml matplotlib nose jupyter
 # https://stackoverflow.com/questions/52582563/pip-install-attributeerror-distinfodistribution-dep-map
 # https://github.com/conda-forge/testpath-feedstock/issues/7
-  - conda install --yes 'testpath<0.4' 
+#  - conda install --yes 'testpath<0.4' 
   - conda info -a
   - pip install --upgrade pip
   - pip install -r requirements.txt
