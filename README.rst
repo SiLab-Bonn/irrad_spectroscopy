@@ -50,7 +50,7 @@ Testing
 
 The code in this package has unit-tests. These tests contain a benchmark with actual gamma-spectroscopy data of
 two calibrated, radioactive sources, namely 22-Na and 133-Ba. The activity reconstruction efficiencies for the 
-tested data sets are tested to be above 93% and 97% for 22-Na (1 line) and 133-Ba respectively.
+tested data sets are tested to be above 90%.
  
 
 .. |travis-status| image:: https://api.travis-ci.com/SiLab-Bonn/irrad_spectroscopy.svg?branch=master
