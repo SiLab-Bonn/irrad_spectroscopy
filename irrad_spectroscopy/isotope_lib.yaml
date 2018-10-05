@@ -7,7 +7,7 @@ isotopes:
       7:
         reaction: 14N (p, 2a) 7Be
         cross_section: 10 mb
-        half_life: 53.12 d
+        half_life: 4598726.4
         decay_mode: electron capture
         lines:
           - 477.595
@@ -20,7 +20,7 @@ isotopes:
       65:
         reaction: 65Cu (p, n) 65Zn
         cross_section: 500 mb
-        half_life: 244.26 d
+        half_life: 21053001.6
         decay_mode: electron capture / beta +
         lines:
           - 1115.546
@@ -33,7 +33,7 @@ isotopes:
       48:
         reaction: 48Ti (p, n) 48V
         cross_section: 500 mb
-        half_life: 15.97 d
+        half_life: 1380110.4
         decay_mode: electron capture / beta +
         lines:
           - 983.517
@@ -48,7 +48,7 @@ isotopes:
       79:
         reaction: 79Br (p, n) 79Kr
         cross_section: 500 mb
-        half_life: 35.04 h
+        half_life: 126147.6
         decay_mode: electron capture / beta +
         lines:
           - 261.35
