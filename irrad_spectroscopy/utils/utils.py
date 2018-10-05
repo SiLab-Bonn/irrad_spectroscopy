@@ -4,42 +4,65 @@ from collections import OrderedDict
 
 
 def get_measurement_time(spectrum_file):
+    """
+    Reads time of measurement from mcd file of same name as spectrum file.
+    """
 
     # get mcd file of respective spectrum file
     mcd_file = '%s.%s' % (spectrum_file.split('.')[0], 'mcd')
 
+    # file does not exist
     if not os.path.isfile(mcd_file):
         raise IOError('%s does not exist!' % mcd_file)
+
+    # init variable
     t_res = None
+    # open file and loop through lines
     with open(mcd_file, 'r') as f_open:
         for line in f_open:
+            # "LIVETIME" is measured time
             if 'livetime' in line.lower():
                 tmp = line.replace('LIVETIME: ', '')
                 t_res = float(tmp)
                 break
+
+    # if nothing was found
     if t_res is None:
         raise ValueError('Could not read measurement time from file.')
+
     return t_res
 
 
 def isotopes_to_dict(lib, info='lines'):
+    """
+    Method to return dict of isotope keys and info. Info
+    can either be 'lines' or 'probability'
+    """
+
     if not isinstance(lib, dict):
         raise TypeError('Isotope library must be dict.')
     if 'isotopes' not in lib:
         raise ValueError('Isotope library must contain isotopes.')
     else:
         isotopes = lib['isotopes']
+
+    # init result dict and loop over different isotopes
     result = {}
     for symbol in isotopes:
         mass_number = isotopes[symbol]['A']
         for A in mass_number:
-            identifier = '%s_%s' % (str(A), str(symbol))
-            for i, n in enumerate(mass_number[A][info]):
-                result[identifier + '_%i' % i] = n
+            if info in mass_number[A]:
+                identifier = '%s_%s' % (str(A), str(symbol))
+                for i, n in enumerate(mass_number[A][info]):
+                    result[identifier + '_%i' % i] = n
     return result
 
 
 def source_to_dict(source, info='lines'):
+    """
+    Method to convert a source dict to a dict containing isotpe keys and info.
+    """
+
     reqs = ('A', 'symbol', info)
     if not all(req in source for req in reqs):
         raise ValueError('Missing reuqired data in source dict: %s' % ', '.join(req for req in reqs if req not in source))
@@ -47,6 +70,10 @@ def source_to_dict(source, info='lines'):
 
 
 def calc_activity(observed_peaks, probability_peaks):
+    """
+    Method to calculate activity isotope-wise. The peak-wise activities of all peaks of
+    each isotope are added and scaled with their respectively summed-up probability
+    """
     activities = OrderedDict()
     
     for peak in observed_peaks:
@@ -64,42 +91,8 @@ def calc_activity(observed_peaks, probability_peaks):
         try:
             activities[iso]['nominal'] = activities[iso]['unscaled']['nominal'] * 1. / activities[iso]['probability']
             activities[iso]['sigma'] = activities[iso]['unscaled']['sigma'] * 1. / activities[iso]['probability']
+        # when no probabilty given
         except ZeroDivisionError:
             pass
 
     return activities
-    
-
-
-def add_isotope_to_lib(lib_file, isotope_dict):
-    # open lib file
-    with open(lib_file, 'r') as lf:
-        lib = yaml.safe_load(lf)
-
-    reqs = ['symbol', 'Z', 'A', 'lines', 'probability']
-
-    for req in reqs:
-        missing_reqs = []
-        if req not in isotope_dict:
-            missing_reqs.append(req)
-    if missing_reqs:
-        raise ValueError('Required info of %s is missing!' % ', '.join(missing_reqs))
-
-    if isotope_dict['symbol'] in lib['isotopes']:
-        if isotope_dict['A'] in lib['isotopes'][isotope_dict['symbol']]['A']:
-            tmp = list(lib['isotopes'][isotope_dict['symbol']]['A'][isotope_dict['A']]['probability'])
-            tmp.append(isotope_dict['probability'])
-            index = list(reversed(sorted(tmp))).index(isotope_dict['probability'])
-            current_isotope = lib['isotopes'][isotope_dict['symbol']]['A'][isotope_dict['A']]
-            current_isotope['probability'].insert(index, isotope_dict['probability'])
-            current_isotope['lines'].insert(index, isotope_dict['lines'])
-        else:
-            mass_number = lib['isotopes'][isotope_dict['symbol']]['A']
-            mass_number[isotope_dict['A']] = {'lines': list(isotope_dict['lines']),
-                                              'probability': list(isotope_dict['probability'])}
-    else:
-        lib['isotopes'][isotope_dict['symbol']] = {'Z': isotope_dict['Z'],
-                                                   'A': isotope_dict['A']}
-        lib['isotopes'][isotope_dict['symbol']]['A'] = {}
-        lib['isotopes'][isotope_dict['symbol']]['A'][isotope_dict['A']] = {'lines': [isotope_dict['lines']],
-                                                                           'probability': [isotope_dict['probability']]}
