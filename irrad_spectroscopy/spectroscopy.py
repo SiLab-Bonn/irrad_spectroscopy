@@ -7,6 +7,7 @@
 # Imports
 import logging
 import inspect
+import warnings
 import numpy as np
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve
@@ -16,6 +17,9 @@ from scipy.special import erfc
 
 # set logging level when doing import
 logging.getLogger().setLevel(logging.INFO)
+
+# ignore scipy throwing warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
 ### Functions
@@ -595,39 +599,63 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
         # get local background and update limits
         else:
-            # get background from 3 to 6 sigma left of peak
-            lower_bkg = np.logical_and(popt[0] - 6 * popt[1] <= _x, _x <= popt[0] - 3 * popt[1])
-            # get background from 3 to 6 sigma right of peak
-            upper_bkg = np.logical_and(popt[0] + 3 * popt[1] <= _x, _x <= popt[0] + 6 * popt[1])
+            # find local background bounds; start looking at bkg from (+-3 to +-6) sigma
+            # increase bkg to left/right of peak until to avoid influence of nearby peaks
+            _i_dev = 6
+            _deviation = None
+            while _i_dev < int(_MAX_PEAKS / 2):
+                # Make tmp array of mean bkg values left and right of peak
+                _tmp_dev_array = [np.mean(_y[(popt[0] - _i_dev * popt[1] <= _x) & (_x <= popt[0] - 3 * popt[1])]),
+                                  np.mean(_y[(popt[0] + 3 * popt[1] <= _x) & (_x <= popt[0] + _i_dev * popt[1])])]
+                # look at std. deviation; as long as it decreases for increasing bkg area update
+                if np.std(_tmp_dev_array) < _deviation or _deviation is None:
+                    _deviation = np.std(_tmp_dev_array)
+                # if std. deviation increases again, break
+                elif np.std(_tmp_dev_array) >= _deviation:
+                    _i_dev -= 1
+                    break
+                # increment
+                _i_dev += 1
+
+            # get background from 3 to _i_dev sigma left of peak
+            lower_bkg = np.logical_and(popt[0] - _i_dev * popt[1] <= _x, _x <= popt[0] - 3 * popt[1])
+            # get background from 3 to _i_dev sigma right of peak
+            upper_bkg = np.logical_and(popt[0] + 3 * popt[1] <= _x, _x <= popt[0] + _i_dev * popt[1])
             # combine bool mask
             bkg_mask = np.logical_or(lower_bkg, upper_bkg)
             # mask other peaks in bkg so local background fit will not be influenced by nearby peak
             bkg_mask[~peak_mask] = False
             # do fit
             bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
-
-            # find intersections of line and gauss
+            # _x values of current peak,
+            _peak_x = _x[(low_lim <= _x) & (_x <= high_lim)]
+            # estimate intersections of background and peak from data
+            x0_low = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]]
+            x0_high = _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
+            # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
+            # increse environment to 4 sigma to be sure
+            low_lim, high_lim = popt[0] - popt[1] * 5, popt[0] + popt[1] * 5
+            # fsolve heavily relies on correct start parameters; estimate from data and loop
             try:
-                n_tries = 0
+                _i_tries = 0
                 found = False
-                # fsolve heavily relies on correct start parameters; estimate from data and loop
-                _peak_x = _x[(low_lim <= _x) & (_x <= high_lim)]  # _x values of curent peak, # estimate intersections of background and peak from data
-                x0_low, x0_high = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]], _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
-                while n_tries < _MAX_PEAKS:
-                    diff = np.abs(x0_high - x0_low) / _MAX_PEAKS * n_tries
-                    x0_low += diff
-                    x0_high -= diff
+                while _i_tries < _MAX_PEAKS:
+                    diff = np.abs(high_lim - low_lim) / _MAX_PEAKS * _i_tries
+
+                    _x0_low = low_lim + diff / 2.
+                    _x0_high = high_lim - diff / 2.
 
                     # find intersections; needs to be sorted since sometimes higher intersection is found first
-                    low_lim, high_lim = sorted(fsolve(lambda k: tmp_fit(k, *popt) - lin(k, *bkg_opt), x0=np.array([x0_low, x0_high])))
+                    _low, _high = sorted(fsolve(lambda k: tmp_fit(k, *popt) - lin(k, *bkg_opt), x0=[_x0_low, _x0_high]))
 
                     # if intersections have been found
-                    if not np.isclose(low_lim, high_lim) and np.abs(high_lim - low_lim) <= 6 * popt[1]:
+                    if not np.isclose(_low, _high) and np.abs(_high - _low) <= 10 * popt[1]:
+                        low_lim, high_lim = _low, _high
                         found = True
                         break
 
                     # increment
-                    n_tries += 1
+                    _i_tries += 1
 
                 # raise error
                 if not found:
@@ -635,7 +663,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
             except (TypeError, ValueError):
                 logging.info('Intersections between peak and local background for %s could not be found. Use estimates from data instead.' % peak_name)
-                low_lim, high_lim = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]], _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
+                low_lim, high_lim = x0_low, x0_high
             
             # do background integration
             bkg, bkg_err = quad(lin, low_lim, high_lim, args=tuple(bkg_opt))
