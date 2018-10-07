@@ -103,7 +103,7 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
             
             # make x values for plotting
             _tmp_x = np.linspace(low_lim, high_lim, 100)
-            
+
             # add peak fitting label
             plt.plot(_tmp_x, tmp_fit(_tmp_x, *peaks[p]['peak_fit']['popt']), lw=1, ls='--', zorder=10, c='r')
             
@@ -118,7 +118,7 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
             
             # set text in plot 
             text = str(p) + ': %.2f +- %.2f' % (peaks[p]['peak_fit']['popt'][0], peaks[p]['peak_fit']['perr'][0]) if 'peak' in str(p) else str(p)
-            y_text = (peaks[p]['peak_fit']['popt'][2] + background_model(peaks[p]['peak_fit']['popt'][0])) * 1.05 if not local_flag else peaks[p]['peak_fit']['popt'][2] * 1.05
+            y_text = (peaks[p]['peak_fit']['popt'][-1] + background_model(peaks[p]['peak_fit']['popt'][0])) * 1.05 if not local_flag else peaks[p]['peak_fit']['popt'][-1] * 1.05
             plt.text(peaks[p]['peak_fit']['popt'][0], y_text, text, fontsize=8)
         
         # plot also calibration
