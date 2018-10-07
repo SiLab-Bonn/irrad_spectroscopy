@@ -26,12 +26,23 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 ### general fit functions
 
-def gauss(x, mu, sigma, A):
-    return A * np.exp(-0.5*np.power((x-mu)/sigma, 2))
+def gauss(x, mu, sigma, h):
+    return h * np.exp(-0.5 * np.power((x - mu) / sigma, 2.))
     
 
-def gauss_general(x, mu, sigma, n, A):
-    return A*np.exp(-np.power((x-mu)/sigma, n))
+def gauss_general(x, mu, sigma, n, h):
+    return h * np.exp(-np.power((x - mu) / sigma, n))
+
+
+def gaux(x, mu, sigma, tau, h):
+    """
+    Convolution of Gauss and exponential under assumption of small tau (e.g. small exponential contribution)
+    https://en.wikipedia.org/wiki/Exponentially_modified_Gaussian_distribution
+    """
+
+    term1 = np.exp(-0.5 * np.power((x - mu) / sigma, 2.))
+    term2 = 1 - (x - mu) * tau / np.power(sigma, 2.)
+    return h * term1 * term2
 
 
 def lin(x, a, b):
@@ -40,23 +51,23 @@ def lin(x, a, b):
 ### spectral background model fit functions
 
 
-def plateau_linear(x, a, b, mu, sigma, A):
-    return lin(x, a, b) + gauss_general(x, mu, sigma, 4., A)  # flat gauss + straight line
+def plateau_linear(x, a, b, mu, sigma, h):
+    return lin(x, a, b) + gauss_general(x, mu, sigma, 4., h)  # flat gauss + straight line
     
     
-def gauss_linear(x, a, b, mu, sigma, A):
-    return lin(x, a, b) + gauss(x, mu, sigma, A)  # gauss + straight line
+def gauss_linear(x, a, b, mu, sigma, h):
+    return lin(x, a, b) + gauss(x, mu, sigma, h)  # gauss + straight line
     
     
-def gauss_exp_tail(x, mu, sigma, _lambda, A):
-    amplitude = A * _lambda / 2.
+def gauss_exp_tail(x, mu, sigma, _lambda, h):
+    amplitude = h * _lambda / 2.
     term_1 = np.exp(_lambda / 2. * (2. * mu + _lambda * np.power(sigma, 2.) - 2. * x))
     term_2 = erfc((mu + _lambda * np.power(sigma, 2.) - x) / (np.sqrt(2.) * sigma))
     return amplitude * term_1 * term_2
     
 
-def modified_gauss_exp_tail(x, mu, sigma, _lambda, A, mu_2, sigma_2, A_2):
-    return gauss_exp_tail(x, mu, sigma, _lambda, A) + gauss(x, mu_2, sigma_2, A_2)
+def modified_gauss_exp_tail(x, mu, sigma, _lambda, h, mu_2, sigma_2, h_2):
+    return gauss_exp_tail(x, mu, sigma, _lambda, h) + gauss(x, mu_2, sigma_2, h_2)
     
     
 def get_background_mask(spectrum, low_lim=0.0, high_lim=1e-3):
@@ -391,7 +402,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     # boolean masks
     # masking regions due to failing general conditions (peak_mask)
     # masking successfully fitted regions (peak_mask_fitted)
-    peak_mask, peak_mask_fitted = np.ones_like(y, dtype=np.bool), np.ones_like(y, dtype=np.bool)
+    peak_mask = peak_mask_fitted = np.ones_like(y, dtype=np.bool)
 
     # flag whether expected peaks have been checked
     checked_expected = False
@@ -517,17 +528,23 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             
         # start fitting
         try:  # get fit parameters and errors
-            _p0 = {'mu': x_peak if energy_cal is None else energy_cal(x_peak), 'A': y_peak}
+            # starting parameters
+            _mu = x_peak if energy_cal is None else energy_cal(x_peak)
+            _sigma = np.abs(x_fit[y_fit >= y_peak / 2.0][-1] - x_fit[y_fit >= y_peak / 2.0][0]) / 2.3548
+            _p0 = {'mu': _mu, 'sigma': _sigma, 'h': y_peak}
             fit_args = inspect.getargspec(peak_fit)[0][1:]
             p0 = tuple(_p0[arg] if arg in _p0 else 1 for arg in fit_args)
             popt, pcov = curve_fit(tmp_fit, x_fit, y_fit, p0=p0, sigma=np.sqrt(y_fit), absolute_sigma=True, maxfev=5000)
-            perr = np.sqrt(np.diag(pcov)) # get std deviation
+            perr = np.sqrt(np.diag(pcov))  # get std deviation
             
             # if fitting resulted in nan errors
             if any(np.isnan(perr)):
                 peak_mask[low:high] = False
                 continue
-        
+
+            # update
+            _mu, _sigma = [popt[fit_args.index(par)] for par in ('mu', 'sigma')]
+
         # fitting did not succeed
         except RuntimeError:  # disable failed region for next iteration
             logging.debug('Fitting failed. Skipping peak at %.2f' % (x_peak if energy_cal is None else energy_cal(x_peak)))
@@ -544,7 +561,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                 upper_est = (1 + expected_accuracy) * expected_peaks[ep]
                 
                 # if current peak checks out set peak name and break
-                if lower_est <= popt[0] <= upper_est:
+                if lower_est <= _mu <= upper_est:
                     peak_name = ep
                     break
                 peak_name = None
@@ -565,12 +582,12 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         peak_name = 'peak_%i' % counter if peak_name is None else peak_name
         
         # if we already found peak, disable mask and continue
-        if any(popt[0] == peaks[p]['peak_fit']['popt'][0] for p in peaks):
+        if any(_mu == peaks[p]['peak_fit']['popt'][0] for p in peaks):
             logging.debug('Peak at %.2f already fitted. Skipping' % (x_peak if energy_cal is None else energy_cal(x_peak)))
             peak_mask[low:high] = False
             continue
-            
-        # if fit is unreliable 
+
+        # if fit is unreliable
         if any(np.abs(perr / popt) > 1.0):
             if not reliable_only:
                 logging.warning('Unreliable fit for %s. Uncertainties larger than 100 percent.' % peak_name)
@@ -590,7 +607,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         peaks[peak_name]['activity'] = OrderedDict()
         
         # get integration limits within 3 sigma for non local background
-        low_lim, high_lim = popt[0] - popt[1] * 3, popt[0] + popt[1] * 3 # integrate within 3 sigma
+        low_lim, high_lim = _mu - 3 * _sigma, _mu + 3 * _sigma # integrate within 3 sigma
 
         # get background via integration of previously fitted background model
         if not local_background and background is not None:
@@ -605,8 +622,8 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             _deviation = None
             while _i_dev < int(_MAX_PEAKS / 2):
                 # Make tmp array of mean bkg values left and right of peak
-                _tmp_dev_array = [np.mean(_y[(popt[0] - _i_dev * popt[1] <= _x) & (_x <= popt[0] - 3 * popt[1])]),
-                                  np.mean(_y[(popt[0] + 3 * popt[1] <= _x) & (_x <= popt[0] + _i_dev * popt[1])])]
+                _tmp_dev_array = [np.mean(_y[(_mu - _i_dev * _sigma <= _x) & (_x <= _mu - 3 * _sigma)]),
+                                  np.mean(_y[(_mu + 3 * _sigma <= _x) & (_x <= _mu + _i_dev * _sigma)])]
                 # look at std. deviation; as long as it decreases for increasing bkg area update
                 if np.std(_tmp_dev_array) < _deviation or _deviation is None:
                     _deviation = np.std(_tmp_dev_array)
@@ -618,9 +635,9 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                 _i_dev += 1
 
             # get background from 3 to _i_dev sigma left of peak
-            lower_bkg = np.logical_and(popt[0] - _i_dev * popt[1] <= _x, _x <= popt[0] - 3 * popt[1])
+            lower_bkg = np.logical_and(_mu - _i_dev * _sigma <= _x, _x <= _mu - 3 * _sigma)
             # get background from 3 to _i_dev sigma right of peak
-            upper_bkg = np.logical_and(popt[0] + 3 * popt[1] <= _x, _x <= popt[0] + _i_dev * popt[1])
+            upper_bkg = np.logical_and(_mu + 3 * _sigma <= _x, _x <= _mu + _i_dev * _sigma)
             # combine bool mask
             bkg_mask = np.logical_or(lower_bkg, upper_bkg)
             # mask other peaks in bkg so local background fit will not be influenced by nearby peak
@@ -633,8 +650,8 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             x0_low = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]]
             x0_high = _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
             # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
-            # increse environment to 4 sigma to be sure
-            low_lim, high_lim = popt[0] - popt[1] * 5, popt[0] + popt[1] * 5
+            # increase environment to 5 sigma to be sure
+            low_lim, high_lim = _mu - 5 * _sigma, _mu + 5 * _sigma
             # fsolve heavily relies on correct start parameters; estimate from data and loop
             try:
                 _i_tries = 0
@@ -649,7 +666,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                     _low, _high = sorted(fsolve(lambda k: tmp_fit(k, *popt) - lin(k, *bkg_opt), x0=[_x0_low, _x0_high]))
 
                     # if intersections have been found
-                    if not np.isclose(_low, _high) and np.abs(_high - _low) <= 10 * popt[1]:
+                    if not np.isclose(_low, _high) and np.abs(_high - _low) <= 7 * _sigma:
                         low_lim, high_lim = _low, _high
                         found = True
                         break
@@ -711,14 +728,9 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         peaks[peak_name]['activity']['unit'] = 'becquerel' if t_spectrum is not None else 'counts / t_spectrum'
         peaks[peak_name]['activity']['calibrated'] = efficiency_cal is not None
         
-        # try disable fitted region for next iteration within 3 sigma
-        try:
-            l_sigma, h_sigma = np.where(_x >= low_lim)[0][0], np.where(_x >= high_lim)[0][0]
-            peak_mask[l_sigma:h_sigma] = False
-            peak_mask_fitted[l_sigma:h_sigma] = False
-        except IndexError:
-            peak_mask[low:high] = False
-            peak_mask_fitted[low:high] = False
+        # disable fitted region for next iteration
+        current_mask = (low_lim <= _x) & (_x <= high_lim)
+        peak_mask[current_mask] = peak_mask_fitted[current_mask] = False
             
         counter += 1  # increase counter
         runtime_counter = 0  # peak was found; reset runtime counter
