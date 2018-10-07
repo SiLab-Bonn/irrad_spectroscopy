@@ -46,16 +46,31 @@ def isotopes_to_dict(lib, info='lines'):
     else:
         isotopes = lib['isotopes']
 
-    # init result dict and loop over different isotopes
-    result = {}
-    for symbol in isotopes:
-        mass_number = isotopes[symbol]['A']
-        for A in mass_number:
-            if info in mass_number[A]:
-                identifier = '%s_%s' % (str(A), str(symbol))
-                for i, n in enumerate(mass_number[A][info]):
-                    result[identifier + '_%i' % i] = n
-    return result
+        # init result dict and loop over different isotopes
+        result = {}
+        for symbol in isotopes:
+            if info in isotopes[symbol]:
+                if not isinstance(isotopes[symbol][info], dict):
+                    result[symbol] = isotopes[symbol][info]
+                else:
+                    mass_nums = isotopes[symbol][info].keys()
+                    result[symbol] = mass_nums if len(mass_nums) > 1 else mass_nums[0]
+
+            else:
+                mass_number = isotopes[symbol]['A']
+                for A in mass_number:
+                    identifier = '%s_%s' % (str(A), str(symbol))
+                    if info in mass_number[A]:
+                        if isinstance(mass_number[A][info], list):
+                            for i, n in enumerate(mass_number[A][info]):
+                                result[identifier + '_%i' % i] = n
+                        else:
+                            result[identifier] = mass_number[A][info]
+
+        if not result:
+            raise ValueError('Isotope library does not contain info %s.' % info)
+
+        return result
 
 
 def source_to_dict(source, info='lines'):
