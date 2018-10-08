@@ -124,13 +124,13 @@ def do_energy_calibration(observed_peaks, peak_energies, cal_func=lin):
     cal = {}
     
     # make arrays for fitting
-    x_calib, y_calib = np.zeros(shape=len(peak_energies)), np.zeros(shape=len(peak_energies))
+    x_calib, y_calib = np.zeros(shape=len(observed_peaks)), np.zeros(shape=len(observed_peaks))
     
     # fill calibration arrays
-    for i, peak in enumerate(peak_energies):
+    for i, peak in enumerate(observed_peaks):
         x_calib[i] = observed_peaks[peak]['peak_fit']['popt'][0]
         y_calib[i] = peak_energies[peak]
-        
+
     # do fit and calculate error
     popt, pcov = curve_fit(cal_func, x_calib, y_calib, absolute_sigma=True)
     perr = np.sqrt(np.diag(pcov))
@@ -176,7 +176,7 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
     cal = {}
     
     # make arrays for fitting
-    x_calib, y_calib, y_error = np.zeros(shape=len(source_specs['lines'])), np.zeros(shape=len(source_specs['lines'])), np.zeros(shape=len(source_specs['lines']))
+    x_calib, y_calib, y_error = np.zeros(shape=len(observed_peaks)), np.zeros(shape=len(observed_peaks)), np.zeros(shape=len(observed_peaks))
     
     # get activity of at the day of measurement
     activity_now = get_activity(n0=source_specs['activity'][0],
@@ -402,7 +402,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     # boolean masks
     # masking regions due to failing general conditions (peak_mask)
     # masking successfully fitted regions (peak_mask_fitted)
-    peak_mask = peak_mask_fitted = np.ones_like(y, dtype=np.bool)
+    peak_mask, peak_mask_fitted = np.ones_like(y, dtype=np.bool), np.ones_like(y, dtype=np.bool)
 
     # flag whether expected peaks have been checked
     checked_expected = False
