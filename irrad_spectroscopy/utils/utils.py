@@ -33,7 +33,7 @@ def get_measurement_time(spectrum_file):
     return t_res
 
 
-def isotopes_to_dict(lib, info='lines'):
+def isotopes_to_dict(lib, info='lines', fltr=None):
     """
     Method to return dict of isotope keys and info. Info
     can either be 'lines' or 'probability'
@@ -69,6 +69,11 @@ def isotopes_to_dict(lib, info='lines'):
 
         if not result:
             raise ValueError('Isotope library does not contain info %s.' % info)
+
+        if fltr:
+            sortout = [k for k in result if fltr not in k]
+            for s in sortout:
+                del result[s]
 
         return result
 
