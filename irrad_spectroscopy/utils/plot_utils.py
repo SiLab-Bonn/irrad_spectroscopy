@@ -21,7 +21,7 @@ def plot_calibration(x, popt, perr, axis=None, calib_type=None, func=lin):
     def calib(x):
         return func(x, *popt)
         
-    y_labels = {'energy': 'Energy / keV', 'activity': r'Ratio: $A_\mathrm{theo}\ /\ A_\mathrm{meas}$'}
+    y_labels = {'energy': 'Energy / keV', 'efficiency': r'Ratio: $A_\mathrm{theo}\ /\ A_\mathrm{meas}$'}
         
     # plot in same graph
     if axis is None:
