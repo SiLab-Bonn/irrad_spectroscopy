@@ -97,7 +97,7 @@ def calc_activity(observed_peaks, probability_peaks):
     activities = OrderedDict()
     
     for peak in observed_peaks:
-        isotope = ''.join(peak.split('_')[:-1])
+        isotope = '_'.join(peak.split('_')[:-1])
         if isotope not in activities:
             activities[isotope] = OrderedDict([('nominal', 0), ('sigma', 0),
                                                ('probability', 0), ('unscaled', {'nominal': 0, 'sigma': 0})])

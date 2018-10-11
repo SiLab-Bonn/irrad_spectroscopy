@@ -180,7 +180,7 @@ class TestSpectroscopy(unittest.TestCase):
                                           t_1=self.Na22_source_specs['timestamp_measurement'])
         
         # check to see at least 90% of the expected activity; only order of magnitude relevant
-        self.assertTrue(0.9 <= Na22_activity_meas['22Na']['nominal'] / Na22_activity_theo[0] <= 1.0)
+        self.assertTrue(0.9 <= Na22_activity_meas['22_Na']['nominal'] / Na22_activity_theo[0] <= 1.0)
         
         # generate expected peaks and probabilities from source specs
         Ba133_expected = dict(('%i_%s_%i' % (self.Ba133_source_specs['A'],
@@ -219,7 +219,7 @@ class TestSpectroscopy(unittest.TestCase):
                                           t_1=self.Ba133_source_specs['timestamp_measurement'])
         
         # check to see at least 90% of the expected activity; only order of magnitude relevant
-        self.assertTrue(0.9 <= Ba133_activity_meas['133Ba']['nominal'] / Ba133_activity_theo[0] <= 1.0)
+        self.assertTrue(0.9 <= Ba133_activity_meas['133_Ba']['nominal'] / Ba133_activity_theo[0] <= 1.0)
         
             
 if __name__ == '__main__':
