@@ -94,7 +94,10 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
             return peak_fit(x, *args) + background_model(x) if not local_flag else peak_fit(x, *args)
         
         plt.plot([], [], lw=1, ls='--', zorder=10, c='r', label='Peak fits')
-            
+
+        # store multiple mu positions in order to stack labels on plot
+        _y_texts = {}
+
         # loop over fitted peaks
         for p in peaks:
             
@@ -116,9 +119,15 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
                 plt.fill_between(_tmp_x, tmp_fit(_tmp_x, *peaks[p]['peak_fit']['popt']), background_model(_tmp_x), color='r', alpha=0.3)
                 plt.fill_between(_tmp_x, background_model(_tmp_x), np.zeros_like(_tmp_x), color='k', alpha=0.3)
             
-            # set text in plot 
-            text = str(p) + ': %.2f +- %.2f' % (peaks[p]['peak_fit']['popt'][0], peaks[p]['peak_fit']['perr'][0]) if 'peak' in str(p) else str(p)
-            y_text = (peaks[p]['peak_fit']['popt'][-1] + background_model(peaks[p]['peak_fit']['popt'][0])) * 1.05 if not local_flag else peaks[p]['peak_fit']['popt'][-1] * 1.05
+            # set text in plot
+            _mu = peaks[p]['peak_fit']['popt'][0]
+            if _mu not in _y_texts:
+                _y_texts[_mu] = 0
+            else:
+                _y_texts[_mu] += 1
+
+            text = str(p) + ': %.2f +- %.2f' % (_mu, peaks[p]['peak_fit']['perr'][0]) if 'peak' in str(p) else str(p)
+            y_text = (peaks[p]['peak_fit']['popt'][-1] + background_model(_mu)) * (1.05 + 0.05*_y_texts[_mu]) if not local_flag else peaks[p]['peak_fit']['popt'][-1] * (1.05 + 0.05*_y_texts[_mu])
             plt.text(peaks[p]['peak_fit']['popt'][0], y_text, text, fontsize=8)
         
         # plot also calibration

@@ -1,5 +1,6 @@
 # Imports
 import os
+import logging
 from collections import OrderedDict
 
 
@@ -116,3 +117,32 @@ def calc_activity(observed_peaks, probability_peaks):
             pass
 
     return activities
+
+
+def validate_isotopes(peaks, lib):
+    """TODO: docstring"""
+    isotopes_in_sample = set('_'.join(p.split('_')[:-1]) for p in peaks)
+    not_in_lib = []
+    removed = []
+    for isotope in isotopes_in_sample:
+        current_in_lib = isotopes_to_dict(lib, info='probability', fltr=isotope)
+        if not current_in_lib:
+            not_in_lib.append(isotope)
+            continue
+        current_in_sample = dict((peak, current_in_lib[peak]) for peak in peaks if isotope in peak)
+        current_props_lib, current_props_sample = sorted(current_in_lib.values()), sorted(current_in_sample.values())
+        start_index = current_props_lib.index(current_props_sample[0])
+        end_index = len(current_props_sample)
+        current_props_lib = current_props_lib[start_index:]
+        if not all(current_props_lib[j] == current_props_sample[j] for j in range(start_index, end_index)):
+            for cis in current_in_sample:
+                removed.append(cis)
+                del peaks[cis]
+            logging.info('Removed %s due to missing lines!' % isotope)
+        else:
+            logging.info('Isotope %s valid!' % isotope)
+    if not_in_lib:
+        logging.warning('Isotope(s) %s not contained in library; not validated!' % ', '.join(not_in_lib))
+    else:
+        if not removed:
+            logging.info('All isotopes validated!')

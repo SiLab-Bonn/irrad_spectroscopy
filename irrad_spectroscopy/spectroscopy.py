@@ -5,12 +5,16 @@
 #######################################################################
 
 # Imports
+import os
+import yaml
 import logging
 import inspect
 import warnings
 import numpy as np
+import irrad_spectroscopy as isp
+from irrad_spectroscopy.utils.utils import isotopes_to_dict, validate_isotopes
 from collections import OrderedDict, Iterable
-from scipy.optimize import curve_fit, fsolve
+from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
 from scipy.special import erfc
 
@@ -20,7 +24,17 @@ logging.getLogger().setLevel(logging.INFO)
 
 # ignore scipy throwing warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", category=OptimizeWarning)
 
+# load library file
+try:
+    _lib_file = os.path.join(os.path.dirname(isp.__file__), 'isotope_lib.yaml')
+    with open(_lib_file, 'r') as il:
+        _ISOTOPE_LIB = yaml.safe_load(il)
+    logging.debug('Successfully loaded isotope library file.')
+except IOError:
+    _ISOTOPE_LIB = None
+    logging.warning('Isotope library file at %s could not be loaded!' % _lib_file)
 
 ### Functions
 
@@ -415,7 +429,12 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
-        raise ValueError('Either n_peaks or expected_peaks has to be given!')
+        if _ISOTOPE_LIB is None:
+            raise ValueError('No isotope library file found. Either n_peaks or expected_peaks has to be given!')
+        else:
+            expected_peaks = isotopes_to_dict(_ISOTOPE_LIB, info='lines')
+            tmp_n_peaks = total_n_peaks = len(expected_peaks)
+            logging.info('Finding isotopes from isotope library file located at %s...' % _lib_file)
     else:
         # expected peaks are checked first
         tmp_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks)
@@ -752,7 +771,16 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
     logging.info('Finished fitting.')
 
-    # remove inof from result dict
+    # identify wrongly assigned isotopes and remove
+    if _ISOTOPE_LIB is not None and reliable_only:
+        logging.info('Validate identified isotopes...')
+        validate_isotopes(peaks=peaks, lib=_ISOTOPE_LIB)
+    else:
+        msg = 'Isotopes not validated.'
+        msg += 'Isotope library not found' if _ISOTOPE_LIB is None else 'Set "reliabe_only=True" to validate!'
+        logging.warning(msg)
+
+    # remove info from result dict
     if not full_output:
         for iso in peaks:
             del peaks[iso]['background']
