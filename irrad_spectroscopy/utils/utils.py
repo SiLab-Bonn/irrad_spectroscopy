@@ -120,20 +120,47 @@ def calc_activity(observed_peaks, probability_peaks):
 
 
 def validate_isotopes(peaks, lib):
-    """TODO: docstring"""
+    """
+    Methods that validates identified isotopes from fit_spectrum. It uses the isotope library in order to perform
+    the following check: For each isotope in peaks, the respective line with the lowest probability per isotope is
+    taken as start parameter. All remaining lines of the same isotope with higher probability must be in the spectrum
+    as well.
+
+    Parameters
+    ----------
+
+    peaks: dict
+        return value of irrad_spectroscopy.fit_spectrum
+    lib: dict
+        isotope library dictionary loaded from isotope_lib.yaml
+
+    """
+
+    # get unique isotopes in sample
     isotopes_in_sample = set('_'.join(p.split('_')[:-1]) for p in peaks)
+
+    # make list for logging info
     not_in_lib = []
     removed = []
+
+    # loop over all unique isotopes
     for isotope in isotopes_in_sample:
+        # get all lines' probabilities of isotope from library
         current_in_lib = isotopes_to_dict(lib, info='probability', fltr=isotope)
+        # if current isotope is not in library
         if not current_in_lib:
             not_in_lib.append(isotope)
             continue
+        # get all lines' probabilities of current isotope in sample
         current_in_sample = dict((peak, current_in_lib[peak]) for peak in peaks if isotope in peak)
+        # sort both
         current_props_lib, current_props_sample = sorted(current_in_lib.values()), sorted(current_in_sample.values())
+        # get index of lowest prob line in probs from lib as start and len as end
         start_index = current_props_lib.index(current_props_sample[0])
         end_index = len(current_props_sample)
+        # update lib lines of current isotope to start from lowest prob line in sample
         current_props_lib = current_props_lib[start_index:]
+        # check whether all lines with higher probability are also present in sample; if not remove entire isotope
         if not all(current_props_lib[j] == current_props_sample[j] for j in range(start_index, end_index)):
             for cis in current_in_sample:
                 removed.append(cis)
