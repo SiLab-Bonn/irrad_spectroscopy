@@ -148,5 +148,4 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
     
     if output_plot is not None:
         plt.savefig(output_plot, bbox_inches='tight')
-    
-    
+
