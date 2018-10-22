@@ -9,3 +9,5 @@ irrad_spectroscopy/examples/output/
 # eclipse
 .project
 .pydevproject
+# egg-info folder
+irrad_spectroscopy.egg-info/
