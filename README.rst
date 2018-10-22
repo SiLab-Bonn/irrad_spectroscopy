@@ -20,12 +20,13 @@ You have to have Python 2/3 with the following packages installed:
 - pyyaml
 - matplotlib
 - jupyter (examples)
+- pandas (creating gamma library from the web)
 
 It's recommended to use a Python environment like `Miniconda <https://conda.io/miniconda.html>`_. After installation you can use Minicondas package manager ``conda`` to install the required packages
 
 .. code-block:: bash
 
-   conda install numpy scipy pyyaml matplotlib jupyter
+   conda install numpy scipy pyyaml matplotlib jupyter pandas
 
 To finally install ``irrad_spectroscopy`` run the setup file
 
