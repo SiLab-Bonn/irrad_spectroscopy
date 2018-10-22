@@ -5,14 +5,12 @@
 #######################################################################
 
 # Imports
-import os
-import yaml
 import logging
 import inspect
 import warnings
 import numpy as np
 import irrad_spectroscopy as isp
-from irrad_spectroscopy.utils.utils import isotopes_to_dict, validate_isotopes
+from irrad_spectroscopy.spec_utils import isotopes_to_dict
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
@@ -25,16 +23,6 @@ logging.getLogger().setLevel(logging.INFO)
 # ignore scipy throwing warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=OptimizeWarning)
-
-# load library file
-try:
-    _lib_file = os.path.join(os.path.dirname(isp.__file__), 'isotope_lib.yaml')
-    with open(_lib_file, 'r') as il:
-        _ISOTOPE_LIB = yaml.safe_load(il)
-    logging.debug('Successfully loaded isotope library file.')
-except IOError:
-    _ISOTOPE_LIB = None
-    logging.warning('Isotope library file at %s could not be loaded!' % _lib_file)
 
 ### Functions
 
@@ -100,7 +88,7 @@ def get_background_mask(spectrum, low_lim=0.0, high_lim=1e-3):
 
     return mask
 
-### physics
+# physics
 
 
 def get_activity(n0, half_life, t_0, t_1):
@@ -110,7 +98,7 @@ def get_activity(n0, half_life, t_0, t_1):
 def get_release_time(a, a_limit, half_life):
     return -np.log(a_limit / a) / (np.log(2.) / half_life)
 
-### calibrations
+# calibrations
 
 
 def do_energy_calibration(observed_peaks, peak_energies, cal_func=lin):
@@ -235,7 +223,7 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
 
     return cal
 
-### fitting
+# fitting
 
 
 def fit_background(x, y, model=None, low_lim=0.0, high_lim=1e-3, p0=None, calibration=None):
@@ -429,12 +417,9 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
-        if _ISOTOPE_LIB is None:
-            raise ValueError('No isotope library file found. Either n_peaks or expected_peaks has to be given!')
-        else:
-            expected_peaks = isotopes_to_dict(_ISOTOPE_LIB, info='lines')
-            tmp_n_peaks = total_n_peaks = len(expected_peaks)
-            logging.info('Finding isotopes from isotope library file located at %s...' % _lib_file)
+        expected_peaks = isotopes_to_dict(isp.isotope_lib, info='lines')
+        tmp_n_peaks = total_n_peaks = len(expected_peaks)
+        logging.info('Finding isotopes from isotope library file in %s...' % isp.static_path)
     else:
         # expected peaks are checked first
         tmp_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks)
@@ -486,7 +471,11 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             runtime_msg = 'Not all peaks could be found! '
             if expected_peaks is not None:
                 missing_peaks = [str(p) for p in expected_peaks if p in expected_peaks and p not in peaks]
-                runtime_msg += ', '.join(missing_peaks) + ' missing!'
+                if missing_peaks:
+                    if len(missing_peaks) <= 10:
+                        runtime_msg += ', '.join(missing_peaks) + ' missing! '
+                    else:
+                        runtime_msg += 'Number of lines not found in spectrum: {}'.format(len(missing_peaks))
                 logging.warning(runtime_msg)
 
                 # check expected peaks first; then reset and look for another n_peaks
@@ -514,7 +503,10 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             if expected_peaks is not None:
                 missing_peaks = [str(p) for p in expected_peaks if p in expected_peaks and p not in peaks]
                 if missing_peaks:
-                    msg += ', '.join(missing_peaks) + ' missing! '
+                    if len(missing_peaks) <= 10:
+                        msg += ', '.join(missing_peaks) + ' missing! '
+                    else:
+                        msg += 'Number of lines not found in spectrum: {}'.format(len(missing_peaks))
             if n_peaks is not None:
                 msg += '' if counter == tmp_n_peaks else '{} of {} peaks found.'.format(counter, tmp_n_peaks)
             logging.info(msg)
@@ -577,6 +569,17 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                     logging.debug('Skipping fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
                     peak_mask[low:high] = False
                     continue
+
+            # if fit is indistinguishable from background
+            try:
+                _msk = ((_mu - 6 * _sigma <= _x) & (_x <= _mu - 3 * _sigma)) | ((_mu + 3 * _sigma <= _x) & (_x <= _mu + 6 * _sigma))
+                _msk[~peak_mask_fitted] = False
+                if np.max(_y[_msk]) > popt[fit_args.index('h')]:
+                    logging.debug('Peak at %.2f indistinguishable from background. Skipping' % _mu)
+                    raise ValueError
+            except ValueError:
+                peak_mask[low:high] = False
+                continue
 
         # fitting did not succeed
         except RuntimeError:  # disable failed region for next iteration
@@ -772,12 +775,11 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     logging.info('Finished fitting.')
 
     # identify wrongly assigned isotopes and remove
-    if _ISOTOPE_LIB is not None and reliable_only:
+    if reliable_only:
         logging.info('Validate identified isotopes...')
-        validate_isotopes(peaks=peaks, lib=_ISOTOPE_LIB)
+        validate_isotopes(peaks=peaks, lib=isp.isotope_lib)
     else:
-        msg = 'Isotopes not validated.'
-        msg += 'Isotope library not found' if _ISOTOPE_LIB is None else 'Set "reliabe_only=True" to validate!'
+        msg = 'Isotopes not validated. Set "reliabe_only=True" to validate!'
         logging.warning(msg)
 
     # remove info from result dict
@@ -787,3 +789,119 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             del peaks[iso]['peak_fit']
 
     return peaks
+
+# result checking
+
+
+def validate_isotopes(peaks, lib=isp.isotope_lib):
+    """
+    Methods that validates identified isotopes from fit_spectrum. It uses the isotope library in order to perform
+    the following check: For each isotope in peaks, the respective line with the lowest probability per isotope is
+    taken as start parameter. All remaining lines of the same isotope with higher probability must be in the spectrum
+    as well.
+
+    Parameters
+    ----------
+
+    peaks: dict
+        return value of irrad_spectroscopy.fit_spectrum
+    lib: dict
+        isotope library dictionary loaded from isotope_lib.yaml
+
+    """
+
+    # get unique isotopes in sample
+    isotopes_in_sample = set('_'.join(p.split('_')[:-1]) for p in peaks)
+
+    # make list for logging info
+    not_in_lib = []
+    removed = []
+
+    # loop over all unique isotopes
+    for isotope in isotopes_in_sample:
+        # get all lines' probabilities of isotope from library
+        current_in_lib = isotopes_to_dict(lib, info='probability', fltr=isotope)
+
+        # if current isotope is not in library
+        if not current_in_lib:
+            not_in_lib.append(isotope)
+            continue
+
+        # get all lines' probabilities of current isotope in sample
+        current_in_sample = dict((peak, current_in_lib[peak]) for peak in peaks if isotope in peak)
+
+        # sort both
+        current_props_lib, current_props_sample = sorted(current_in_lib.values()), sorted(current_in_sample.values())
+
+        # get index of lowest prob line in probs from lib as start and len as end
+        start_index = current_props_lib.index(current_props_sample[0])
+
+        # update lib lines of current isotope to start from lowest prob line in sample
+        current_props_lib = current_props_lib[start_index:]
+
+        # now both lists should be equal if all higher probability lines are present; if not remove isotope
+        if current_props_lib != current_props_sample:
+            for cis in current_in_sample:
+                removed.append(cis)
+                del peaks[cis]
+            logging.info('Removed %s due to %i missing lines!' % (isotope, len(current_in_lib) - len(current_in_sample)))
+
+        # if peaks are scaled for efficiency the activities must increase
+        elif all(peaks[pn]['activity']['calibrated'] for pn in current_in_sample):
+            # helper funcs and vars
+            _tmp = sorted(current_in_sample.keys())
+            _f = lambda x: peaks[x]['activity']['nominal']
+            _g = lambda y: current_in_lib[y]
+
+            if any(_f(_tmp[j]) <= _f(_tmp[j+1]) and abs(_g(_tmp[j])-_g(_tmp[j+1])) < 1e-2 for j in range(len(_tmp)-1)):
+                for cis in current_in_sample:
+                    removed.append(cis)
+                    del peaks[cis]
+                logging.info('Removed %s due to faulty activitiy.'
+                             'Consecutively increasing probabilities do not show increasing activities!' % isotope)
+        # current isotope is valid
+        else:
+            logging.info('Isotope %s valid!' % isotope)
+
+    if not_in_lib:
+        logging.warning('Isotope(s) %s not contained in library; not validated!' % ', '.join(not_in_lib))
+    else:
+        if not removed:
+            logging.info('All isotopes validated!')
+
+# analysis
+
+
+def calc_activity(observed_peaks, probability_peaks=None):
+    """
+    Method to calculate activity isotope-wise. The peak-wise activities of all peaks of
+    each isotope are added and scaled with their respectively summed-up probability
+    """
+    activities = OrderedDict()
+    probability_peaks = isotopes_to_dict(isp.isotope_lib, info='probability') if probability_peaks is None else probability_peaks
+
+    for peak in observed_peaks:
+        isotope = '_'.join(peak.split('_')[:-1])
+        if isotope not in activities:
+            activities[isotope] = OrderedDict([('nominal', 0), ('sigma', 0),
+                                               ('probability', 0), ('unscaled', {'nominal': 0, 'sigma': 0})])
+
+        if peak in probability_peaks:
+            activities[isotope]['unscaled']['nominal'] += observed_peaks[peak]['activity']['nominal']
+            activities[isotope]['unscaled']['sigma'] += observed_peaks[peak]['activity']['sigma']
+            activities[isotope]['probability'] += probability_peaks[peak]
+
+    for iso in activities:
+        try:
+            activities[iso]['nominal'] = activities[iso]['unscaled']['nominal'] * 1. / activities[iso]['probability']
+            activities[iso]['sigma'] = activities[iso]['unscaled']['sigma'] * 1. / activities[iso]['probability']
+
+        # when no probability given
+        except ZeroDivisionError:
+            pass
+
+    return activities
+
+
+def calc_effective_dose():
+    pass
