@@ -3,14 +3,11 @@ import logging
 import yaml
 import numpy as np
 import unittest
-import irrad_spectroscopy as isp
 import irrad_spectroscopy.spectroscopy as sp
-from irrad_spectroscopy.spec_utils import get_measurement_time, isotopes_to_dict, source_to_dict
+from irrad_spectroscopy.spec_utils import get_measurement_time, source_to_dict
+from irrad_spectroscopy.physics import decay_law
+from irrad_spectroscopy import testing_path, isotope_lib
 
-# Get the absolute path of the irrad_spectroscopy installation
-package_path = isp.package_path
-
-testing_path = isp.testing_path
 
 test_data_path = os.path.join(testing_path, 'test_data')
 
@@ -51,7 +48,7 @@ class TestSpectroscopy(unittest.TestCase):
         # variables
         cls.energy_calibration = None
         cls.efficiency_calibration = None
-        cls.isotope_lib = isp.isotope_lib
+        cls.isotope_lib = isotope_lib
                 
     @classmethod
     def tearDownClass(cls):
@@ -169,10 +166,8 @@ class TestSpectroscopy(unittest.TestCase):
             
         # check for correct activity from library
         Na22_activity_meas = sp.calc_activity(Na22_peaks)
-        Na22_activity_theo = sp.get_activity(n0=np.array(self.Na22_source_specs['activity']),
-                                             half_life=self.Na22_source_specs['half_life'],
-                                             t_0=self.Na22_source_specs['timestamp_calibration'],
-                                             t_1=self.Na22_source_specs['timestamp_measurement'])
+        Na22_activity_theo = decay_law(t=self.Na22_source_specs['timestamp_measurement']-self.Na22_source_specs['timestamp_calibration'],
+                                       x0=np.array(self.Na22_source_specs['activity']), half_life=self.Na22_source_specs['half_life'])
 
         # check to see at least 90% of the expected activity; only order of magnitude relevant
         self.assertTrue(0.9 <= Na22_activity_meas['22_Na']['nominal'] / Na22_activity_theo[0] <= 1.0)
@@ -205,10 +200,9 @@ class TestSpectroscopy(unittest.TestCase):
             
         # check for correct activity
         Ba133_activity_meas = sp.calc_activity(Ba133_peaks)
-        Ba133_activity_theo = sp.get_activity(n0=np.array(self.Ba133_source_specs['activity']),
-                                              half_life=self.Ba133_source_specs['half_life'],
-                                              t_0=self.Ba133_source_specs['timestamp_calibration'],
-                                              t_1=self.Ba133_source_specs['timestamp_measurement'])
+        Ba133_activity_theo = decay_law(t=self.Ba133_source_specs['timestamp_measurement']-self.Ba133_source_specs['timestamp_calibration'],
+                                        x0=np.array(self.Ba133_source_specs['activity']),
+                                        half_life=self.Ba133_source_specs['half_life'])
         
         # check to see at least 90% of the expected activity; only order of magnitude relevant
         self.assertTrue(0.9 <= Ba133_activity_meas['133_Ba']['nominal'] / Ba133_activity_theo[0] <= 1.0)

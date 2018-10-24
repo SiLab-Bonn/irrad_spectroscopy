@@ -88,16 +88,6 @@ def get_background_mask(spectrum, low_lim=0.0, high_lim=1e-3):
 
     return mask
 
-# physics
-
-
-def get_activity(n0, half_life, t_0, t_1):
-    return n0 * np.exp(-(np.log(2)/half_life) * (t_1 - t_0))
-
-
-def get_release_time(a, a_limit, half_life):
-    return -np.log(a_limit / a) / (np.log(2.) / half_life)
-
 # calibrations
 
 
