@@ -2,6 +2,7 @@
 import os
 import yaml
 import time
+import datetime
 import logging
 import irrad_spectroscopy as isp
 import numpy as np
@@ -48,6 +49,11 @@ def get_measurement_time(spectrum_file):
         raise ValueError('Could not read measurement time from file.')
 
     return t_res
+
+
+def date_to_posix(year, month, day, hour=0, minute=0, second=0):
+    """ Returns posix timestamp from date and optionally time"""
+    return time.mktime(datetime.datetime(year, month, day, hour, minute, second).timetuple())
 
 
 def isotopes_to_dict(lib, info='lines', fltr=None):
