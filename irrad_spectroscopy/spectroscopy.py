@@ -11,6 +11,7 @@ import warnings
 import numpy as np
 import irrad_spectroscopy as isp
 from irrad_spectroscopy.spec_utils import isotopes_to_dict
+from irrad_spectroscopy.physics import decay_law
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
@@ -171,16 +172,12 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
     x_calib, y_calib, y_error = np.zeros(shape=len(observed_peaks)), np.zeros(shape=len(observed_peaks)), np.zeros(shape=len(observed_peaks))
 
     # get activity of at the day of measurement
-    activity_now = get_activity(n0=source_specs['activity'][0],
-                                half_life=source_specs['half_life'],
-                                t_0=source_specs['timestamp_calibration'],
-                                t_1=source_specs['timestamp_measurement'])
+    activity_now = decay_law(t=source_specs['timestamp_measurement']-source_specs['timestamp_calibration'],
+                             x0=source_specs['activity'][0], half_life=source_specs['half_life'])
 
     # get activity uncertainty
-    activity_error_now = get_activity(n0=source_specs['activity'][1],
-                                      half_life=source_specs['half_life'],
-                                      t_0=source_specs['timestamp_calibration'],
-                                      t_1=source_specs['timestamp_measurement'])
+    activity_error_now = decay_law(t=source_specs['timestamp_measurement']-source_specs['timestamp_calibration'],
+                                   x0=source_specs['activity'][1], half_life=source_specs['half_life'])
 
     # dict with energies as keys and prob as values
     energy_probs = dict(('%i_%s_%i' % (source_specs['A'], source_specs['symbol'], i) , l) for i, l in enumerate(source_specs['probability']))
