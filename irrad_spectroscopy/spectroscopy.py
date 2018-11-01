@@ -15,7 +15,7 @@ from irrad_spectroscopy.physics import decay_law
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
-from scipy.special import erfc
+from scipy.interpolate import interp1d
 
 
 # set logging level when doing import
@@ -50,44 +50,6 @@ def gaux(x, mu, sigma, tau, h):
 
 def lin(x, a, b):
     return a * x + b
-
-### spectral background model fit functions
-
-
-def plateau_linear(x, a, b, mu, sigma, h):
-    return lin(x, a, b) + gauss_general(x, mu, sigma, 4., h)  # flat gauss + straight line
-
-
-def gauss_linear(x, a, b, mu, sigma, h):
-    return lin(x, a, b) + gauss(x, mu, sigma, h)  # gauss + straight line
-
-
-def gauss_exp_tail(x, mu, sigma, _lambda, h):
-    amplitude = h * _lambda / 2.
-    term_1 = np.exp(_lambda / 2. * (2. * mu + _lambda * np.power(sigma, 2.) - 2. * x))
-    term_2 = erfc((mu + _lambda * np.power(sigma, 2.) - x) / (np.sqrt(2.) * sigma))
-    return amplitude * term_1 * term_2
-
-
-def modified_gauss_exp_tail(x, mu, sigma, _lambda, h, mu_2, sigma_2, h_2):
-    return gauss_exp_tail(x, mu, sigma, _lambda, h) + gauss(x, mu_2, sigma_2, h_2)
-
-
-def get_background_mask(spectrum, low_lim=0.0, high_lim=1e-3):
-
-    # get abs slopes; n - 1 array; slopes from i to i + 1
-    slopes = np.abs(spectrum[:-1] - spectrum[1:])
-
-    # get max values
-    max_slope = np.max(slopes)
-
-    # bool mask
-    mask = np.logical_and(low_lim * max_slope <= slopes, slopes <= high_lim * max_slope)
-
-    # Add final zero in order to correct shape
-    mask = np.append(mask, np.array([0], dtype=np.bool))
-
-    return mask
 
 # calibrations
 
@@ -213,12 +175,12 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
 # fitting
 
 
-def fit_background(x, y, model=None, low_lim=0.0, high_lim=1e-3, p0=None, calibration=None):
+def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
     """
-    Method to identify the background of a spectrum by looking at absolute values of the slopes of spectrum.
-    According to the slopes between low_lim * max(slope) and high_lim * max(slope) the spectrum is masked with an array
-    and this masked part then fitted to a function describing the background (model). If a calibration is provided,
-    the channels are translated into energies beforehand.
+    Method to identify the background of a spectrum by looking at absolute values of the slopes of spectrum and applying
+    a moving average with window size wndw, order times on the slopes. From this, an estimate of what is background and
+    what not is made by looking at the resulting mean of the moving average with some scale. An interpolation of the data
+    is made. If a calibration is provided, the channels are translated into energies beforehand.
 
     Parameters
     ----------
@@ -227,22 +189,20 @@ def fit_background(x, y, model=None, low_lim=0.0, high_lim=1e-3, p0=None, calibr
         array of channels
     y : array
         array of counts
-    model : func
-        function describing background. If None try all models and see which has lowest red. chi2
-    low_lim / high_lim : float
-        floats of fraction of max. slope to mask background in
-    p0 : iterable
-        starting parameters for background model fit. If None take predefined values
+    window : int
+        window size ov moving average
+    order : int
+        order of how many time the average is applied. For each application i, the window decreases window*(order -i)
+    scale : float
+        scaling of mean
     calibration : func
         function that translates channels to energy
 
     Returns
     -------
 
-    background_model : func
-        function describing background
-    background mask : np.array
-        masked array of background points in spectrum
+    background_estimate : func
+        interpolated function describing background
     """
 
     # make tmp variables of spectrum to avoid altering input
@@ -251,70 +211,56 @@ def fit_background(x, y, model=None, low_lim=0.0, high_lim=1e-3, p0=None, calibr
     # apply calibration if not None
     _x = _x if calibration is None else calibration(_x)
 
-    # get background mask; see function definition
-    background_mask = get_background_mask(_y, low_lim=low_lim, high_lim=high_lim)
+    # get slopes of spectrum
+    dy = np.diff(_y)
 
-    # mask spectrum
-    y_background = _y[background_mask]
-    x_background = _x[background_mask]
+    # initialize variable to calulate moving average along slopes; should be close to 0 for background
+    dy_mv_avg = dy
 
-    # get background peak position
-    x_peak_bkg = x_background[np.where(y_background == np.max(y_background))[0][0]]
+    # list of  bkg estimates for each order
+    bkg_estimates = []
 
-    # make fixed start parameters for each background model; typical values FIXME: find non-static solution
-    _P0 = {gauss_linear: (3e-03,  4., x_peak_bkg, 1.5e2, 1e1),
-           gauss_exp_tail: (x_peak_bkg, 1e1, 7e-3, 3e5),
-           modified_gauss_exp_tail: (x_peak_bkg, 8e1, 1e-3, 2.5e6, x_peak_bkg*10, 1.5e3, 1e2),
-           plateau_linear: (3e-03,  4., x_peak_bkg, 1.5e2, 1e1)}
+    # init variables
+    prev_ratio = None
+    idx = 0
 
-    # no background model provided, try fitting all pre-defined models and select best fit
-    if model is None:
-        # logging to user
-        models = ', '.join([str(model.__name__) for model in _P0])
-        logging.info('No background model provided. Finding best model from %s. This may take a moment.' % models)
+    # loop and smooth slopes o times
+    for o in range(order):
+        # move order times over the slopes in order to smooth
+        dy_mv_avg = [np.mean(dy_mv_avg[i:i + (window * (order - o))]) for i in range(dy.shape[0])]
 
-        # dicts for optimized parameters of each model and relative errors
-        popts = {}
-        rel_errs = {}
+        # make mask
+        bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=np.bool))
 
-        # loop over models and fit
-        for fit_model in _P0:
-            try:
-                # do fit; allow high number of maxfev since we come from staic p0
-                bkg_opt, bkg_cov = curve_fit(fit_model, x_background, y_background, p0=_P0[fit_model], maxfev=50000, absolute_sigma=True)
-                bkg_err = np.sqrt(np.diag(bkg_cov))
-            except RuntimeError:
-                continue
+        # interpolate the masked array into array, then create function and append to estimates
+        bkg_estimates.append(interp1d(_x, np.interp(_x, _x[bkg_mask], y[bkg_mask]), kind='quadratic'))
 
-            # if fit reulted in non-nan errors
-            if not any(np.isnan(bkg_err)):
-                popts[fit_model] = bkg_opt
-                rel_errs[fit_model] = np.sum(np.abs(bkg_err / bkg_opt))
+        # mask wherever signal and bkg are 0
+        zero_mask = ~(np.isclose(_y, 0) & np.isclose(bkg_estimates[o](_x), 0))
 
-        # select model with smallest sum of relative errors on fit parameters
-        best_fit = min(rel_errs, key=rel_errs.get)
+        # make signal to noise ratio of current order
+        sn = _y[zero_mask] / bkg_estimates[o](_x)[zero_mask]
 
-        # logging to user
-        logging.info('Selected %s as best model for given background.' % str(best_fit.__name__))
+        # remove parts where signal equals bkg
+        sn = sn[~np.isclose(sn, 1)]
 
-        # define model function describing background
-        def best_model(x):
-            return best_fit(x, *popts[best_fit])
+        # mask areas which are peaks by interpolation
+        peak_mask = sn >= np.mean(sn) + 2 * np.std(sn)
 
-    # model is provided
-    else:
-        # if no start parameters are provided but model is from pre-defined models
-        _p0 = p0 if p0 is not None else _P0[model] if model in _P0 else None
+        # make ration of number of peak x values and their sum; gets smaller with every order until peaks are masked
+        ratio = sn.shape[0] / np.sum(sn[peak_mask])
 
-        # do fit; if fitting fails user gets RuntimeError; select better model or starting parameters
-        bkg_opt, bkg_cov = curve_fit(model, x_background, y_background, p0=_p0, maxfev=10000, absolute_sigma=True)
-        bkg_err = np.sqrt(np.diag(bkg_cov))
+        if prev_ratio is None:
+            prev_ratio = ratio
+        # if peaks are started to get masked break and return
+        elif prev_ratio < ratio:
+            idx = o - 1
+            break
+        else:
+            prev_ratio = ratio
 
-        # define model function describing background
-        def best_model(x):
-            return model(x, *bkg_opt)
-
-    return best_model, background_mask
+    # return bkg estimate which has highest signal in smallest number of x vals
+    return bkg_estimates[idx]
 
 
 def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, channel_sigma=5, energy_cal=None, efficiency_cal=None, t_spectrum=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable_only=True, full_output=True):
