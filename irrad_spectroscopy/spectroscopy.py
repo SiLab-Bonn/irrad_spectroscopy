@@ -10,7 +10,7 @@ import inspect
 import warnings
 import numpy as np
 import irrad_spectroscopy as isp
-from irrad_spectroscopy.spec_utils import isotopes_to_dict
+from irrad_spectroscopy.spec_utils import isotopes_to_dict, source_to_dict
 from irrad_spectroscopy.physics import decay_law
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
@@ -83,11 +83,12 @@ def do_energy_calibration(observed_peaks, peak_energies, cal_func=lin):
 
     # fill calibration arrays
     for i, peak in enumerate(observed_peaks):
-        x_calib[i] = observed_peaks[peak]['peak_fit']['popt'][0]
-        y_calib[i] = peak_energies[peak]
+        if peak in peak_energies:
+            x_calib[i] = observed_peaks[peak]['peak_fit']['popt'][0]
+            y_calib[i] = peak_energies[peak]
 
     # do fit and calculate error
-    popt, pcov = curve_fit(cal_func, x_calib, y_calib, absolute_sigma=True)
+    popt, pcov = curve_fit(cal_func, x_calib[y_calib != 0], y_calib[y_calib != 0], absolute_sigma=True)
     perr = np.sqrt(np.diag(pcov))
 
     msg = 'Parameters: '+ ', '.join('%.3f' % par for par in popt), 'Errors: ' + ', '.join('%.3f' % err for err in perr)
@@ -100,7 +101,7 @@ def do_energy_calibration(observed_peaks, peak_energies, cal_func=lin):
     cal['func'] = energy_calibration
     cal['popt'] = popt
     cal['perr'] = perr
-    cal['accuracy'] = 5 * np.std(y_calib / energy_calibration(x_calib))  # include 99.9999 % of the data
+    cal['accuracy'] = 3 * np.std(y_calib / energy_calibration(x_calib))  # include 99% of the data
     cal['type'] = 'energy'
 
     return cal
@@ -142,19 +143,20 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
                                    x0=source_specs['activity'][1], half_life=source_specs['half_life'])
 
     # dict with energies as keys and prob as values
-    energy_probs = dict(('%i_%s_%i' % (source_specs['A'], source_specs['symbol'], i) , l) for i, l in enumerate(source_specs['probability']))
+    energy_probs = source_to_dict(source_specs, 'probability')
 
     # fill calibration arrays
     for i, peak in enumerate(observed_peaks):
-        activity_meas = observed_peaks[peak]['activity']['nominal'] / source_specs['t_measurement']
-        activity_theo = energy_probs[peak] * activity_now
-        del_activity_meas = observed_peaks[peak]['activity']['sigma'] / source_specs['t_measurement']
-        del_activity_theo = energy_probs[peak] * activity_error_now
-        x_calib[i] = observed_peaks[peak]['peak_fit']['popt'][0]
-        y_calib[i] = activity_theo / activity_meas
-        y_error[i] = np.sqrt((del_activity_theo / activity_meas)**2.0 + ((activity_theo * del_activity_meas) / activity_meas**2.0)**2.0)
+        if peak in energy_probs:
+            activity_meas = observed_peaks[peak]['activity']['nominal'] / source_specs['t_measurement']
+            activity_theo = energy_probs[peak] * activity_now
+            del_activity_meas = observed_peaks[peak]['activity']['sigma'] / source_specs['t_measurement']
+            del_activity_theo = energy_probs[peak] * activity_error_now
+            x_calib[i] = observed_peaks[peak]['peak_fit']['popt'][0]
+            y_calib[i] = activity_theo / activity_meas
+            y_error[i] = np.sqrt((del_activity_theo / activity_meas)**2.0 + ((activity_theo * del_activity_meas) / activity_meas**2.0)**2.0)
 
-    popt, pcov = curve_fit(cal_func, x_calib, y_calib, sigma=y_error, absolute_sigma=True, maxfev=5000)
+    popt, pcov = curve_fit(cal_func, x_calib[y_calib != 0], y_calib[y_calib != 0], sigma=y_error[y_calib != 0], absolute_sigma=True, maxfev=5000)
     perr = np.sqrt(np.diag(pcov))
 
     msg = 'Parameters: '+ ', '.join('%.3f' % par for par in popt), 'Errors: ' + ', '.join('%.3f' % err for err in perr)
@@ -167,7 +169,7 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
     cal['func'] = efficiency_calibration
     cal['popt'] = popt
     cal['perr'] = perr
-    cal['accuracy'] = 5 * np.std(y_calib / efficiency_calibration(x_calib))  # include 99.9999 % of the data
+    cal['accuracy'] = 3 * np.std(y_calib / efficiency_calibration(x_calib))  # include 99% of the data
     cal['type'] = 'efficiency'
 
     return cal
@@ -312,13 +314,6 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         dictionary with fit parameters of gauss as well as errors and integrated counts (signal) of each peak with error
     """
 
-    # define tmp fit function of peak: either just gauss or gauss plus background
-    def tmp_fit(x, *args):
-        if background is not None:
-            return peak_fit(x, *args) + background(x) if not local_background else peak_fit(x, *args)
-        else:
-            return peak_fit(x, *args)
-
     # make tmp variables of spectrum to avoid altering input
     _x, _y = x, y
 
@@ -342,11 +337,18 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     # flag whether expected peaks have been checked
     checked_expected = False
 
+    # make background model if None
+    if background is None:
+        logging.info('Interpolating background...')
+        _background = interpolate_bkg(x=_x, y=_y, calibration=energy_cal)
+    else:
+        _background = background
+
     # calibrate channels if a calibration is given
     _x = _x if energy_cal is None else energy_cal(_x)
 
     # correct y by background to find peaks
-    y_find_peaks = _y if background is None else _y - background(_x)
+    y_find_peaks = _y - _background(_x)
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
@@ -394,6 +396,10 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         if _e_msg:
             logging.warning(_e_msg)
 
+    # define tmp fit function of peak: either just gauss or gauss plus background
+    def tmp_fit(x, *args):
+        return peak_fit(x, *args) if local_background else peak_fit(x, *args) + _background(x)
+
     logging.info('Start fitting...')
 
     # loop over tmp_n_peaks
@@ -413,7 +419,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
                 # check expected peaks first; then reset and look for another n_peaks
                 if n_peaks is not None:
-                    msg='Finding additional %i peaks ...' % n_peaks
+                    msg = 'Finding additional %i peaks ...' % n_peaks
                     counter = 0
                     runtime_counter = 0
                     tmp_n_peaks = n_peaks
@@ -445,252 +451,258 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             logging.info(msg)
             break
 
-        # get corresponding channel number
-        x_peak = np.where(y_peak == y_find_peaks)[0][0]
+        # get corresponding channel numbers: MULTIPLE X FOR SAME Y POSSIBLE BUT RARE! NEED TO LOOP
+        x_peaks = np.where(y_peak == y_find_peaks)[0]
 
-        # make fit environment; fit around x_peak +- some channel_sigma
-        # if we're fitting channels
-        if energy_cal is None:
-            low = x_peak - channel_sigma[counter] if x_peak - channel_sigma[counter] > 0 else 0
-            high = x_peak + channel_sigma[counter] if x_peak + channel_sigma[counter] < len(_x) else len(_x) - 1
+        # loop over possibly multiple x peak positions
+        for x_peak in x_peaks:
 
-        # if we're fitting already calibrated channels
-        else:
-            tmp_peak = np.where(_x == energy_cal(x_peak))[0][0]
+            # make fit environment; fit around x_peak +- some channel_sigma
+            # make tmp_peak for whether we're fitting channels or already calibrated channels
+            tmp_peak = x_peak if energy_cal is None else np.where(_x == energy_cal(x_peak))[0][0]
             low = tmp_peak - channel_sigma[counter] if tmp_peak - channel_sigma[counter] > 0 else 0
             high = tmp_peak + channel_sigma[counter] if tmp_peak + channel_sigma[counter] < len(_x) else len(_x) - 1
 
-        # make fit regions in x and y; a little confusing to look at but we need the double indexing to
-        # obtain the same shapes
-        x_fit, y_fit = _x[low:high][peak_mask[low:high]], _y[low:high][peak_mask[low:high]]
+            # make fit regions in x and y; a little confusing to look at but we need the double indexing to
+            # obtain the same shapes
+            x_fit, y_fit = _x[low:high][peak_mask[low:high]], _y[low:high][peak_mask[low:high]]
 
-        # check whether we have enough points to fit to
-        if len(x_fit) < 5:  # skip less than 5 data points
-            logging.debug('Only %i data points in fit region. Skipping' % len(x_fit))
-            peak_mask[low:high] = False
-            continue
-
-        # start fitting
-        try:  # get fit parameters and errors
-            # starting parameters
-            _mu = x_peak if energy_cal is None else energy_cal(x_peak)
-            _sigma = np.abs(x_fit[y_fit >= y_peak / 2.0][-1] - x_fit[y_fit >= y_peak / 2.0][0]) / 2.3548
-            _p0 = {'mu': _mu, 'sigma': _sigma, 'h': y_peak}
-            fit_args = inspect.getargspec(peak_fit)[0][1:]
-            p0 = tuple(_p0[arg] if arg in _p0 else 1 for arg in fit_args)
-            popt, pcov = curve_fit(tmp_fit, x_fit, y_fit, p0=p0, sigma=np.sqrt(y_fit), absolute_sigma=True, maxfev=5000)
-            perr = np.sqrt(np.diag(pcov))  # get std deviation
-
-            # update
-            _mu, _sigma = [popt[fit_args.index(par)] for par in ('mu', 'sigma')]
-
-            # if fitting resulted in nan errors
-            if any(np.isnan(perr)):
+            # check whether we have enough points to fit to
+            if len(x_fit) < 5:  # skip less than 5 data points
+                logging.debug('Only %i data points in fit region. Skipping' % len(x_fit))
                 peak_mask[low:high] = False
                 continue
 
-            if any(_mu == peaks[p]['peak_fit']['popt'][0] for p in peaks):
-                logging.debug('Peak at %.2f already fitted. Skipping' % _mu)
-                peak_mask[low:high] = False
-                continue
+            # start fitting
+            try:
+                # estimate starting parameters
+                _mu = x_peak if energy_cal is None else energy_cal(x_peak)
+                _sigma = 0
+                k = 2.0
+                while _sigma == 0 and k <= 10:
+                    try:
+                        _sigma = np.abs(x_fit[y_fit >= y_peak / k][-1] - x_fit[y_fit >= y_peak / k][0]) / 2.3548
+                    except IndexError:
+                        pass
+                    finally:
+                        k += .5
+                _p0 = {'mu': _mu, 'sigma': _sigma, 'h': y_peak}
+                fit_args = inspect.getargspec(peak_fit)[0][1:]
+                p0 = tuple(_p0[arg] if arg in _p0 else 1 for arg in fit_args)
+                popt, pcov = curve_fit(tmp_fit, x_fit, y_fit, p0=p0, sigma=np.sqrt(y_fit), absolute_sigma=True, maxfev=5000)
+                perr = np.sqrt(np.diag(pcov))  # get std deviation
 
-            # if fit is unreliable
-            if any(np.abs(perr / popt) > 1.0):
-                if not reliable_only:
-                    logging.warning('Unreliable fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
-                else:
-                    logging.debug('Skipping fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
+                # update
+                _mu, _sigma = [popt[fit_args.index(par)] for par in ('mu', 'sigma')]
+
+                # if fitting resulted in nan errors
+                if any(np.isnan(perr)):
                     peak_mask[low:high] = False
                     continue
 
-            # if fit is indistinguishable from background
-            try:
-                _msk = ((_mu - 6 * _sigma <= _x) & (_x <= _mu - 3 * _sigma)) | ((_mu + 3 * _sigma <= _x) & (_x <= _mu + 6 * _sigma))
-                _msk[~peak_mask_fitted] = False
-                if np.max(_y[_msk]) > popt[fit_args.index('h')]:
-                    logging.debug('Peak at %.2f indistinguishable from background. Skipping' % _mu)
-                    raise ValueError
-            except ValueError:
+                if any(_mu == peaks[p]['peak_fit']['popt'][0] for p in peaks):
+                    logging.debug('Peak at %.2f already fitted. Skipping' % _mu)
+                    peak_mask[low:high] = False
+                    continue
+
+                # if fit is unreliable
+                if any(np.abs(perr / popt) > 1.0):
+                    if not reliable_only:
+                        logging.warning('Unreliable fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
+                    else:
+                        logging.debug('Skipping fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
+                        peak_mask[low:high] = False
+                        continue
+
+                # if fit is indistinguishable from background
+                try:
+                    _msk = ((_mu - 6 * _sigma <= _x) & (_x <= _mu - 3 * _sigma)) | ((_mu + 3 * _sigma <= _x) & (_x <= _mu + 6 * _sigma))
+                    _msk[~peak_mask_fitted] = False
+                    if np.max(_y[_msk]) > popt[fit_args.index('h')]:
+                        logging.debug('Peak at %.2f indistinguishable from background. Skipping' % _mu)
+                        raise ValueError
+                except ValueError:
+                    peak_mask[low:high] = False
+                    continue
+
+            # fitting did not succeed
+            except RuntimeError:  # disable failed region for next iteration
+                logging.debug('Fitting failed. Skipping peak at %.2f' % _mu)
                 peak_mask[low:high] = False
                 continue
 
-        # fitting did not succeed
-        except RuntimeError:  # disable failed region for next iteration
-            logging.debug('Fitting failed. Skipping peak at %.2f' % _mu)
-            peak_mask[low:high] = False
-            continue
+            # check if our fitted peak is expected
+            if expected_peaks is not None and not checked_expected:
 
-        # check if our fitted peak is expected
-        if expected_peaks is not None and not checked_expected:
+                # make list for potential candidates
+                candidates = []
 
-            # make list for potential candidates
-            candidates = []
+                # loop over all expected peaks and check which check out as expected within the accuracy
+                for ep in expected_peaks:
 
-            # loop over all expected peaks and check which check out as expected within the accuracy
-            for ep in expected_peaks:
+                    # get upper and lower estimates
+                    lower_est, upper_est = [(1 + sgn * expected_accuracy) * expected_peaks[ep] for sgn in (-1, 1)]
 
-                # get upper and lower estimates
-                lower_est, upper_est = [(1 + sgn * expected_accuracy) * expected_peaks[ep] for sgn in (-1, 1)]
+                    # if current peak checks out set peak name and break
+                    if lower_est <= _mu <= upper_est:
+                        candidates.append(ep)
 
-                # if current peak checks out set peak name and break
-                if lower_est <= _mu <= upper_est:
-                    candidates.append(ep)
+                # if no candidates are found, current peak was not expected
+                if not candidates:
+                    logging.debug('Peak at %.2f not expected. Skipping' % _mu)
+                    peak_mask[low:high] = False
+                    continue
 
-            # if no candidates are found, current peak was not expected
-            if not candidates:
-                logging.debug('Peak at %.2f not expected. Skipping' % _mu)
-                peak_mask[low:high] = False
-                continue
+                # if all candidates are already found
+                if all(c in peaks for c in candidates):
+                    logging.debug('Peak at %.2f already fitted. Skipping' % _mu)
+                    peak_mask[x_peak] = False
+                    continue
+            else:
+                candidates = ['peak_%i' % counter]
 
-            # if all candidates are already found
-            if all(c in peaks for c in candidates):
-                logging.debug('Peak at %.2f already fitted. Skipping' % _mu)
-                peak_mask[x_peak] = False
-                continue
-        else:
-            candidates = ['peak_%i' % counter]
+            ### FROM HERE ON THE FITTED PEAK WILL BE IN THE RESULT DICT ###
 
-        ### FROM HERE ON THE FITTED PEAK WILL BE IN THE RESULT DICT ###
+            # get integration limits within 3 sigma for non local background
+            low_lim, high_lim = _mu - 3 * _sigma, _mu + 3 * _sigma  # integrate within 3 sigma
 
-        # get integration limits within 3 sigma for non local background
-        low_lim, high_lim = _mu - 3 * _sigma, _mu + 3 * _sigma # integrate within 3 sigma
+            # get background via integration of background model
+            if not local_background :
+                bkg, bkg_err = quad(_background, low_lim, high_lim)  # background integration
 
-        # get background via integration of previously fitted background model
-        if not local_background and background is not None:
-            bkg, bkg_err = quad(background, low_lim, high_lim) # background integration
-
-        # get local background and update limits
-        else:
-            # find local background bounds; start looking at bkg from (+-3 to +-6) sigma
-            # increase bkg to left/right of peak until to avoid influence of nearby peaks
-            _i_dev = 6
-            _deviation = None
-            while _i_dev < int(_MAX_PEAKS / 2):
-                # Make tmp array of mean bkg values left and right of peak
-                _tmp_dev_array = [np.mean(_y[(_mu - _i_dev * _sigma <= _x) & (_x <= _mu - 3 * _sigma)]),
-                                  np.mean(_y[(_mu + 3 * _sigma <= _x) & (_x <= _mu + _i_dev * _sigma)])]
-                # look at std. deviation; as long as it decreases for increasing bkg area update
-                if np.std(_tmp_dev_array) < _deviation or _deviation is None:
-                    _deviation = np.std(_tmp_dev_array)
-                # if std. deviation increases again, break
-                elif np.std(_tmp_dev_array) >= _deviation:
-                    _i_dev -= 1
-                    break
-                # increment
-                _i_dev += 1
-
-            # get background from 3 to _i_dev sigma left of peak
-            lower_bkg = np.logical_and(_mu - _i_dev * _sigma <= _x, _x <= _mu - 3 * _sigma)
-            # get background from 3 to _i_dev sigma right of peak
-            upper_bkg = np.logical_and(_mu + 3 * _sigma <= _x, _x <= _mu + _i_dev * _sigma)
-            # combine bool mask
-            bkg_mask = np.logical_or(lower_bkg, upper_bkg)
-            # mask other peaks in bkg so local background fit will not be influenced by nearby peak
-            bkg_mask[~peak_mask] = False
-            # do fit
-            bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
-            # _x values of current peak
-            _peak_x = _x[(low_lim <= _x) & (_x <= high_lim)]
-            # estimate intersections of background and peak from data
-            x0_low = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]]
-            x0_high = _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
-            # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
-            # increase environment to 5 sigma to be sure
-            low_lim, high_lim = _mu - 5 * _sigma, _mu + 5 * _sigma
-            # fsolve heavily relies on correct start parameters; estimate from data and loop
-            try:
-                _i_tries = 0
-                found = False
-                while _i_tries < _MAX_PEAKS:
-                    diff = np.abs(high_lim - low_lim) / _MAX_PEAKS * _i_tries
-
-                    _x0_low = low_lim + diff / 2.
-                    _x0_high = high_lim - diff / 2.
-
-                    # find intersections; needs to be sorted since sometimes higher intersection is found first
-                    _low, _high = sorted(fsolve(lambda k: tmp_fit(k, *popt) - lin(k, *bkg_opt), x0=[_x0_low, _x0_high]))
-
-                    # if intersections have been found
-                    if not np.isclose(_low, _high) and np.abs(_high - _low) <= 7 * _sigma:
-                        low_lim, high_lim = _low, _high
-                        found = True
+            # get local background and update limits
+            else:
+                # find local background bounds; start looking at bkg from (+-3 to +-6) sigma
+                # increase bkg to left/right of peak until to avoid influence of nearby peaks
+                _i_dev = 6
+                _deviation = None
+                while _i_dev < int(_MAX_PEAKS / 2):
+                    # Make tmp array of mean bkg values left and right of peak
+                    _tmp_dev_array = [np.mean(_y[(_mu - _i_dev * _sigma <= _x) & (_x <= _mu - 3 * _sigma)]),
+                                      np.mean(_y[(_mu + 3 * _sigma <= _x) & (_x <= _mu + _i_dev * _sigma)])]
+                    # look at std. deviation; as long as it decreases for increasing bkg area update
+                    if np.std(_tmp_dev_array) < _deviation or _deviation is None:
+                        _deviation = np.std(_tmp_dev_array)
+                    # if std. deviation increases again, break
+                    elif np.std(_tmp_dev_array) >= _deviation:
+                        _i_dev -= 1
                         break
-
                     # increment
-                    _i_tries += 1
+                    _i_dev += 1
 
-                # raise error
-                if not found:
-                    raise ValueError
+                # get background from 3 to _i_dev sigma left of peak
+                lower_bkg = np.logical_and(_mu - _i_dev * _sigma <= _x, _x <= _mu - 3 * _sigma)
+                # get background from 3 to _i_dev sigma right of peak
+                upper_bkg = np.logical_and(_mu + 3 * _sigma <= _x, _x <= _mu + _i_dev * _sigma)
+                # combine bool mask
+                bkg_mask = np.logical_or(lower_bkg, upper_bkg)
+                # mask other peaks in bkg so local background fit will not be influenced by nearby peak
+                bkg_mask[~peak_mask] = False
+                # do fit
+                bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
+                # _x values of current peak
+                _peak_x = _x[(low_lim <= _x) & (_x <= high_lim)]
+                # estimate intersections of background and peak from data
+                x0_low = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]]
+                x0_high = _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
+                # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
+                # increase environment to 5 sigma to be sure
+                low_lim, high_lim = _mu - 5 * _sigma, _mu + 5 * _sigma
+                # fsolve heavily relies on correct start parameters; estimate from data and loop
+                try:
+                    _i_tries = 0
+                    found = False
+                    while _i_tries < _MAX_PEAKS:
+                        diff = np.abs(high_lim - low_lim) / _MAX_PEAKS * _i_tries
 
-            except (TypeError, ValueError):
-                msg = 'Intersections between peak and local background for peak(s) %s could not be found. ' \
-                      'Use estimates from data instead.' % ', '.join(candidates)
-                logging.info(msg)
-                low_lim, high_lim = x0_low, x0_high
+                        _x0_low = low_lim + diff / 2.
+                        _x0_high = high_lim - diff / 2.
 
-            # do background integration
-            bkg, bkg_err = quad(lin, low_lim, high_lim, args=tuple(bkg_opt))
+                        # find intersections; needs to be sorted since sometimes higher intersection is found first
+                        _low, _high = sorted(fsolve(lambda k: tmp_fit(k, *popt) - lin(k, *bkg_opt), x0=[_x0_low, _x0_high]))
 
-        # get counts via integration of fit
-        counts, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt)) # count integration
+                        # if intersections have been found
+                        if not np.isclose(_low, _high) and np.abs(_high - _low) <= 7 * _sigma:
+                            low_lim, high_lim = _low, _high
+                            found = True
+                            break
 
-        # estimate lower uncertainty limit
-        counts_low, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt - perr)) # lower counts limit
+                        # increment
+                        _i_tries += 1
 
-        # estimate lower uncertainty limit
-        counts_high, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt + perr)) # lower counts limit
+                    # raise error
+                    if not found:
+                        raise ValueError
 
-        low_count_err, high_count_err = np.abs(counts - counts_low), np.abs(counts_high - counts)
+                except (TypeError, ValueError):
+                    msg = 'Intersections between peak and local background for peak(s) %s could not be found. ' \
+                          'Use estimates from data instead.' % ', '.join(candidates)
+                    logging.info(msg)
+                    low_lim, high_lim = x0_low, x0_high
 
-        max_count_err = high_count_err if high_count_err >= low_count_err else low_count_err
+                # do background integration
+                bkg, bkg_err = quad(lin, low_lim, high_lim, args=tuple(bkg_opt))
 
-        # calc activity and error
-        activity, activity_err = counts - bkg, np.sqrt(np.power(max_count_err,2.) + np.power(bkg_err,2.))
+            # get counts via integration of fit
+            counts, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt))  # count integration
 
-        # scale activity to compensate for dectector inefficiency at given energy
-        if efficiency_cal is not None:
-            activity, activity_err = (efficiency_cal(popt[0]) * x for x in [activity, activity_err])
+            # estimate lower uncertainty limit
+            counts_low, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt - perr))  # lower counts limit
 
-        # normalize to counts / s == Bq
-        if t_spectrum is not None:
-            activity, activity_err = activity / t_spectrum, activity_err / t_spectrum
+            # estimate lower uncertainty limit
+            counts_high, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt + perr))  # lower counts limit
 
-        # write current results to dict for every candidate
-        for peak_name in candidates:
-            # make entry for current peak
-            peaks[peak_name] = OrderedDict()
+            low_count_err, high_count_err = np.abs(counts - counts_low), np.abs(counts_high - counts)
 
-            # entries for data
-            peaks[peak_name]['background'] = OrderedDict()
-            peaks[peak_name]['peak_fit'] = OrderedDict()
-            peaks[peak_name]['activity'] = OrderedDict()
+            max_count_err = high_count_err if high_count_err >= low_count_err else low_count_err
 
-            # write background to result dict
-            peaks[peak_name]['background']['popt'] = bkg_opt.tolist()
-            peaks[peak_name]['background']['perr'] = np.sqrt(np.diag(bkg_cov)).tolist()
-            peaks[peak_name]['background']['type'] = 'local' if local_background or background is None else 'global'
+            # calc activity and error
+            activity, activity_err = counts - bkg, np.sqrt(np.power(max_count_err, 2.) + np.power(bkg_err, 2.))
 
-            # write optimal fit parameters/erros for every peak to result dict
-            peaks[peak_name]['peak_fit']['popt'] = popt.tolist()
-            peaks[peak_name]['peak_fit']['perr'] = perr.tolist()
-            peaks[peak_name]['peak_fit']['int_lims'] = [float(low_lim), float(high_lim)]
-            peaks[peak_name]['peak_fit']['type'] = peak_fit.__name__
+            # scale activity to compensate for dectector inefficiency at given energy
+            if efficiency_cal is not None:
+                activity, activity_err = (efficiency_cal(popt[0]) * x for x in [activity, activity_err])
 
-            # write activity data to output dict
-            peaks[peak_name]['activity']['nominal'] = float(activity)
-            peaks[peak_name]['activity']['sigma'] = float(activity_err)
-            peaks[peak_name]['activity']['type'] = 'integrated' if t_spectrum is None else 'normalized'
-            peaks[peak_name]['activity']['unit'] = 'becquerel' if t_spectrum is not None else 'counts / t_spectrum'
-            peaks[peak_name]['activity']['calibrated'] = efficiency_cal is not None
+            # normalize to counts / s == Bq
+            if t_spectrum is not None:
+                activity, activity_err = activity / t_spectrum, activity_err / t_spectrum
 
-            counter += 1  # increase counter
+            # write current results to dict for every candidate
+            for peak_name in candidates:
+                # make entry for current peak
+                peaks[peak_name] = OrderedDict()
 
-        runtime_counter = 0  # peak(s) were found; reset runtime counter
+                # entries for data
+                peaks[peak_name]['background'] = OrderedDict()
+                peaks[peak_name]['peak_fit'] = OrderedDict()
+                peaks[peak_name]['activity'] = OrderedDict()
 
-        # disable fitted region for next iteration
-        current_mask = (low_lim <= _x) & (_x <= high_lim)
-        peak_mask[current_mask] = peak_mask_fitted[current_mask] = False
+                # write background to result dict
+                if local_background:
+                    peaks[peak_name]['background']['popt'] = bkg_opt.tolist()
+                    peaks[peak_name]['background']['perr'] = np.sqrt(np.diag(bkg_cov)).tolist()
+                peaks[peak_name]['background']['type'] = 'local' if local_background else 'global'
+
+                # write optimal fit parameters/errors for every peak to result dict
+                peaks[peak_name]['peak_fit']['popt'] = popt.tolist()
+                peaks[peak_name]['peak_fit']['perr'] = perr.tolist()
+                peaks[peak_name]['peak_fit']['int_lims'] = [float(low_lim), float(high_lim)]
+                peaks[peak_name]['peak_fit']['type'] = peak_fit.__name__
+
+                # write activity data to output dict
+                peaks[peak_name]['activity']['nominal'] = float(activity)
+                peaks[peak_name]['activity']['sigma'] = float(activity_err)
+                peaks[peak_name]['activity']['type'] = 'integrated' if t_spectrum is None else 'normalized'
+                peaks[peak_name]['activity']['unit'] = 'becquerel' if t_spectrum is not None else 'counts / t_spectrum'
+                peaks[peak_name]['activity']['calibrated'] = efficiency_cal is not None
+
+                counter += 1  # increase counter
+
+            runtime_counter = 0  # peak(s) were found; reset runtime counter
+
+            # disable fitted region for next iteration
+            current_mask = (low_lim <= _x) & (_x <= high_lim)
+            peak_mask[current_mask] = peak_mask_fitted[current_mask] = False
 
         # check whether we have found all expected peaks and there's still n_peaks to look after
         if counter == tmp_n_peaks and expected_peaks is not None:
@@ -721,7 +733,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             del peaks[iso]['background']
             del peaks[iso]['peak_fit']
 
-    return peaks
+    return peaks if background is not None else (peaks, _background)
 
 # result checking
 
