@@ -265,10 +265,10 @@ def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
     return bkg_estimates[idx]
 
 
-def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, channel_sigma=5, energy_cal=None, efficiency_cal=None, t_spectrum=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable_only=True, full_output=True):
+def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energy_cal=None, efficiency_cal=None, t_spec=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable=True, full_output=True):
     """
     Method that identifies the first n_peaks peaks in a spectrum. They are identified in descending order from highest
-    to lowest peak. A Gaussian is fitted to each peak within a fit region of +- channel_sigma of its peak center.
+    to lowest peak. A Gaussian is fitted to each peak within a fit region of +- ch_sigma of its peak center.
     If a calibration is provided, the channels are translated into energies. The integral of each peak within its fitting
     range is calculated as well as the error. If a dict of expected peaks is given, only these peaks are looked for
     within a accuracy of expected_accuracy.
@@ -280,19 +280,19 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         array of channels
     y : np.array
         array of counts
-    background : func
+    bkg : func
         function describing background; if local_background is True, background is only needed to find peaks and not for activity calculation
-    local_background: bool
+    local_bkg: bool
         if True, every peaks background will be determined by a linear fit right below the peak
     n_peaks : int
         number of peaks to identify
-    channel_sigma : int
+    ch_sigma : int
         defines fit region around center of peak in channels
     energy_cal : func
         calibration function that translates channels to energy
     efficiency_cal : func
         calibration function that scales activity as function of energy (compensation of detector inefficiencies)
-    t_spectrum : float
+    t_spec : float
         integrated time of measured spectrum y in seconds
     expected_peaks : dict
         dict of expected peaks with names (e.g. 40K_1 for 1 kalium peak) as keys and values either in channels or energies
@@ -302,7 +302,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         function to fit peaks in spectrum with. This is only fitted to peaks
     energy_range : iterable or iterable of iterables
         iterable (of iterables) with two values (per element) one for lower and upper limit. Is only applied when energy calibration is provided.
-    reliable_only: bool
+    reliable: bool
         whether to accept peaks with unreliable fits
     full_output : bool
         whether to return dict with all info
@@ -338,17 +338,17 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     checked_expected = False
 
     # make background model if None
-    if background is None:
+    if bkg is None:
         logging.info('Interpolating background...')
-        _background = interpolate_bkg(x=_x, y=_y, calibration=energy_cal)
+        _bkg = interpolate_bkg(x=_x, y=_y, calibration=energy_cal)
     else:
-        _background = background
+        _bkg = bkg
 
     # calibrate channels if a calibration is given
     _x = _x if energy_cal is None else energy_cal(_x)
 
     # correct y by background to find peaks
-    y_find_peaks = _y - _background(_x)
+    y_find_peaks = _y - _bkg(_x)
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
@@ -363,10 +363,10 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         total_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks) if n_peaks is None else n_peaks + len(expected_peaks)
 
     # make channel sigma iterable if not already iterable
-    if not isinstance(channel_sigma, Iterable):
-        channel_sigma = [channel_sigma] * total_n_peaks
+    if not isinstance(ch_sigma, Iterable):
+        ch_sigma = [ch_sigma] * total_n_peaks
     else:
-        if len(channel_sigma) != total_n_peaks:
+        if len(ch_sigma) != total_n_peaks:
             raise IndexError('Not enough channel sigmas for number of peaks')
 
     # check whether energy range cut should be applied for finding peaks
@@ -398,7 +398,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
     # define tmp fit function of peak: either just gauss or gauss plus background
     def tmp_fit(x, *args):
-        return peak_fit(x, *args) if local_background else peak_fit(x, *args) + _background(x)
+        return peak_fit(x, *args) if local_bkg else peak_fit(x, *args) + _bkg(x)
 
     logging.info('Start fitting...')
 
@@ -457,11 +457,11 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
         # loop over possibly multiple x peak positions
         for x_peak in x_peaks:
 
-            # make fit environment; fit around x_peak +- some channel_sigma
+            # make fit environment; fit around x_peak +- some ch_sigma
             # make tmp_peak for whether we're fitting channels or already calibrated channels
             tmp_peak = x_peak if energy_cal is None else np.where(_x == energy_cal(x_peak))[0][0]
-            low = tmp_peak - channel_sigma[counter] if tmp_peak - channel_sigma[counter] > 0 else 0
-            high = tmp_peak + channel_sigma[counter] if tmp_peak + channel_sigma[counter] < len(_x) else len(_x) - 1
+            low = tmp_peak - ch_sigma[counter] if tmp_peak - ch_sigma[counter] > 0 else 0
+            high = tmp_peak + ch_sigma[counter] if tmp_peak + ch_sigma[counter] < len(_x) else len(_x) - 1
 
             # make fit regions in x and y; a little confusing to look at but we need the double indexing to
             # obtain the same shapes
@@ -507,7 +507,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
 
                 # if fit is unreliable
                 if any(np.abs(perr / popt) > 1.0):
-                    if not reliable_only:
+                    if not reliable:
                         logging.warning('Unreliable fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
                     else:
                         logging.debug('Skipping fit for peak at %.2f. Uncertainties larger than 100 percent.' % _mu)
@@ -567,8 +567,8 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             low_lim, high_lim = _mu - 3 * _sigma, _mu + 3 * _sigma  # integrate within 3 sigma
 
             # get background via integration of background model
-            if not local_background :
-                bkg, bkg_err = quad(_background, low_lim, high_lim)  # background integration
+            if not local_bkg :
+                bkg, bkg_err = quad(_bkg, low_lim, high_lim)  # background integration
 
             # get local background and update limits
             else:
@@ -664,8 +664,8 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                 activity, activity_err = (efficiency_cal(popt[0]) * x for x in [activity, activity_err])
 
             # normalize to counts / s == Bq
-            if t_spectrum is not None:
-                activity, activity_err = activity / t_spectrum, activity_err / t_spectrum
+            if t_spec is not None:
+                activity, activity_err = activity / t_spec, activity_err / t_spec
 
             # write current results to dict for every candidate
             for peak_name in candidates:
@@ -678,10 +678,10 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                 peaks[peak_name]['activity'] = OrderedDict()
 
                 # write background to result dict
-                if local_background:
+                if local_bkg:
                     peaks[peak_name]['background']['popt'] = bkg_opt.tolist()
                     peaks[peak_name]['background']['perr'] = np.sqrt(np.diag(bkg_cov)).tolist()
-                peaks[peak_name]['background']['type'] = 'local' if local_background else 'global'
+                peaks[peak_name]['background']['type'] = 'local' if local_bkg else 'global'
 
                 # write optimal fit parameters/errors for every peak to result dict
                 peaks[peak_name]['peak_fit']['popt'] = popt.tolist()
@@ -692,8 +692,8 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
                 # write activity data to output dict
                 peaks[peak_name]['activity']['nominal'] = float(activity)
                 peaks[peak_name]['activity']['sigma'] = float(activity_err)
-                peaks[peak_name]['activity']['type'] = 'integrated' if t_spectrum is None else 'normalized'
-                peaks[peak_name]['activity']['unit'] = 'becquerel' if t_spectrum is not None else 'counts / t_spectrum'
+                peaks[peak_name]['activity']['type'] = 'integrated' if t_spec is None else 'normalized'
+                peaks[peak_name]['activity']['unit'] = 'becquerel' if t_spec is not None else 'counts / t_spec'
                 peaks[peak_name]['activity']['calibrated'] = efficiency_cal is not None
 
                 counter += 1  # increase counter
@@ -720,7 +720,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
     logging.info('Finished fitting.')
 
     # identify wrongly assigned isotopes and remove
-    if reliable_only:
+    if reliable:
         logging.info('Validate identified isotopes...')
         validate_isotopes(peaks=peaks, lib=isp.isotope_lib)
     else:
@@ -733,7 +733,7 @@ def fit_spectrum(x, y, background=None, local_background=True, n_peaks=None, cha
             del peaks[iso]['background']
             del peaks[iso]['peak_fit']
 
-    return peaks if background is not None else (peaks, _background)
+    return peaks if bkg is not None else (peaks, _bkg)
 
 # result checking
 
