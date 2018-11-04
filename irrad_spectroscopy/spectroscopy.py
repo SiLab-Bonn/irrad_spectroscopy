@@ -584,7 +584,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                     _tmp_dev_array = [np.mean(_y[(_mu - _i_dev * _sigma <= _x) & (_x <= _mu - 3 * _sigma)]),
                                       np.mean(_y[(_mu + 3 * _sigma <= _x) & (_x <= _mu + _i_dev * _sigma)])]
                     # look at std. deviation; as long as it decreases for increasing bkg area update
-                    if np.std(_tmp_dev_array) < _deviation or _deviation is None:
+                    if _deviation is None or np.std(_tmp_dev_array) < _deviation:
                         _deviation = np.std(_tmp_dev_array)
                     # if std. deviation increases again, break
                     elif np.std(_tmp_dev_array) >= _deviation:
