@@ -49,6 +49,7 @@ class TestSpectroscopy(unittest.TestCase):
         cls.energy_calibration = None
         cls.efficiency_calibration = None
         cls.isotope_lib = isotope_lib
+        cls.accuracy = 1e-3
                 
     @classmethod
     def tearDownClass(cls):
@@ -71,13 +72,13 @@ class TestSpectroscopy(unittest.TestCase):
     def test_energy_calibration(self):
         """Do energy calibration of detector channels to spectrum of 152-Eu source"""
         
-        energy_calib_bkg, _ = sp.fit_background(x=self.Eu152_spectrum[0],
-                                                y=self.Eu152_spectrum[1])
+        energy_calib_bkg = sp.interpolate_bkg(x=self.Eu152_spectrum[0],
+                                              y=self.Eu152_spectrum[1])
         
         energy_calib_peaks = sp.fit_spectrum(x=self.Eu152_spectrum[0],
                                              y=self.Eu152_spectrum[1],
                                              expected_peaks=self.energy_calib_peaks['channel'],
-                                             background=energy_calib_bkg)
+                                             bkg=energy_calib_bkg)
         
         # check whether all peaks have been found
         self.assertListEqual(sorted(energy_calib_peaks.keys()), sorted(self.energy_calib_peaks['channel'].keys()))
@@ -98,15 +99,15 @@ class TestSpectroscopy(unittest.TestCase):
         # generate expected peaks from source specs
         Eu152_expected = source_to_dict(self.Eu152_source_specs, info='lines')
         
-        efficiency_calib_bkg, _ = sp.fit_background(x=self.Eu152_spectrum[0],
+        efficiency_calib_bkg = sp.interpolate_bkg(x=self.Eu152_spectrum[0],
                                                   y=self.Eu152_spectrum[1])
         
         efficiency_calib_peaks = sp.fit_spectrum(x=self.Eu152_spectrum[0],
                                                  y=self.Eu152_spectrum[1],
                                                  energy_cal=self.energy_calibration['func'],
-                                                 expected_accuracy=self.energy_calibration['accuracy'],
+                                                 expected_accuracy=self.accuracy,  # self.energy_calibration['accuracy']
                                                  expected_peaks=Eu152_expected,
-                                                 background=efficiency_calib_bkg)
+                                                 bkg=efficiency_calib_bkg)
         
         # check whether all peaks have been found
         self.assertListEqual(sorted(efficiency_calib_peaks.keys()), sorted(Eu152_expected.keys()))
@@ -142,12 +143,12 @@ class TestSpectroscopy(unittest.TestCase):
         Na22_expected = source_to_dict(self.Na22_source_specs, info='lines')
 
         # fit spectrum of source
-        Na22_peaks = sp.fit_spectrum(x=self.Na22_spectrum[0],
-                                     y=self.Na22_spectrum[1],
-                                     energy_cal=self.energy_calibration['func'],
-                                     efficiency_cal=self.efficiency_calibration['func'],
-                                     t_spectrum=self.t_Na22,
-                                     expected_accuracy=self.energy_calibration['accuracy'])
+        Na22_peaks, Na22_bkg = sp.fit_spectrum(x=self.Na22_spectrum[0],
+                                               y=self.Na22_spectrum[1],
+                                               energy_cal=self.energy_calibration['func'],
+                                               efficiency_cal=self.efficiency_calibration['func'],
+                                               t_spec=self.t_Na22,
+                                               expected_accuracy=self.accuracy)  # self.energy_calibration['accuracy']
         
         # check whether all expected peaks have been found from library
         self.assertTrue(all(ep in Na22_peaks for ep in Na22_expected.keys()))
@@ -161,7 +162,7 @@ class TestSpectroscopy(unittest.TestCase):
         # check whether all peaks are at correct energies within 1 per mille accuracy
         for na22_peak in Na22_peaks:
             if na22_peak in Na22_expected:
-                low, high = (x * Na22_expected[na22_peak] for x in (1 - self.energy_calibration['accuracy'], 1 + self.energy_calibration['accuracy']))
+                low, high = (x * Na22_expected[na22_peak] for x in (1 - self.accuracy, 1 + self.accuracy))
                 self.assertTrue(low <= Na22_peaks[na22_peak]['peak_fit']['popt'][0] <= high)
             
         # check for correct activity from library
@@ -176,12 +177,12 @@ class TestSpectroscopy(unittest.TestCase):
         Ba133_expected = source_to_dict(self.Ba133_source_specs, info='lines')
 
         # fit spectrum of source
-        Ba133_peaks = sp.fit_spectrum(x=self.Ba133_spectrum[0],
-                                      y=self.Ba133_spectrum[1],
-                                      energy_cal=self.energy_calibration['func'],
-                                      efficiency_cal=self.efficiency_calibration['func'],
-                                      t_spectrum=self.t_Ba133,
-                                      expected_accuracy=self.energy_calibration['accuracy'])
+        Ba133_peaks, Ba133_bkg = sp.fit_spectrum(x=self.Ba133_spectrum[0],
+                                                 y=self.Ba133_spectrum[1],
+                                                 energy_cal=self.energy_calibration['func'],
+                                                 efficiency_cal=self.efficiency_calibration['func'],
+                                                 t_spec=self.t_Ba133,
+                                                 expected_accuracy=self.accuracy)  # self.energy_calibration['accuracy']
         
         # check whether all expected peaks have been found from library
         self.assertTrue(all(ep in Ba133_peaks for ep in Ba133_expected.keys()))
@@ -195,8 +196,8 @@ class TestSpectroscopy(unittest.TestCase):
         # check whether all peaks are at correct energies within 1 per mill accuracy
         for ba133_peak in Ba133_peaks:
             if ba133_peak in Ba133_expected:
-                low, high = (x * Ba133_expected[ba133_peak] for x in (1 - self.energy_calibration['accuracy'], 1 + self.energy_calibration['accuracy']))
-                self.assertTrue(low <= Ba133_peaks[ba133_peak]['peak_fit']['popt'][0] <= high)
+                low, high = (x * Ba133_expected[ba133_peak] for x in (1 - self.accuracy, 1 + self.accuracy))
+                self.assertTrue(low <= Ba133_peaks[ba133_peak]['peak_fit']['popt'][0] <= high, msg=str(self.energy_calibration['accuracy']))
             
         # check for correct activity
         Ba133_activity_meas = sp.calc_activity(Ba133_peaks)
