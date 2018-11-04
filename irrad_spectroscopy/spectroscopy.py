@@ -798,6 +798,8 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
         # update lib lines of current isotope to start from lowest prob line in sample
         current_props_lib = current_props_lib[start_index:]
 
+        # sanity checks follow, each in distinct if/elif statement
+
         # now both lists should be equal if all higher probability lines are present; if not remove isotope
         if current_props_lib != current_props_sample:
             for cis in current_in_sample:
@@ -808,11 +810,14 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
         # if peaks are scaled for efficiency the activities must increase
         elif all(peaks[pn]['activity']['calibrated'] for pn in current_in_sample):
             # helper funcs and vars
-            _tmp = sorted(current_in_sample.keys())
+            _tmp = [None] * len(current_in_sample)
+            for k in current_in_sample.keys():
+                _tmp[int(k.split('_')[-1])] = k
             _f = lambda x: peaks[x]['activity']['nominal']
-            _g = lambda y: current_in_lib[y]
+            _g = lambda y: peaks[y]['activity']['sigma']
+            _bool_arr = [_f(_tmp[j]) + _g(_tmp[j]) >= _f(_tmp[j+1]) - _g(_tmp[j+1]) for j in range(len(_tmp)-1)]
 
-            if any(_f(_tmp[j]) <= _f(_tmp[j+1]) and abs(_g(_tmp[j])-_g(_tmp[j+1])) < 1e-2 for j in range(len(_tmp)-1)):
+            if _bool_arr and np.count_nonzero(_bool_arr) / (1.0 * len(_bool_arr)) < 0.75:
                 for cis in current_in_sample:
                     removed.append(cis)
                     del peaks[cis]
