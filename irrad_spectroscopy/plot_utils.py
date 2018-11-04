@@ -53,7 +53,7 @@ def plot_calibration(x, popt, perr, axis=None, calib_type=None, func=lin):
         ax1.grid()
     
     
-def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None, plot_calib=False, calibration=None, title=None, output_plot=None, peak_fit=gauss):
+def plot_spectrum(x, y, peaks=None, bkg=None, plot_calib=False, calibration=None, title=None, output_plot=None, peak_fit=gauss):
     
     # make tmp variables of spectrum to avoid altering input
     _x, _y = x, y
@@ -73,16 +73,13 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
     plt.errorbar(_x, _y, yerr=np.sqrt(_y), marker='.',lw=1, ls='None', label='Spectrum')
     
     ### plot rest
-    # plot masked background
-    if background_mask is not None:
-        plt.plot(_x[background_mask], _y[background_mask], ls='None', marker='^', zorder=5, label='Background from masking')
-    
-    # plot background model
-    if background_model is not None:
-        plt.plot(_x, background_model(_x), c='y',lw=1, ls='--', zorder=7, label='Global background fit')
+
+    # plot background
+    if bkg is not None:
+        plt.plot(_x, bkg(_x), c='y',lw=1, ls='--', zorder=7, label='Global background')
     
     # plot fitted peaks
-    if peaks is not None and (background_model is not None or all('local' == peaks[p]['background']['type'] for p in peaks)): 
+    if peaks is not None and (bkg is not None or all('local' == peaks[p]['background']['type'] for p in peaks)):
         
         local_flag = False   
         if all('local'== peaks[p]['background']['type'] for p in peaks):
@@ -91,7 +88,7 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
 
         # define tmp fit function of peak plus background or just gauss if local backgrounds are selected
         def tmp_fit(x, *args):
-            return peak_fit(x, *args) + background_model(x) if not local_flag else peak_fit(x, *args)
+            return peak_fit(x, *args) + bkg(x) if not local_flag else peak_fit(x, *args)
         
         plt.plot([], [], lw=1, ls='--', zorder=10, c='r', label='Peak fits')
 
@@ -116,19 +113,28 @@ def plot_spectrum(x, y, peaks=None, background_mask=None, background_model=None,
                 plt.fill_between(_tmp_x, tmp_fit(_tmp_x, *peaks[p]['peak_fit']['popt']), lin(_tmp_x, *peaks[p]['background']['popt']), color='r', alpha=0.3)
                 plt.fill_between(_tmp_x, lin(_tmp_x, *peaks[p]['background']['popt']), np.zeros_like(_tmp_x), color='k', alpha=0.3)
             else:
-                plt.fill_between(_tmp_x, tmp_fit(_tmp_x, *peaks[p]['peak_fit']['popt']), background_model(_tmp_x), color='r', alpha=0.3)
-                plt.fill_between(_tmp_x, background_model(_tmp_x), np.zeros_like(_tmp_x), color='k', alpha=0.3)
+                plt.fill_between(_tmp_x, tmp_fit(_tmp_x, *peaks[p]['peak_fit']['popt']), bkg(_tmp_x), color='r', alpha=0.3)
+                plt.fill_between(_tmp_x, bkg(_tmp_x), np.zeros_like(_tmp_x), color='k', alpha=0.3)
             
             # set text in plot
             _mu = peaks[p]['peak_fit']['popt'][0]
+            _h = peaks[p]['peak_fit']['popt'][-1]
+
             if _mu not in _y_texts:
-                _y_texts[_mu] = 0
+                text_flag = False
             else:
-                _y_texts[_mu] += 1
+                text_flag = True
 
             text = str(p) + ': %.2f +- %.2f' % (_mu, peaks[p]['peak_fit']['perr'][0]) if 'peak' in str(p) else str(p)
-            y_text = (peaks[p]['peak_fit']['popt'][-1] + background_model(_mu)) * (1.05 + 0.05*_y_texts[_mu]) if not local_flag else peaks[p]['peak_fit']['popt'][-1] * (1.05 + 0.05*_y_texts[_mu])
-            plt.text(peaks[p]['peak_fit']['popt'][0], y_text, text, fontsize=8)
+
+            if text_flag:
+                prev_text = _y_texts[_mu].get_text()
+                new_text = prev_text + ', ' + text
+                _y_texts[_mu].set_text(new_text)
+                _y_texts[_mu].set_fontweight('semibold')
+            else:
+                y_text = (_h + bkg(_mu)) * 1.05 if not local_flag else _h * 1.05
+                _y_texts[_mu] = plt.text(_mu, y_text, text, fontsize=8, bbox=dict(edgecolor='k', facecolor='none'))
         
         # plot also calibration
         if plot_calib:
