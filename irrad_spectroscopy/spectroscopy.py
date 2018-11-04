@@ -312,6 +312,9 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 
     peaks : dict
         dictionary with fit parameters of gauss as well as errors and integrated counts (signal) of each peak with error
+
+    _bkg : func, optional
+        if bkg is None, bkg is interpolated and also returned
     """
 
     # make tmp variables of spectrum to avoid altering input
@@ -337,15 +340,15 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
     # flag whether expected peaks have been checked
     checked_expected = False
 
+    # calibrate channels if a calibration is given
+    _x = _x if energy_cal is None else energy_cal(_x)
+
     # make background model if None
     if bkg is None:
         logging.info('Interpolating background...')
-        _bkg = interpolate_bkg(x=_x, y=_y, calibration=energy_cal)
+        _bkg = interpolate_bkg(x=_x, y=_y)
     else:
         _bkg = bkg
-
-    # calibrate channels if a calibration is given
-    _x = _x if energy_cal is None else energy_cal(_x)
 
     # correct y by background to find peaks
     y_find_peaks = _y - _bkg(_x)
@@ -568,7 +571,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 
             # get background via integration of background model
             if not local_bkg :
-                bkg, bkg_err = quad(_bkg, low_lim, high_lim)  # background integration
+                background, background_err = quad(_bkg, low_lim, high_lim)  # background integration
 
             # get local background and update limits
             else:
@@ -598,16 +601,19 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                 bkg_mask = np.logical_or(lower_bkg, upper_bkg)
                 # mask other peaks in bkg so local background fit will not be influenced by nearby peak
                 bkg_mask[~peak_mask] = False
-                # do fit
-                bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
-                # _x values of current peak
-                _peak_x = _x[(low_lim <= _x) & (_x <= high_lim)]
-                # estimate intersections of background and peak from data
-                x0_low = _peak_x[np.where(_peak_x >= np.mean(_x[lower_bkg]))[0][0]]
-                x0_high = _peak_x[np.where(_peak_x <= np.mean(_x[upper_bkg]))[0][-1]]
+                # do fit; make sure we don't mask at least 2 points
+                if np.count_nonzero(bkg_mask) > 1:
+                    bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
+                    bkg_interp = False
+                # if we do use interpolated bkg
+                else:
+                    bkg_opt, bkg_cov = curve_fit(lin, _x[(lower_bkg | upper_bkg)], _bkg(_x[(lower_bkg | upper_bkg)]))
+                    bkg_interp = True
                 # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
                 # increase environment to 5 sigma to be sure
                 low_lim, high_lim = _mu - 5 * _sigma, _mu + 5 * _sigma
+                # _x values of current peak
+                _peak_x, _peak_y = _x[(low_lim <= _x) & (_x <= high_lim)], _y[(low_lim <= _x) & (_x <= high_lim)]
                 # fsolve heavily relies on correct start parameters; estimate from data and loop
                 try:
                     _i_tries = 0
@@ -635,13 +641,21 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                         raise ValueError
 
                 except (TypeError, ValueError):
-                    msg = 'Intersections between peak and local background for peak(s) %s could not be found. ' \
-                          'Use estimates from data instead.' % ', '.join(candidates)
+                    msg = 'Intersections between peak and local background for peak(s) %s could not be found.' % ', '.join(candidates)
+                    if bkg_interp:
+                        msg += ' Use estimates from interpolated background instead.'
+                        _y_low, _y_high = _bkg(_x[lower_bkg]), _bkg(_x[upper_bkg])
+                    else:
+                        msg += ' Use estimates from data instead.'
+                        _y_low, _y_high = _y[lower_bkg], _y[upper_bkg]
+
+                    # estimate intersections of background and peak from data
+                    low_lim = _peak_x[np.where(_peak_y >= np.mean(_y_low))[0][0]]
+                    high_lim = _peak_x[np.where(_peak_y >= np.mean(_y_high))[0][-1]]
                     logging.info(msg)
-                    low_lim, high_lim = x0_low, x0_high
 
                 # do background integration
-                bkg, bkg_err = quad(lin, low_lim, high_lim, args=tuple(bkg_opt))
+                background, background_err = quad(lin, low_lim, high_lim, args=tuple(bkg_opt))
 
             # get counts via integration of fit
             counts, _ = quad(tmp_fit, low_lim, high_lim, args=tuple(popt))  # count integration
@@ -657,7 +671,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
             max_count_err = high_count_err if high_count_err >= low_count_err else low_count_err
 
             # calc activity and error
-            activity, activity_err = counts - bkg, np.sqrt(np.power(max_count_err, 2.) + np.power(bkg_err, 2.))
+            activity, activity_err = counts - background, np.sqrt(np.power(max_count_err, 2.) + np.power(background_err, 2.))
 
             # scale activity to compensate for dectector inefficiency at given energy
             if efficiency_cal is not None:
