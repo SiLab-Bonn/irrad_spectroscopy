@@ -72,11 +72,9 @@ class TestSpectroscopy(unittest.TestCase):
     def test_energy_calibration(self):
         """Do energy calibration of detector channels to spectrum of 152-Eu source"""
         
-        energy_calib_bkg = sp.interpolate_bkg(x=self.Eu152_spectrum[0],
-                                              y=self.Eu152_spectrum[1])
+        energy_calib_bkg = sp.interpolate_bkg(counts=self.Eu152_spectrum[1])
         
-        energy_calib_peaks = sp.fit_spectrum(x=self.Eu152_spectrum[0],
-                                             y=self.Eu152_spectrum[1],
+        energy_calib_peaks = sp.fit_spectrum(counts=self.Eu152_spectrum[1],
                                              expected_peaks=self.energy_calib_peaks['channel'],
                                              bkg=energy_calib_bkg)
         
@@ -99,11 +97,9 @@ class TestSpectroscopy(unittest.TestCase):
         # generate expected peaks from source specs
         Eu152_expected = source_to_dict(self.Eu152_source_specs, info='lines')
         
-        efficiency_calib_bkg = sp.interpolate_bkg(x=self.Eu152_spectrum[0],
-                                                  y=self.Eu152_spectrum[1])
+        efficiency_calib_bkg = sp.interpolate_bkg(counts=self.Eu152_spectrum[1])
         
-        efficiency_calib_peaks = sp.fit_spectrum(x=self.Eu152_spectrum[0],
-                                                 y=self.Eu152_spectrum[1],
+        efficiency_calib_peaks = sp.fit_spectrum(counts=self.Eu152_spectrum[1],
                                                  energy_cal=self.energy_calibration['func'],
                                                  expected_accuracy=self.accuracy,  # self.energy_calibration['accuracy']
                                                  expected_peaks=Eu152_expected,
@@ -143,8 +139,7 @@ class TestSpectroscopy(unittest.TestCase):
         Na22_expected = source_to_dict(self.Na22_source_specs, info='lines')
 
         # fit spectrum of source
-        Na22_peaks, Na22_bkg = sp.fit_spectrum(x=self.Na22_spectrum[0],
-                                               y=self.Na22_spectrum[1],
+        Na22_peaks, Na22_bkg = sp.fit_spectrum(counts=self.Na22_spectrum[1],
                                                energy_cal=self.energy_calibration['func'],
                                                efficiency_cal=self.efficiency_calibration['func'],
                                                t_spec=self.t_Na22,
@@ -177,8 +172,7 @@ class TestSpectroscopy(unittest.TestCase):
         Ba133_expected = source_to_dict(self.Ba133_source_specs, info='lines')
 
         # fit spectrum of source
-        Ba133_peaks, Ba133_bkg = sp.fit_spectrum(x=self.Ba133_spectrum[0],
-                                                 y=self.Ba133_spectrum[1],
+        Ba133_peaks, Ba133_bkg = sp.fit_spectrum(counts=self.Ba133_spectrum[1],
                                                  energy_cal=self.energy_calibration['func'],
                                                  efficiency_cal=self.efficiency_calibration['func'],
                                                  t_spec=self.t_Ba133,

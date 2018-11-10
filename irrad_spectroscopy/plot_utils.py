@@ -53,15 +53,26 @@ def plot_calibration(x, popt, perr, axis=None, calib_type=None, func=lin):
         ax1.grid()
     
     
-def plot_spectrum(x, y, peaks=None, bkg=None, plot_calib=False, calibration=None, title=None, output_plot=None, peak_fit=gauss):
+def plot_spectrum(counts, channels=None, peaks=None, bkg=None, plot_calib=False, energy_cal=None, title=None, output_plot=None, peak_fit=gauss):
+
+    # some sanity checks for input data
+    # check if input is np.array
+    try:
+        _ = counts.shape
+        _cnts = counts[:]
+    except AttributeError:
+        _cnts = np.array(counts)
+
+    # check for correct shape
+    if len(_cnts.shape) != 1:
+        raise ValueError('Counts must be 1-dimensional array')
+
+    _chnnls = np.arange(_cnts.shape[0]) if channels is None else channels[:]
+
+    # calibrate channels if a calibration is given
+    _chnnls = _chnnls if energy_cal is None else energy_cal(_chnnls)
     
-    # make tmp variables of spectrum to avoid altering input
-    _x, _y = x, y
-    
-    # apply calibration if not None
-    _x = _x if calibration is None else calibration(_x)
-    
-    x_label = 'Channel' if calibration is None else 'Energy / keV'
+    x_label = 'Channel' if energy_cal is None else 'Energy / keV'
     y_label = 'Counts'
     
     plt.xlabel(x_label)
@@ -70,13 +81,13 @@ def plot_spectrum(x, y, peaks=None, bkg=None, plot_calib=False, calibration=None
     plt.grid()
     
     # plot spectrum first
-    plt.errorbar(_x, _y, yerr=np.sqrt(_y), marker='.',lw=1, ls='None', label='Spectrum')
+    plt.errorbar(_chnnls, _cnts, yerr=np.sqrt(_cnts), marker='.',lw=1, ls='None', label='Spectrum')
     
     ### plot rest
 
     # plot background
     if bkg is not None:
-        plt.plot(_x, bkg(_x), c='y',lw=1, ls='--', zorder=7, label='Global background')
+        plt.plot(_chnnls, bkg(_chnnls), c='y',lw=1, ls='--', zorder=7, label='Global background')
     
     # plot fitted peaks
     if peaks is not None and (bkg is not None or all('local' == peaks[p]['background']['type'] for p in peaks)):

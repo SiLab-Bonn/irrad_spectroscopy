@@ -177,7 +177,7 @@ def do_efficiency_calibration(observed_peaks, source_specs, cal_func=lin):
 # fitting
 
 
-def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
+def interpolate_bkg(counts, channels=None, window=5, order=3, scale=0.5, energy_cal=None):
     """
     Method to identify the background of a spectrum by looking at absolute values of the slopes of spectrum and applying
     a moving average with window size wndw, order times on the slopes. From this, an estimate of what is background and
@@ -187,17 +187,17 @@ def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
     Parameters
     ----------
 
-    x : array
-        array of channels
-    y : array
+    counts : array
         array of counts
+    channels : array or None
+        array of channels; if None will be np.arange(len(counts))
     window : int
         window size ov moving average
     order : int
         order of how many time the average is applied. For each application i, the window decreases window*(order -i)
     scale : float
         scaling of mean
-    calibration : func
+    energy_cal : func
         function that translates channels to energy
 
     Returns
@@ -207,14 +207,30 @@ def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
         interpolated function describing background
     """
 
-    # make tmp variables of spectrum to avoid altering input
-    _x, _y = x, y
+    # some sanity checks for input data
+    # check if input is np.array
+    try:
+        _ = counts.shape
+        _cnts = counts[:]
+    except AttributeError:
+        _cnts = np.array(counts)
 
-    # apply calibration if not None
-    _x = _x if calibration is None else calibration(_x)
+    # check for correct shape
+    if len(_cnts.shape) != 1:
+        raise ValueError('Counts must be 1-dimensional array')
+
+    # check if channels are given
+    if channels is None:
+        logging.info('Generating array of {} channels'.format(_cnts.shape[0]))
+        _chnnls = np.arange(_cnts.shape[0])
+    else:
+        _chnnls = channels[:]
+
+    # calibrate channels if a calibration is given
+    _chnnls = _chnnls if energy_cal is None else energy_cal(_chnnls)
 
     # get slopes of spectrum
-    dy = np.diff(_y)
+    dy = np.diff(_cnts)
 
     # initialize variable to calulate moving average along slopes; should be close to 0 for background
     dy_mv_avg = dy
@@ -235,13 +251,13 @@ def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
         bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=np.bool))
 
         # interpolate the masked array into array, then create function and append to estimates
-        bkg_estimates.append(interp1d(_x, np.interp(_x, _x[bkg_mask], y[bkg_mask]), kind='quadratic'))
+        bkg_estimates.append(interp1d(_chnnls, np.interp(_chnnls, _chnnls[bkg_mask], _cnts[bkg_mask]), kind='quadratic'))
 
         # mask wherever signal and bkg are 0
-        zero_mask = ~(np.isclose(_y, 0) & np.isclose(bkg_estimates[o](_x), 0))
+        zero_mask = ~(np.isclose(_cnts, 0) & np.isclose(bkg_estimates[o](_chnnls), 0))
 
         # make signal to noise ratio of current order
-        sn = _y[zero_mask] / bkg_estimates[o](_x)[zero_mask]
+        sn = _cnts[zero_mask] / bkg_estimates[o](_chnnls)[zero_mask]
 
         # remove parts where signal equals bkg
         sn = sn[~np.isclose(sn, 1)]
@@ -265,7 +281,7 @@ def interpolate_bkg(x, y, window=5, order=3, scale=0.5, calibration=None):
     return bkg_estimates[idx]
 
 
-def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energy_cal=None, efficiency_cal=None, t_spec=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable=True, full_output=True):
+def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energy_cal=None, efficiency_cal=None, t_spec=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable=True, full_output=True):
     """
     Method that identifies the first n_peaks peaks in a spectrum. They are identified in descending order from highest
     to lowest peak. A Gaussian is fitted to each peak within a fit region of +- ch_sigma of its peak center.
@@ -276,10 +292,10 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
     Parameters
     ----------
 
-    x : np.array
-        array of channels
-    y : np.array
+    counts : array
         array of counts
+    channels : array or None
+        array of channels; if None will be np.arange(len(counts))
     bkg : func
         function describing background; if local_background is True, background is only needed to find peaks and not for activity calculation
     local_bkg: bool
@@ -317,8 +333,27 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
         if bkg is None, bkg is interpolated and also returned
     """
 
-    # make tmp variables of spectrum to avoid altering input
-    _x, _y = x, y
+    # some sanity checks for input data
+    # check if input is np.array
+    try:
+        _ = counts.shape
+        _cnts = counts[:]
+    except AttributeError:
+        _cnts = np.array(counts)
+
+    # check for correct shape
+    if len(_cnts.shape) != 1:
+        raise ValueError('Counts must be 1-dimensional array')
+
+    # check if channels are given
+    if channels is None:
+        logging.info('Generating array of {} channels'.format(_cnts.shape[0]))
+        _chnnls = np.arange(_cnts.shape[0])
+    else:
+        _chnnls = channels[:]
+
+    # calibrate channels if a calibration is given
+    _chnnls = _chnnls if energy_cal is None else energy_cal(_chnnls)
 
     # peak counter
     counter = 0
@@ -335,29 +370,26 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
     # boolean masks
     # masking regions due to failing general conditions (peak_mask)
     # masking successfully fitted regions (peak_mask_fitted)
-    peak_mask, peak_mask_fitted = np.ones_like(y, dtype=np.bool), np.ones_like(y, dtype=np.bool)
+    peak_mask, peak_mask_fitted = np.ones_like(_cnts, dtype=np.bool), np.ones_like(_cnts, dtype=np.bool)
 
     # flag whether expected peaks have been checked
     checked_expected = False
 
-    # calibrate channels if a calibration is given
-    _x = _x if energy_cal is None else energy_cal(_x)
-
     # make background model if None
     if bkg is None:
         logging.info('Interpolating background...')
-        _bkg = interpolate_bkg(x=_x, y=_y)
+        _bkg = interpolate_bkg(channels=_chnnls, counts=_cnts)
     else:
         _bkg = bkg
 
     # correct y by background to find peaks
-    y_find_peaks = _y - _bkg(_x)
+    y_find_peaks = _cnts - _bkg(_chnnls)
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
         expected_peaks = get_isotope_info(isp.gamma_table, info='lines')
         tmp_n_peaks = total_n_peaks = len(expected_peaks)
-        logging.info('Finding isotopes from gamma table file in %s...' % isp.tables_path)
+        logging.info('Finding isotopes from gamma table file %s...' % isp.gamma_table_file)
     else:
         # expected peaks are checked first
         tmp_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks)
@@ -381,7 +413,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
             # one range specified
             if isinstance(energy_range, Iterable) and not isinstance(energy_range[0], Iterable):
                 if len(energy_range) == 2:
-                    _e_range_mask = (_x <= energy_range[0]) | (_x >= energy_range[1])
+                    _e_range_mask = (_chnnls <= energy_range[0]) | (_chnnls >= energy_range[1])
                     peak_mask[_e_range_mask] = peak_mask_fitted[_e_range_mask] = False
                 else:
                     _e_msg = 'Energy range {} must contain two elements of lower/upper limit.'.format(energy_range)
@@ -390,7 +422,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                 if all(len(er) == 2 for er in energy_range):
                     peak_mask, peak_mask_fitted = ~peak_mask, ~peak_mask_fitted
                     for e_section in energy_range:
-                        _e_sec_mask = (e_section[0] <= _x) & (_x <= e_section[1])
+                        _e_sec_mask = (e_section[0] <= _chnnls) & (_chnnls <= e_section[1])
                         peak_mask[_e_sec_mask] = peak_mask_fitted[_e_sec_mask] = True
                 else:
                     _e_msg = 'Each element of {} must contain two elements of lower/upper limit.'.format(energy_range)
@@ -462,13 +494,13 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 
             # make fit environment; fit around x_peak +- some ch_sigma
             # make tmp_peak for whether we're fitting channels or already calibrated channels
-            tmp_peak = x_peak if energy_cal is None else np.where(_x == energy_cal(x_peak))[0][0]
+            tmp_peak = x_peak if energy_cal is None else np.where(_chnnls == energy_cal(x_peak))[0][0]
             low = tmp_peak - ch_sigma[counter] if tmp_peak - ch_sigma[counter] > 0 else 0
-            high = tmp_peak + ch_sigma[counter] if tmp_peak + ch_sigma[counter] < len(_x) else len(_x) - 1
+            high = tmp_peak + ch_sigma[counter] if tmp_peak + ch_sigma[counter] < len(_chnnls) else len(_chnnls) - 1
 
             # make fit regions in x and y; a little confusing to look at but we need the double indexing to
             # obtain the same shapes
-            x_fit, y_fit = _x[low:high][peak_mask[low:high]], _y[low:high][peak_mask[low:high]]
+            x_fit, y_fit = _chnnls[low:high][peak_mask[low:high]], _cnts[low:high][peak_mask[low:high]]
 
             # check whether we have enough points to fit to
             if len(x_fit) < 5:  # skip less than 5 data points
@@ -519,9 +551,10 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 
                 # if fit is indistinguishable from background
                 try:
-                    _msk = ((_mu - 6 * _sigma <= _x) & (_x <= _mu - 3 * _sigma)) | ((_mu + 3 * _sigma <= _x) & (_x <= _mu + 6 * _sigma))
+                    _msk = ((_mu - 6 * _sigma <= _chnnls) & (_chnnls <= _mu - 3 * _sigma)) | \
+                           ((_mu + 3 * _sigma <= _chnnls) & (_chnnls <= _mu + 6 * _sigma))
                     _msk[~peak_mask_fitted] = False
-                    if np.max(_y[_msk]) > popt[fit_args.index('h')]:
+                    if np.max(_cnts[_msk]) > popt[fit_args.index('h')]:
                         logging.debug('Peak at %.2f indistinguishable from background. Skipping' % _mu)
                         raise ValueError
                 except ValueError:
@@ -581,8 +614,8 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                 _deviation = None
                 while _i_dev < int(_MAX_PEAKS / 2):
                     # Make tmp array of mean bkg values left and right of peak
-                    _tmp_dev_array = [np.mean(_y[(_mu - _i_dev * _sigma <= _x) & (_x <= _mu - 3 * _sigma)]),
-                                      np.mean(_y[(_mu + 3 * _sigma <= _x) & (_x <= _mu + _i_dev * _sigma)])]
+                    _tmp_dev_array = [np.mean(_cnts[(_mu - _i_dev * _sigma <= _chnnls) & (_chnnls <= _mu - 3 * _sigma)]),
+                                      np.mean(_cnts[(_mu + 3 * _sigma <= _chnnls) & (_chnnls <= _mu + _i_dev * _sigma)])]
                     # look at std. deviation; as long as it decreases for increasing bkg area update
                     if _deviation is None or np.std(_tmp_dev_array) < _deviation:
                         _deviation = np.std(_tmp_dev_array)
@@ -594,26 +627,27 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                     _i_dev += 1
 
                 # get background from 3 to _i_dev sigma left of peak
-                lower_bkg = np.logical_and(_mu - _i_dev * _sigma <= _x, _x <= _mu - 3 * _sigma)
+                lower_bkg = np.logical_and(_mu - _i_dev * _sigma <= _chnnls, _chnnls <= _mu - 3 * _sigma)
                 # get background from 3 to _i_dev sigma right of peak
-                upper_bkg = np.logical_and(_mu + 3 * _sigma <= _x, _x <= _mu + _i_dev * _sigma)
+                upper_bkg = np.logical_and(_mu + 3 * _sigma <= _chnnls, _chnnls <= _mu + _i_dev * _sigma)
                 # combine bool mask
                 bkg_mask = np.logical_or(lower_bkg, upper_bkg)
                 # mask other peaks in bkg so local background fit will not be influenced by nearby peak
                 bkg_mask[~peak_mask] = False
                 # do fit; make sure we don't mask at least 2 points
                 if np.count_nonzero(bkg_mask) > 1:
-                    bkg_opt, bkg_cov = curve_fit(lin, _x[bkg_mask], _y[bkg_mask])
+                    bkg_opt, bkg_cov = curve_fit(lin, _chnnls[bkg_mask], _cnts[bkg_mask])
                     bkg_interp = False
                 # if we do use interpolated bkg
                 else:
-                    bkg_opt, bkg_cov = curve_fit(lin, _x[(lower_bkg | upper_bkg)], _bkg(_x[(lower_bkg | upper_bkg)]))
+                    bkg_opt, bkg_cov = curve_fit(lin, _chnnls[(lower_bkg | upper_bkg)], _bkg(_chnnls[(lower_bkg | upper_bkg)]))
                     bkg_interp = True
                 # find intersections of line and gauss; should be in 3-sigma environment since background is not 0
                 # increase environment to 5 sigma to be sure
                 low_lim, high_lim = _mu - 5 * _sigma, _mu + 5 * _sigma
-                # _x values of current peak
-                _peak_x, _peak_y = _x[(low_lim <= _x) & (_x <= high_lim)], _y[(low_lim <= _x) & (_x <= high_lim)]
+                # _chnnls values of current peak
+                _peak_chnnls = _chnnls[(low_lim <= _chnnls) & (_chnnls <= high_lim)]
+                _peak_cnts  =  _cnts[(low_lim <= _chnnls) & (_chnnls <= high_lim)]
                 # fsolve heavily relies on correct start parameters; estimate from data and loop
                 try:
                     _i_tries = 0
@@ -644,14 +678,14 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
                     msg = 'Intersections between peak and local background for peak(s) %s could not be found.' % ', '.join(candidates)
                     if bkg_interp:
                         msg += ' Use estimates from interpolated background instead.'
-                        _y_low, _y_high = _bkg(_x[lower_bkg]), _bkg(_x[upper_bkg])
+                        _y_low, _y_high = _bkg(_chnnls[lower_bkg]), _bkg(_chnnls[upper_bkg])
                     else:
                         msg += ' Use estimates from data instead.'
-                        _y_low, _y_high = _y[lower_bkg], _y[upper_bkg]
+                        _y_low, _y_high = _cnts[lower_bkg], _cnts[upper_bkg]
 
                     # estimate intersections of background and peak from data
-                    low_lim = _peak_x[np.where(_peak_y >= np.mean(_y_low))[0][0]]
-                    high_lim = _peak_x[np.where(_peak_y >= np.mean(_y_high))[0][-1]]
+                    low_lim = _peak_chnnls[np.where(_peak_cnts >= np.mean(_y_low))[0][0]]
+                    high_lim = _peak_chnnls[np.where(_peak_cnts >= np.mean(_y_high))[0][-1]]
                     logging.info(msg)
 
                 # do background integration
@@ -715,7 +749,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
             runtime_counter = 0  # peak(s) were found; reset runtime counter
 
             # disable fitted region for next iteration
-            current_mask = (low_lim <= _x) & (_x <= high_lim)
+            current_mask = (low_lim <= _chnnls) & (_chnnls <= high_lim)
             peak_mask[current_mask] = peak_mask_fitted[current_mask] = False
 
         # check whether we have found all expected peaks and there's still n_peaks to look after
