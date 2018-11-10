@@ -11,7 +11,7 @@ import warnings
 import numpy as np
 import irrad_spectroscopy as isp
 from irrad_spectroscopy.spec_utils import isotopes_to_dict, source_to_dict
-from irrad_spectroscopy.physics import decay_law
+from irrad_spectroscopy.physics import decay_law, gamma_dose_rate
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
@@ -836,7 +836,7 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
 # analysis
 
 
-def calc_activity(observed_peaks, probability_peaks=None):
+def get_activity(observed_peaks, probability_peaks=None):
     """
     Method to calculate activity isotope-wise. The peak-wise activities of all peaks of
     each isotope are added and scaled with their respectively summed-up probability
@@ -852,13 +852,15 @@ def calc_activity(observed_peaks, probability_peaks=None):
 
         if peak in probability_peaks:
             activities[isotope]['unscaled']['nominal'] += observed_peaks[peak]['activity']['nominal']
-            activities[isotope]['unscaled']['sigma'] += observed_peaks[peak]['activity']['sigma']
+            # squared sum in order to get Gaussian error propagation right
+            activities[isotope]['unscaled']['sigma'] += observed_peaks[peak]['activity']['sigma']**2
             activities[isotope]['probability'] += probability_peaks[peak]
 
     for iso in activities:
         try:
             activities[iso]['nominal'] = activities[iso]['unscaled']['nominal'] * 1. / activities[iso]['probability']
-            activities[iso]['sigma'] = activities[iso]['unscaled']['sigma'] * 1. / activities[iso]['probability']
+            # square root of sum of squared sigmas in order to get Gaussian error propagation right
+            activities[iso]['sigma'] = activities[iso]['unscaled']['sigma']**0.5 * 1. / activities[iso]['probability']
 
         # when no probability given
         except ZeroDivisionError:
@@ -867,5 +869,80 @@ def calc_activity(observed_peaks, probability_peaks=None):
     return activities
 
 
-def calc_effective_dose():
-    pass
+def get_dose(peaks, distance, time=None, material='air'):
+    """
+    Method to calculate the dose or dose rate at distance in given material which the sample exposes. The dose (rate) is
+    calculated isotope-wise and subsequently summed up for all present isotopes.
+
+    Parameters
+    ----------
+
+    peaks : dict
+        return value of irrad_spectroscopy.fit_spectrum
+    distance : float
+        distance in cm at which the dose rate should be calculated
+    time : float
+        time in hours for which the total effective dose should be calculated
+
+    Returns
+    -------
+
+    dose : dict
+        dict with info about dose (rate)
+    """
+
+    # make result dict
+    dose = OrderedDict([('nominal', 0.0), ('sigma', 0.0), ('unit', None), ('isotopes', OrderedDict())])
+    # get unique isotopes in sample
+    isotopes = set('_'.join(p.split('_')[:-1]) for p in peaks)
+    # get gamma lines in sample
+    lines = peaks.keys()
+    # get activities in sample
+    activities = get_activity(peaks)
+
+    if time:
+        _type = 'dose in {} hours'.format(time)
+        dose['unit'] = 'uSv'
+        half_lifes = isotopes_to_dict(lib=isp.isotope_lib, info='half_life')
+    else:
+        _type = 'dose rate'
+        dose['unit'] = 'uSv/h'
+
+    # user feedback
+    logging.info('Calculating {} in {} for distance of {} cm from point source'.format(_type, material, distance))
+
+    for iso in isotopes:
+        dose['isotopes'][iso] = OrderedDict([('nominal', 0.0), ('sigma', 0.0), ('lines', OrderedDict())])
+        iso_activity_n = activities[iso]['nominal']
+        iso_activity_s = activities[iso]['sigma']
+        iso_probabilities = isotopes_to_dict(lib=isp.isotope_lib, info='probability', fltr=iso)
+        for l in lines:
+            if time:
+                # integrate activitiy over time; convert half life to hours since dose rate given in uSv/h
+                tmp_activity_n, _ = quad(decay_law, 0, time, args=tuple([iso_activity_n, half_lifes[iso]/60.**2]))
+                tmp_activity_s, _ = quad(decay_law, 0, time, args=tuple([iso_activity_s, half_lifes[iso] / 60.**2]))
+            else:
+                tmp_activity_n, tmp_activity_s = iso_activity_n, iso_activity_s
+
+            if iso in l:
+                dose['isotopes'][iso]['lines'][l] = OrderedDict([('nominal', 0.0), ('sigma', 0.0)])
+                tmp_energy = peaks[l]['peak_fit']['popt'][0]
+                tmp_probability = iso_probabilities[l]
+                tmp_dose_n = gamma_dose_rate(tmp_energy, tmp_probability, tmp_activity_n, distance, material)
+                tmp_dose_s = gamma_dose_rate(tmp_energy, tmp_probability, tmp_activity_s, distance, material)
+                dose['isotopes'][iso]['lines'][l]['nominal'] = tmp_dose_n
+                dose['isotopes'][iso]['lines'][l]['sigma'] = tmp_dose_s
+                dose['isotopes'][iso]['nominal'] += tmp_dose_n
+                # squared sum in order to get Gaussian error propagation right
+                dose['isotopes'][iso]['sigma'] += tmp_dose_s**2
+
+        # square root of sum of squared sigmas in order to get Gaussian error propagation right
+        dose['isotopes'][iso]['sigma'] **= 0.5
+
+        dose['nominal'] += dose['isotopes'][iso]['nominal']
+        dose['sigma'] += dose['isotopes'][iso]['sigma']**2
+
+    # square root of sum of squared sigmas in order to get Gaussian error propagation right
+    dose['sigma'] **= 0.5
+
+    return dose
