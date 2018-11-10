@@ -10,7 +10,7 @@ import inspect
 import warnings
 import numpy as np
 import irrad_spectroscopy as isp
-from irrad_spectroscopy.spec_utils import isotopes_to_dict, source_to_dict
+from irrad_spectroscopy.spec_utils import get_isotope_info, source_to_dict
 from irrad_spectroscopy.physics import decay_law, gamma_dose_rate
 from collections import OrderedDict, Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
@@ -355,9 +355,9 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
-        expected_peaks = isotopes_to_dict(isp.isotope_lib, info='lines')
+        expected_peaks = get_isotope_info(isp.gamma_table, info='lines')
         tmp_n_peaks = total_n_peaks = len(expected_peaks)
-        logging.info('Finding isotopes from isotope library file in %s...' % isp.static_path)
+        logging.info('Finding isotopes from gamma table file in %s...' % isp.tables_path)
     else:
         # expected peaks are checked first
         tmp_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks)
@@ -736,7 +736,7 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
     # identify wrongly assigned isotopes and remove
     if reliable:
         logging.info('Validate identified isotopes...')
-        validate_isotopes(peaks=peaks, lib=isp.isotope_lib)
+        validate_isotopes(peaks=peaks, table=isp.gamma_table)
     else:
         msg = 'Isotopes not validated. Set "reliabe_only=True" to validate!'
         logging.warning(msg)
@@ -752,9 +752,9 @@ def fit_spectrum(x, y, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energ
 # result checking
 
 
-def validate_isotopes(peaks, lib=isp.isotope_lib):
+def validate_isotopes(peaks, table=isp.gamma_table):
     """
-    Methods that validates identified isotopes from fit_spectrum. It uses the isotope library in order to perform
+    Methods that validates identified isotopes from fit_spectrum. It uses the gamma table in order to perform
     the following check: For each isotope in peaks, the respective line with the lowest probability per isotope is
     taken as start parameter. All remaining lines of the same isotope with higher probability must be in the spectrum
     as well.
@@ -764,8 +764,8 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
 
     peaks: dict
         return value of irrad_spectroscopy.fit_spectrum
-    lib: dict
-        isotope library dictionary loaded from isotope_lib.yaml
+    table: dict
+        gamma table dictionary loaded from gamma_table.yaml
 
     """
 
@@ -773,39 +773,39 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
     isotopes_in_sample = set('_'.join(p.split('_')[:-1]) for p in peaks)
 
     # make list for logging info
-    not_in_lib = []
+    not_in_table = []
     removed = []
 
     # loop over all unique isotopes
     for isotope in isotopes_in_sample:
-        # get all lines' probabilities of isotope from library
-        current_in_lib = isotopes_to_dict(lib, info='probability', fltr=isotope)
+        # get all lines' probabilities of isotope from gamma table
+        current_in_table = get_isotope_info(table, info='probability', iso_filter=isotope)
 
-        # if current isotope is not in library
-        if not current_in_lib:
-            not_in_lib.append(isotope)
+        # if current isotope is not in table
+        if not current_in_table:
+            not_in_table.append(isotope)
             continue
 
         # get all lines' probabilities of current isotope in sample
-        current_in_sample = dict((peak, current_in_lib[peak]) for peak in peaks if isotope in peak)
+        current_in_sample = dict((peak, current_in_table[peak]) for peak in peaks if isotope in peak)
 
         # sort both
-        current_props_lib, current_props_sample = sorted(current_in_lib.values()), sorted(current_in_sample.values())
+        current_props_table, current_props_sample = sorted(current_in_table.values()), sorted(current_in_sample.values())
 
-        # get index of lowest prob line in probs from lib as start and len as end
-        start_index = current_props_lib.index(current_props_sample[0])
+        # get index of lowest prob line in probs from table as start and len as end
+        start_index = current_props_table.index(current_props_sample[0])
 
-        # update lib lines of current isotope to start from lowest prob line in sample
-        current_props_lib = current_props_lib[start_index:]
+        # update table lines of current isotope to start from lowest prob line in sample
+        current_props_table = current_props_table[start_index:]
 
         # sanity checks follow, each in distinct if/elif statement
 
         # now both lists should be equal if all higher probability lines are present; if not remove isotope
-        if current_props_lib != current_props_sample:
+        if current_props_table != current_props_sample:
             for cis in current_in_sample:
                 removed.append(cis)
                 del peaks[cis]
-            logging.info('Removed %s due to %i missing lines!' % (isotope, len(current_in_lib) - len(current_in_sample)))
+            logging.info('Removed %s due to %i missing lines!' % (isotope, len(current_in_table) - len(current_in_sample)))
 
         # if peaks are scaled for efficiency the activities must increase
         elif all(peaks[pn]['activity']['calibrated'] for pn in current_in_sample):
@@ -827,8 +827,8 @@ def validate_isotopes(peaks, lib=isp.isotope_lib):
         else:
             logging.info('Isotope %s valid!' % isotope)
 
-    if not_in_lib:
-        logging.warning('Isotope(s) %s not contained in library; not validated!' % ', '.join(not_in_lib))
+    if not_in_table:
+        logging.warning('Isotope(s) %s not contained in gamma table; not validated!' % ', '.join(not_in_table))
     else:
         if not removed:
             logging.info('All isotopes validated!')
@@ -842,7 +842,7 @@ def get_activity(observed_peaks, probability_peaks=None):
     each isotope are added and scaled with their respectively summed-up probability
     """
     activities = OrderedDict()
-    probability_peaks = isotopes_to_dict(isp.isotope_lib, info='probability') if probability_peaks is None else probability_peaks
+    probability_peaks = get_isotope_info(info='probability') if probability_peaks is None else probability_peaks
 
     for peak in observed_peaks:
         isotope = '_'.join(peak.split('_')[:-1])
@@ -903,7 +903,7 @@ def get_dose(peaks, distance, time=None, material='air'):
     if time:
         _type = 'dose in {} hours'.format(time)
         dose['unit'] = 'uSv'
-        half_lifes = isotopes_to_dict(lib=isp.isotope_lib, info='half_life')
+        half_lifes = get_isotope_info(table=isp.gamma_table, info='half_life')
     else:
         _type = 'dose rate'
         dose['unit'] = 'uSv/h'
@@ -915,7 +915,7 @@ def get_dose(peaks, distance, time=None, material='air'):
         dose['isotopes'][iso] = OrderedDict([('nominal', 0.0), ('sigma', 0.0), ('lines', OrderedDict())])
         iso_activity_n = activities[iso]['nominal']
         iso_activity_s = activities[iso]['sigma']
-        iso_probabilities = isotopes_to_dict(lib=isp.isotope_lib, info='probability', fltr=iso)
+        iso_probabilities = get_isotope_info(info='probability', iso_filter=iso)
         for l in lines:
             if time:
                 # integrate activitiy over time; convert half life to hours since dose rate given in uSv/h

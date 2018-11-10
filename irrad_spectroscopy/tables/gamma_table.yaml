@@ -1,0 +1,4903 @@
+meta_data: Automated library created on Sun Oct 21 00:14:19 2018. Contains gammas
+  with energies between 1.0 keV and 20000.0 keV with half life greater than 1.0 days.The
+  10 most prominent lines with probabilities above 1.0 % are included.
+isotopes:
+  Be:
+    name: Beryllium
+    Z: 4
+    A:
+      7:
+        reaction: null
+        cross_section: null
+        half_life: 4604256.0
+        decay_mode: EC
+        lines:
+        - 477.606
+        probability:
+        - 0.1052
+  Na:
+    name: Sodium
+    Z: 11
+    A:
+      22:
+        reaction: null
+        cross_section: null
+        half_life: 82271116.8
+        decay_mode: B+
+        lines:
+        - 1274.53
+        probability:
+        - 0.9994414
+  Al:
+    name: Aluminum
+    Z: 13
+    A:
+      26:
+        reaction: null
+        cross_section: null
+        half_life: 22611312000000.0
+        decay_mode: EC
+        lines:
+        - 1808.65
+        probability:
+        - 0.18206
+  K:
+    name: Potassium
+    Z: 19
+    A:
+      40:
+        reaction: null
+        cross_section: null
+        half_life: 4.0271472e+16
+        decay_mode: EC
+        lines:
+        - 1460.83
+        probability:
+        - 0.10669000000000001
+  Ca:
+    name: Calcium
+    Z: 20
+    A:
+      47:
+        reaction: null
+        cross_section: null
+        half_life: 391910.39999999997
+        decay_mode: B-
+        lines:
+        - 1297.09
+        - 489.23
+        - 807.86
+        probability:
+        - 0.71
+        - 0.06248
+        - 0.06248
+  Sc:
+    name: Scandium
+    Z: 21
+    A:
+      47:
+        reaction: null
+        cross_section: null
+        half_life: 289370.88
+        decay_mode: B-
+        lines:
+        - 159.381
+        probability:
+        - 0.6829999999999999
+      48:
+        reaction: null
+        cross_section: null
+        half_life: 157212.0
+        decay_mode: B-
+        lines:
+        - 983.526
+        - 1312.12
+        - 1037.522
+        - 175.361
+        - 1212.88
+        probability:
+        - 1.0011
+        - 1.0011
+        - 0.97607
+        - 0.07478
+        - 0.02383
+      46:
+        reaction: null
+        cross_section: null
+        half_life: 7241184.0
+        decay_mode: B-
+        lines:
+        - 1120.545
+        - 889.277
+        probability:
+        - 0.9998699999999999
+        - 0.99984
+  Ti:
+    name: Titanium
+    Z: 22
+    A:
+      44:
+        reaction: null
+        cross_section: null
+        half_life: 1986768000.0
+        decay_mode: EC
+        lines:
+        - 78.337
+        - 67.875
+        probability:
+        - 0.9620000000000001
+        - 0.94372
+  V:
+    name: Vanadium
+    Z: 23
+    A:
+      50:
+        reaction: null
+        cross_section: null
+        half_life: 4.41504e+24
+        decay_mode: B-
+        lines:
+        - 1553.77
+        - 783.29
+        probability:
+        - 0.83
+        - 0.16995000000000002
+      48:
+        reaction: null
+        cross_section: null
+        half_life: 1380110.4
+        decay_mode: EC
+        lines:
+        - 983.521
+        - 1312.096
+        - 944.132
+        - 2240.395
+        probability:
+        - 0.5022099999999999
+        - 0.48965000000000003
+        - 0.03897
+        - 0.0121
+  Cr:
+    name: Chromium
+    Z: 24
+    A:
+      51:
+        reaction: null
+        cross_section: null
+        half_life: 2393496.0
+        decay_mode: EC
+        lines:
+        - 320.0824
+        probability:
+        - 0.0992
+  Mn:
+    name: Manganese
+    Z: 25
+    A:
+      52:
+        reaction: null
+        cross_section: null
+        half_life: 483062.4
+        decay_mode: EC
+        lines:
+        - 1434.092
+        - 935.544
+        - 744.233
+        - 1333.649
+        - 1246.278
+        - 848.18
+        probability:
+        - 0.70533
+        - 0.6665300000000001
+        - 0.63479
+        - 0.03576
+        - 0.029689999999999998
+        - 0.02342
+      54:
+        reaction: null
+        cross_section: null
+        half_life: 26967168.0
+        decay_mode: EC
+        lines:
+        - 834.848
+        probability:
+        - 0.99976
+  Fe:
+    name: Iron
+    Z: 26
+    A:
+      59:
+        reaction: null
+        cross_section: null
+        half_life: 3845059.2
+        decay_mode: B-
+        lines:
+        - 1099.251
+        - 1291.596
+        - 192.349
+        - 142.652
+        probability:
+        - 0.565
+        - 0.43200000000000005
+        - 0.0308
+        - 0.0102
+  Co:
+    name: Cobalt
+    Z: 27
+    A:
+      57:
+        reaction: null
+        cross_section: null
+        half_life: 23478336.0
+        decay_mode: EC
+        lines:
+        - 122.06065
+        - 136.47356
+        - 14.4129
+        probability:
+        - 0.85578
+        - 0.10676999999999999
+        - 0.09158
+      58:
+        reaction: null
+        cross_section: null
+        half_life: 6122304.0
+        decay_mode: EC
+        lines:
+        - 810.775
+        probability:
+        - 0.8463200000000001
+      56:
+        reaction: null
+        cross_section: null
+        half_life: 6672931.2
+        decay_mode: EC
+        lines:
+        - 846.771
+        - 1238.282
+        - 2598.459
+        - 1771.351
+        - 1037.84
+        - 3253.416
+        - 2034.755
+        - 1360.215
+        - 3201.962
+        - 2015.181
+        probability:
+        - 0.80928
+        - 0.54176
+        - 0.1401
+        - 0.12528
+        - 0.11474999999999999
+        - 0.06576
+        - 0.06389
+        - 0.03474
+        - 0.02689
+        - 0.024620000000000003
+      60:
+        reaction: null
+        cross_section: null
+        half_life: 166238870.4
+        decay_mode: B-
+        lines:
+        - 1332.501
+        - 1173.237
+        probability:
+        - 0.9998600000000001
+        - 0.9997400000000001
+  Ni:
+    name: Nickel
+    Z: 28
+    A:
+      57:
+        reaction: null
+        cross_section: null
+        half_life: 128160.0
+        decay_mode: B+
+        lines:
+        - 1377.63
+        - 127.164
+        - 1919.52
+        - 1757.55
+        probability:
+        - 0.46067
+        - 0.09398
+        - 0.0691
+        - 0.03243
+      56:
+        reaction: null
+        cross_section: null
+        half_life: 524880.0
+        decay_mode: EC
+        lines:
+        - 158.38
+        - 811.85
+        - 749.95
+        - 269.5
+        - 480.44
+        - 1561.8
+        probability:
+        - 1.00055
+        - 0.87093
+        - 0.50129
+        - 0.36963999999999997
+        - 0.36963999999999997
+        - 0.14178000000000002
+  Cu:
+    name: Copper
+    Z: 29
+    A:
+      67:
+        reaction: null
+        cross_section: null
+        half_life: 222588.0
+        decay_mode: B-
+        lines:
+        - 184.577
+        - 93.311
+        - 91.266
+        probability:
+        - 0.48700000000000004
+        - 0.161
+        - 0.07
+  Zn:
+    name: Zinc
+    Z: 30
+    A:
+      72:
+        reaction: null
+        cross_section: null
+        half_life: 167400.0
+        decay_mode: B-
+        lines:
+        - 144.7
+        - 191.5
+        - 16.4
+        - 102.8
+        - 88.7
+        - 112.1
+        - 79.4
+        probability:
+        - 0.8290000000000001
+        - 0.09368
+        - 0.08289999999999999
+        - 0.02321
+        - 0.02155
+        - 0.020720000000000002
+        - 0.017410000000000002
+      65:
+        reaction: null
+        cross_section: null
+        half_life: 21104064.0
+        decay_mode: EC
+        lines:
+        - 1115.546
+        probability:
+        - 0.49892000000000003
+  Ga:
+    name: Gallium
+    Z: 31
+    A:
+      67:
+        reaction: null
+        cross_section: null
+        half_life: 281767.68
+        decay_mode: EC
+        lines:
+        - 93.311
+        - 184.577
+        - 300.219
+        - 393.529
+        - 91.266
+        - 208.951
+        probability:
+        - 0.39127
+        - 0.2116
+        - 0.16768999999999998
+        - 0.04671
+        - 0.03154
+        - 0.02396
+  Ge:
+    name: Germanium
+    Z: 32
+    A:
+      69:
+        reaction: null
+        cross_section: null
+        half_life: 140580.0
+        decay_mode: EC
+        lines:
+        - 1106.77
+        - 574.11
+        - 871.98
+        - 1336.6
+        - 318.63
+        probability:
+        - 0.27545000000000003
+        - 0.10192
+        - 0.0909
+        - 0.03443
+        - 0.01184
+  As:
+    name: Arsenic
+    Z: 33
+    A:
+      73:
+        reaction: null
+        cross_section: null
+        half_life: 6937920.0
+        decay_mode: EC
+        lines:
+        - 53.437
+        probability:
+        - 0.10339999999999999
+      71:
+        reaction: null
+        cross_section: null
+        half_life: 235008.0
+        decay_mode: EC
+        lines:
+        - 174.954
+        - 1095.49
+        - 499.876
+        - 326.785
+        probability:
+        - 0.58606
+        - 0.02919
+        - 0.0259
+        - 0.02168
+      77:
+        reaction: null
+        cross_section: null
+        half_life: 139788.0
+        decay_mode: B-
+        lines:
+        - 239.011
+        probability:
+        - 0.0159
+      76:
+        reaction: null
+        cross_section: null
+        half_life: 93121.92000000001
+        decay_mode: B-
+        lines:
+        - 559.1
+        - 657.05
+        - 1216.08
+        - 1212.92
+        - 1228.52
+        - 563.23
+        probability:
+        - 0.45
+        - 0.06165
+        - 0.0342
+        - 0.0144
+        - 0.012150000000000001
+        - 0.01202
+      74:
+        reaction: null
+        cross_section: null
+        half_life: 1535328.0
+        decay_mode: EC
+        lines:
+        - 595.83
+        - 634.78
+        probability:
+        - 0.33297
+        - 0.15351
+      72:
+        reaction: null
+        cross_section: null
+        half_life: 93600.0
+        decay_mode: EC
+        lines:
+        - 833.99
+        probability:
+        - 0.0962
+  Se:
+    name: Selenium
+    Z: 34
+    A:
+      72:
+        reaction: null
+        cross_section: null
+        half_life: 725760.0
+        decay_mode: EC
+        lines:
+        - 46.0
+        probability:
+        - 0.58
+      75:
+        reaction: null
+        cross_section: null
+        half_life: 10349856.0
+        decay_mode: EC
+        lines:
+        - 264.6576
+        - 136.0001
+        - 279.5422
+        - 121.1155
+        - 400.6572
+        - 96.734
+        - 198.606
+        - 303.9236
+        - 66.0518
+        probability:
+        - 0.58562
+        - 0.57918
+        - 0.24847999999999998
+        - 0.171
+        - 0.11402
+        - 0.03401
+        - 0.0147
+        - 0.01309
+        - 0.01106
+  Br:
+    name: Bromine
+    Z: 35
+    A:
+      82:
+        reaction: null
+        cross_section: null
+        half_life: 127079.99999999999
+        decay_mode: B-
+        lines:
+        - 776.517
+        - 554.348
+        - 619.106
+        - 698.374
+        - 1044.002
+        - 1317.473
+        - 827.828
+        - 1474.88
+        - 221.48
+        - 1007.59
+        probability:
+        - 0.8354
+        - 0.70758
+        - 0.43441
+        - 0.28486999999999996
+        - 0.27234
+        - 0.26482
+        - 0.24034
+        - 0.16315000000000002
+        - 0.022639999999999997
+        - 0.012709999999999999
+      77:
+        reaction: null
+        cross_section: null
+        half_life: 205329.6
+        decay_mode: EC
+        lines:
+        - 238.98
+        - 520.69
+        - 297.23
+        - 249.77
+        - 578.91
+        - 281.65
+        - 817.79
+        - 755.35
+        - 585.48
+        - 439.47
+        probability:
+        - 0.22952999999999998
+        - 0.22264
+        - 0.041319999999999996
+        - 0.029609999999999997
+        - 0.029380000000000003
+        - 0.022719999999999997
+        - 0.020659999999999998
+        - 0.01657
+        - 0.01559
+        - 0.01554
+  Kr:
+    name: Krypton
+    Z: 36
+    A:
+      79:
+        reaction: null
+        cross_section: null
+        half_life: 126144.0
+        decay_mode: EC
+        lines:
+        - 261.29
+        - 397.54
+        - 606.09
+        - 306.47
+        - 217.07
+        - 299.53
+        - 388.97
+        - 831.97
+        probability:
+        - 0.11846999999999999
+        - 0.08707000000000001
+        - 0.0757
+        - 0.02429
+        - 0.02215
+        - 0.01433
+        - 0.0141
+        - 0.01173
+  Rb:
+    name: Rubidium
+    Z: 37
+    A:
+      83:
+        reaction: null
+        cross_section: null
+        half_life: 7447680.0
+        decay_mode: EC
+        lines:
+        - 520.389
+        - 529.591
+        - 552.588
+        probability:
+        - 0.46236
+        - 0.30330999999999997
+        - 0.16506
+      84:
+        reaction: null
+        cross_section: null
+        half_life: 2831328.0000000005
+        decay_mode: EC
+        lines:
+        - 881.6041
+        probability:
+        - 0.50566
+      86:
+        reaction: null
+        cross_section: null
+        half_life: 1609718.4
+        decay_mode: B-
+        lines:
+        - 1077.0
+        probability:
+        - 0.0864
+  Sr:
+    name: Strontium
+    Z: 38
+    A:
+      83:
+        reaction: null
+        cross_section: null
+        half_life: 116675.99999999999
+        decay_mode: B+
+        lines:
+        - 762.65
+        - 381.53
+        - 418.37
+        - 381.17
+        - 778.44
+        - 1562.51
+        - 389.37
+        - 42.33
+        - 423.63
+        - 1159.97
+        probability:
+        - 0.22243
+        - 0.10432000000000001
+        - 0.0327
+        - 0.01846
+        - 0.01472
+        - 0.013080000000000001
+        - 0.01228
+        - 0.01179
+        - 0.01179
+        - 0.01099
+      85:
+        reaction: null
+        cross_section: null
+        half_life: 5602176.0
+        decay_mode: EC
+        lines:
+        - 514.0067
+        probability:
+        - 0.99553
+  Y:
+    name: Yttrium
+    Z: 39
+    A:
+      87:
+        reaction: null
+        cross_section: null
+        half_life: 287280.0
+        decay_mode: EC
+        lines:
+        - 484.805
+        - 388.531
+        probability:
+        - 0.89556
+        - 0.8193600000000001
+      88:
+        reaction: null
+        cross_section: null
+        half_life: 9214560.0
+        decay_mode: B+
+        lines:
+        - 1836.063
+        - 898.042
+        probability:
+        - 0.99035
+        - 0.93489
+  Zr:
+    name: Zirconium
+    Z: 40
+    A:
+      95:
+        reaction: null
+        cross_section: null
+        half_life: 5531328.0
+        decay_mode: B-
+        lines:
+        - 756.729
+        - 724.199
+        probability:
+        - 0.5446
+        - 0.44173
+      89:
+        reaction: null
+        cross_section: null
+        half_life: 282276.0
+        decay_mode: EC
+        lines:
+        - 909.15
+        probability:
+        - 0.76515
+  Nb:
+    name: Niobium
+    Z: 41
+    A:
+      92:
+        reaction: null
+        cross_section: null
+        half_life: 1094299200000000.0
+        decay_mode: EC
+        lines:
+        - 561.1
+        - 934.5
+        probability:
+        - 1.34
+        - 1.0
+      94:
+        reaction: null
+        cross_section: null
+        half_life: 640180800000.0
+        decay_mode: B-
+        lines:
+        - 871.091
+        - 702.622
+        probability:
+        - 0.9990000000000001
+        - 0.97902
+      95:
+        reaction: null
+        cross_section: null
+        half_life: 3021840.0
+        decay_mode: B-
+        lines:
+        - 765.807
+        probability:
+        - 0.9981
+  Mo:
+    name: Molybdenum
+    Z: 42
+    A:
+      99:
+        reaction: null
+        cross_section: null
+        half_life: 237384.0
+        decay_mode: B-
+        lines:
+        - 739.5
+        - 181.068
+        - 140.511
+        - 777.921
+        - 366.421
+        - 40.5845
+        probability:
+        - 0.1213
+        - 0.05992
+        - 0.04524
+        - 0.04258
+        - 0.01191
+        - 0.01053
+  Tc:
+    name: Technetium
+    Z: 43
+    A:
+      96:
+        reaction: null
+        cross_section: null
+        half_life: 369792.0
+        decay_mode: EC
+        lines:
+        - 778.22
+        - 849.86
+        - 812.54
+        - 1126.85
+        - 314.27
+        - 316.5
+        - 1091.3
+        probability:
+        - 0.99271
+        - 0.97087
+        - 0.81601
+        - 0.15089
+        - 0.024220000000000002
+        - 0.0139
+        - 0.010920000000000001
+      98:
+        reaction: null
+        cross_section: null
+        half_life: 132451200000000.0
+        decay_mode: B-
+        lines:
+        - 745.35
+        - 652.41
+        probability:
+        - 1.02
+        - 1.0
+  Ru:
+    name: Ruthenium
+    Z: 44
+    A:
+      97:
+        reaction: null
+        cross_section: null
+        half_life: 250560.0
+        decay_mode: EC
+        lines:
+        - 215.7
+        - 324.49
+        probability:
+        - 0.8556100000000001
+        - 0.10781
+      103:
+        reaction: null
+        cross_section: null
+        half_life: 3392064.0
+        decay_mode: B-
+        lines:
+        - 497.084
+        - 610.33
+        probability:
+        - 0.91
+        - 0.0576
+  Rh:
+    name: Rhodium
+    Z: 45
+    A:
+      99:
+        reaction: null
+        cross_section: null
+        half_life: 1391040.0000000002
+        decay_mode: B+
+        lines:
+        - 528.24
+        - 353.05
+        - 89.76
+        - 322.45
+        - 618.13
+        - 442.8
+        - 175.43
+        - 295.7
+        - 940.4
+        probability:
+        - 0.33143
+        - 0.3016
+        - 0.29166000000000003
+        - 0.054349999999999996
+        - 0.03646
+        - 0.01955
+        - 0.01757
+        - 0.0116
+        - 0.01127
+      101:
+        reaction: null
+        cross_section: null
+        half_life: 104068800.0
+        decay_mode: EC
+        lines:
+        - 198.01
+        - 127.226
+        - 325.23
+        probability:
+        - 0.7318600000000001
+        - 0.6820900000000001
+        - 0.11856
+      105:
+        reaction: null
+        cross_section: null
+        half_life: 127296.0
+        decay_mode: B-
+        lines:
+        - 318.9
+        - 306.1
+        probability:
+        - 0.191
+        - 0.051
+      102:
+        reaction: null
+        cross_section: null
+        half_life: 17884800.0
+        decay_mode: EC
+        lines:
+        - 556.6
+        - 475.06
+        - 628.05
+        - 468.58
+        - 1103.16
+        probability:
+        - 0.9620000000000001
+        - 0.29529
+        - 0.02889
+        - 0.01862
+        - 0.01862
+  Pd:
+    name: Palladium
+    Z: 46
+    A:
+      100:
+        reaction: null
+        cross_section: null
+        half_life: 313632.0
+        decay_mode: EC
+        lines:
+        - 84.0
+        - 74.78
+        - 126.15
+        - 42.08
+        - 32.66
+        - 158.87
+        probability:
+        - 0.54723
+        - 0.50345
+        - 0.08208
+        - 0.07388
+        - 0.02681
+        - 0.017509999999999998
+  Ag:
+    name: Silver
+    Z: 47
+    A:
+      105:
+        reaction: null
+        cross_section: null
+        half_life: 3567456.0
+        decay_mode: EC
+        lines:
+        - 344.52
+        - 280.44
+        - 644.55
+        - 63.98
+        - 443.37
+        - 319.16
+        - 331.51
+        - 1087.94
+        - 650.72
+        - 392.64
+        probability:
+        - 0.42863
+        - 0.3129
+        - 0.11444000000000001
+        - 0.10844
+        - 0.10844
+        - 0.04501
+        - 0.04243
+        - 0.03986
+        - 0.026269999999999998
+        - 0.02053
+      111:
+        reaction: null
+        cross_section: null
+        half_life: 643680.0
+        decay_mode: B-
+        lines:
+        - 342.13
+        - 245.4
+        probability:
+        - 0.0668
+        - 0.01329
+  Cd:
+    name: Cadmium
+    Z: 48
+    A:
+      109:
+        reaction: null
+        cross_section: null
+        half_life: 39864960.0
+        decay_mode: EC
+        lines:
+        - 88.0336
+        probability:
+        - 0.037000000000000005
+      115:
+        reaction: null
+        cross_section: null
+        half_life: 192456.0
+        decay_mode: B-
+        lines:
+        - 336.241
+        - 527.901
+        - 492.351
+        - 260.896
+        probability:
+        - 0.45899999999999996
+        - 0.27449999999999997
+        - 0.0803
+        - 0.0194
+  In:
+    name: Indium
+    Z: 49
+    A:
+      111:
+        reaction: null
+        cross_section: null
+        half_life: 242326.08
+        decay_mode: EC
+        lines:
+        - 245.4
+        - 171.28
+        probability:
+        - 0.94009
+        - 0.9024899999999999
+  Sn:
+    name: Tin
+    Z: 50
+    A:
+      126:
+        reaction: null
+        cross_section: null
+        half_life: 3153600000000.0
+        decay_mode: B-
+        lines:
+        - 87.567
+        - 64.281
+        - 86.938
+        - 23.28
+        - 21.646
+        probability:
+        - 0.37
+        - 0.0962
+        - 0.08917
+        - 0.06401
+        - 0.012580000000000001
+      113:
+        reaction: null
+        cross_section: null
+        half_life: 9943776.0
+        decay_mode: EC
+        lines:
+        - 391.698
+        - 255.134
+        probability:
+        - 0.64971
+        - 0.021099999999999997
+      125:
+        reaction: null
+        cross_section: null
+        half_life: 832896.0
+        decay_mode: B-
+        lines:
+        - 1067.1
+        - 1089.15
+        - 822.48
+        - 915.55
+        - 2002.134
+        - 469.85
+        - 332.1
+        - 1087.7
+        - 800.28
+        probability:
+        - 0.09699999999999999
+        - 0.045880000000000004
+        - 0.04278
+        - 0.041319999999999996
+        - 0.01921
+        - 0.014839999999999999
+        - 0.014070000000000001
+        - 0.011930000000000001
+        - 0.010669999999999999
+  Sb:
+    name: Antimony
+    Z: 51
+    A:
+      119:
+        reaction: null
+        cross_section: null
+        half_life: 137484.0
+        decay_mode: EC
+        lines:
+        - 23.87
+        probability:
+        - 0.161
+      125:
+        reaction: null
+        cross_section: null
+        half_life: 86993948.16000001
+        decay_mode: B-
+        lines:
+        - 427.874
+        - 600.597
+        - 635.95
+        - 463.365
+        - 176.314
+        - 606.713
+        - 35.489
+        - 671.441
+        - 380.452
+        probability:
+        - 0.298
+        - 0.17767
+        - 0.11294
+        - 0.10564
+        - 0.06887
+        - 0.05015
+        - 0.0453
+        - 0.01803
+        - 0.015269999999999999
+      120:
+        reaction: null
+        cross_section: null
+        half_life: 497664.0
+        decay_mode: EC
+        lines:
+        - 1171.7
+        - 1023.3
+        - 197.3
+        - 89.8
+        probability:
+        - 1.0
+        - 0.9940000000000001
+        - 0.87
+        - 0.795
+      127:
+        reaction: null
+        cross_section: null
+        half_life: 332640.0
+        decay_mode: B-
+        lines:
+        - 685.7
+        - 473.0
+        - 783.7
+        - 252.4
+        - 603.5
+        - 445.1
+        - 412.1
+        - 698.5
+        - 543.3
+        - 290.8
+        probability:
+        - 0.368
+        - 0.25797000000000003
+        - 0.15125
+        - 0.08500999999999999
+        - 0.04453
+        - 0.04341999999999999
+        - 0.03827
+        - 0.03643
+        - 0.02944
+        - 0.02024
+      126:
+        reaction: null
+        cross_section: null
+        half_life: 1076544.0
+        decay_mode: B-
+        lines:
+        - 666.3
+        - 695.0
+        - 414.8
+        - 720.5
+        - 697.0
+        - 856.7
+        - 593.0
+        - 989.3
+        - 573.8
+        - 297.3
+        probability:
+        - 0.996
+        - 0.996
+        - 0.8326600000000001
+        - 0.53784
+        - 0.28884
+        - 0.17629
+        - 0.0747
+        - 0.06773
+        - 0.06673
+        - 0.04482
+      122:
+        reaction: null
+        cross_section: null
+        half_life: 235336.32
+        decay_mode: B-
+        lines:
+        - 564.24
+        - 692.65
+        probability:
+        - 0.70675
+        - 0.03852
+      124:
+        reaction: null
+        cross_section: null
+        half_life: 5201280.0
+        decay_mode: B-
+        lines:
+        - 602.7275
+        - 1690.975
+        - 722.7842
+        - 645.8537
+        - 2090.936
+        - 1368.16
+        - 713.781
+        - 968.199
+        - 1045.128
+        - 1325.508
+        probability:
+        - 0.9826
+        - 0.47794
+        - 0.10808999999999999
+        - 0.07456
+        - 0.055119999999999995
+        - 0.026230000000000003
+        - 0.022869999999999998
+        - 0.01892
+        - 0.01841
+        - 0.015880000000000002
+  Te:
+    name: Tellurium
+    Z: 52
+    A:
+      132:
+        reaction: null
+        cross_section: null
+        half_life: 276825.60000000003
+        decay_mode: B-
+        lines:
+        - 228.16
+        - 49.72
+        - 116.3
+        - 111.76
+        probability:
+        - 0.88
+        - 0.1496
+        - 0.01962
+        - 0.01742
+      121:
+        reaction: null
+        cross_section: null
+        half_life: 1449792.0
+        decay_mode: EC
+        lines:
+        - 573.139
+        - 507.591
+        - 470.472
+        probability:
+        - 0.8029999999999999
+        - 0.17666
+        - 0.01405
+  I:
+    name: Iodine
+    Z: 53
+    A:
+      125:
+        reaction: null
+        cross_section: null
+        half_life: 5132160.0
+        decay_mode: EC
+        lines:
+        - 35.4922
+        probability:
+        - 0.0668
+      129:
+        reaction: null
+        cross_section: null
+        half_life: 495115200000000.0
+        decay_mode: B-
+        lines:
+        - 39.578
+        probability:
+        - 0.0751
+      131:
+        reaction: null
+        cross_section: null
+        half_life: 692988.48
+        decay_mode: B-
+        lines:
+        - 364.489
+        - 636.989
+        - 284.305
+        - 80.185
+        - 722.911
+        probability:
+        - 0.8170000000000001
+        - 0.07173
+        - 0.06136
+        - 0.026230000000000003
+        - 0.01773
+      126:
+        reaction: null
+        cross_section: null
+        half_life: 1132704.0
+        decay_mode: B-
+        lines:
+        - 388.633
+        - 666.331
+        - 753.819
+        - 491.243
+        probability:
+        - 0.34073
+        - 0.32777999999999996
+        - 0.04123
+        - 0.02848
+      124:
+        reaction: null
+        cross_section: null
+        half_life: 360806.4
+        decay_mode: EC
+        lines:
+        - 602.72
+        - 1691.02
+        - 722.78
+        - 1509.49
+        - 1376.0
+        - 1325.5
+        probability:
+        - 0.48387
+        - 0.08371
+        - 0.07965
+        - 0.0241
+        - 0.01345
+        - 0.012
+  Xe:
+    name: Xenon
+    Z: 54
+    A:
+      127:
+        reaction: null
+        cross_section: null
+        half_life: 3144960.0
+        decay_mode: EC
+        lines:
+        - 202.86
+        - 172.132
+        - 374.991
+        - 145.252
+        - 57.61
+        probability:
+        - 0.6831
+        - 0.25548
+        - 0.17214
+        - 0.0429
+        - 0.012230000000000001
+      133:
+        reaction: null
+        cross_section: null
+        half_life: 452995.2
+        decay_mode: B-
+        lines:
+        - 80.997
+        probability:
+        - 0.38
+  Cs:
+    name: Cesium
+    Z: 55
+    A:
+      129:
+        reaction: null
+        cross_section: null
+        half_life: 115416.00000000001
+        decay_mode: EC
+        lines:
+        - 371.918
+        - 411.49
+        - 548.945
+        - 39.578
+        - 318.18
+        - 278.614
+        probability:
+        - 0.30484
+        - 0.22222999999999998
+        - 0.03384
+        - 0.02957
+        - 0.024390000000000002
+        - 0.01317
+      136:
+        reaction: null
+        cross_section: null
+        half_life: 1137024.0
+        decay_mode: B-
+        lines:
+        - 818.514
+        - 1048.073
+        - 340.547
+        - 1235.362
+        - 273.646
+        - 176.602
+        - 153.246
+        - 86.36
+        - 66.881
+        - 163.92
+        probability:
+        - 0.9970399999999999
+        - 0.7976300000000001
+        - 0.42174999999999996
+        - 0.20041
+        - 0.11067
+        - 0.09970000000000001
+        - 0.05753
+        - 0.05184999999999999
+        - 0.04785999999999999
+        - 0.0339
+      132:
+        reaction: null
+        cross_section: null
+        half_life: 559785.6
+        decay_mode: B-
+        lines:
+        - 667.718
+        - 464.47
+        probability:
+        - 0.97113
+        - 0.01726
+      134:
+        reaction: null
+        cross_section: null
+        half_life: 65115532.8
+        decay_mode: B-
+        lines:
+        - 604.721
+        - 795.864
+        - 569.331
+        - 801.953
+        - 563.246
+        - 1365.185
+        - 1167.968
+        - 475.365
+        probability:
+        - 0.9762000000000001
+        - 0.8553000000000001
+        - 0.15380000000000002
+        - 0.08689999999999999
+        - 0.08349999999999999
+        - 0.030139999999999997
+        - 0.01789
+        - 0.01486
+      137:
+        reaction: null
+        cross_section: null
+        half_life: 947341440.0
+        decay_mode: B-
+        lines:
+        - 661.657
+        probability:
+        - 0.851
+  Ba:
+    name: Barium
+    Z: 56
+    A:
+      140:
+        reaction: null
+        cross_section: null
+        half_life: 1101772.8
+        decay_mode: B-
+        lines:
+        - 537.261
+        - 29.966
+        - 162.66
+        - 304.849
+        - 423.722
+        - 437.575
+        - 13.846
+        probability:
+        - 0.2439
+        - 0.14096999999999998
+        - 0.06219
+        - 0.04293
+        - 0.031509999999999996
+        - 0.01929
+        - 0.012199999999999999
+      133:
+        reaction: null
+        cross_section: null
+        half_life: 331758720.0
+        decay_mode: EC
+        lines:
+        - 356.0134
+        - 80.9971
+        - 302.851
+        - 383.848
+        - 276.3997
+        - 79.6139
+        - 53.1625
+        probability:
+        - 0.64098
+        - 0.35184
+        - 0.18935
+        - 0.09234999999999999
+        - 0.07400000000000001
+        - 0.02706
+        - 0.022719999999999997
+      131:
+        reaction: null
+        cross_section: null
+        half_life: 993600.0
+        decay_mode: EC
+        lines:
+        - 496.326
+        - 123.805
+        - 216.078
+        - 373.246
+        - 249.432
+        - 239.629
+        - 133.609
+        - 486.522
+        - 620.111
+        - 1047.6
+        probability:
+        - 0.46823
+        - 0.28983000000000003
+        - 0.19665
+        - 0.14047
+        - 0.028140000000000002
+        - 0.02411
+        - 0.021259999999999998
+        - 0.02088
+        - 0.01437
+        - 0.01325
+      128:
+        reaction: null
+        cross_section: null
+        half_life: 209952.0
+        decay_mode: EC
+        lines:
+        - 273.44
+        probability:
+        - 0.14506
+  La:
+    name: Lanthanum
+    Z: 57
+    A:
+      140:
+        reaction: null
+        cross_section: null
+        half_life: 144987.84
+        decay_mode: B-
+        lines:
+        - 1596.21
+        - 487.021
+        - 815.772
+        - 328.762
+        - 925.189
+        - 867.846
+        - 751.637
+        - 2521.4
+        - 432.493
+        - 919.55
+        probability:
+        - 0.9540000000000001
+        - 0.45506
+        - 0.23278
+        - 0.2032
+        - 0.06897
+        - 0.05505
+        - 0.04331
+        - 0.03463
+        - 0.028999999999999998
+        - 0.026619999999999998
+      138:
+        reaction: null
+        cross_section: null
+        half_life: 3.31128e+18
+        decay_mode: B-
+        lines:
+        - 1435.795
+        - 788.742
+        probability:
+        - 0.6657500000000001
+        - 0.336
+  Ce:
+    name: Cerium
+    Z: 58
+    A:
+      143:
+        reaction: null
+        cross_section: null
+        half_life: 119160.0
+        decay_mode: B-
+        lines:
+        - 293.266
+        - 57.356
+        - 664.571
+        - 721.929
+        - 350.619
+        - 490.368
+        - 231.55
+        - 880.46
+        probability:
+        - 0.428
+        - 0.11727
+        - 0.05692
+        - 0.05393
+        - 0.03231
+        - 0.02161
+        - 0.02054
+        - 0.01031
+      144:
+        reaction: null
+        cross_section: null
+        half_life: 24615359.999999996
+        decay_mode: B-
+        lines:
+        - 133.515
+        - 80.12
+        probability:
+        - 0.1109
+        - 0.013640000000000001
+      141:
+        reaction: null
+        cross_section: null
+        half_life: 2808000.0
+        decay_mode: B-
+        lines:
+        - 145.4405
+        probability:
+        - 0.48200000000000004
+      139:
+        reaction: null
+        cross_section: null
+        half_life: 11892095.999999998
+        decay_mode: EC
+        lines:
+        - 165.853
+        probability:
+        - 0.79887
+  Nd:
+    name: Neodymium
+    Z: 60
+    A:
+      147:
+        reaction: null
+        cross_section: null
+        half_life: 948672.0
+        decay_mode: B-
+        lines:
+        - 91.105
+        - 531.016
+        - 319.411
+        - 439.895
+        probability:
+        - 0.27899999999999997
+        - 0.13085000000000002
+        - 0.019530000000000002
+        - 0.012
+  Pm:
+    name: Promethium
+    Z: 61
+    A:
+      145:
+        reaction: null
+        cross_section: null
+        half_life: 558187200.0
+        decay_mode: EC
+        lines:
+        - 72.4
+        probability:
+        - 0.018500000000000003
+      151:
+        reaction: null
+        cross_section: null
+        half_life: 102240.0
+        decay_mode: B-
+        lines:
+        - 340.08
+        - 167.75
+        - 275.21
+        - 717.72
+        - 445.68
+        - 177.16
+        - 240.09
+        - 104.84
+        - 100.02
+        - 344.9
+        probability:
+        - 0.225
+        - 0.08324999999999999
+        - 0.0675
+        - 0.0405
+        - 0.04005
+        - 0.03825
+        - 0.03825
+        - 0.0351
+        - 0.02543
+        - 0.021150000000000002
+      149:
+        reaction: null
+        cross_section: null
+        half_life: 191088.0
+        decay_mode: B-
+        lines:
+        - 285.95
+        probability:
+        - 0.031
+      146:
+        reaction: null
+        cross_section: null
+        half_life: 174394080.0
+        decay_mode: EC
+        lines:
+        - 453.88
+        - 747.24
+        - 735.93
+        - 633.25
+        probability:
+        - 0.6591
+        - 0.33993
+        - 0.22805
+        - 0.02153
+      144:
+        reaction: null
+        cross_section: null
+        half_life: 31363200.0
+        decay_mode: EC
+        lines:
+        - 696.49
+        - 618.01
+        - 476.78
+        - 778.57
+        probability:
+        - 0.99271
+        - 0.98378
+        - 0.41892
+        - 0.01509
+      148:
+        reaction: null
+        cross_section: null
+        half_life: 463968.0
+        decay_mode: B-
+        lines:
+        - 1465.12
+        - 550.27
+        - 914.85
+        - 611.26
+        probability:
+        - 0.222
+        - 0.22
+        - 0.11455
+        - 0.010209999999999999
+      143:
+        reaction: null
+        cross_section: null
+        half_life: 22896000.0
+        decay_mode: EC
+        lines:
+        - 741.98
+        probability:
+        - 0.385
+  Sm:
+    name: Samarium
+    Z: 62
+    A:
+      145:
+        reaction: null
+        cross_section: null
+        half_life: 29376000.0
+        decay_mode: EC
+        lines:
+        - 61.22
+        probability:
+        - 0.1215
+      153:
+        reaction: null
+        cross_section: null
+        half_life: 167400.0
+        decay_mode: B-
+        lines:
+        - 103.18012
+        - 69.673
+        probability:
+        - 0.298
+        - 0.04845
+  Eu:
+    name: Europium
+    Z: 63
+    A:
+      149:
+        reaction: null
+        cross_section: null
+        half_life: 8043839.999999999
+        decay_mode: EC
+        lines:
+        - 327.526
+        - 277.089
+        - 22.51
+        probability:
+        - 0.04009
+        - 0.03541
+        - 0.02308
+      155:
+        reaction: null
+        cross_section: null
+        half_life: 150146049.6
+        decay_mode: B-
+        lines:
+        - 86.545
+        - 105.305
+        - 45.2972
+        - 60.0086
+        probability:
+        - 0.307
+        - 0.21152
+        - 0.013260000000000001
+        - 0.0113
+      156:
+        reaction: null
+        cross_section: null
+        half_life: 1312416.0
+        decay_mode: B-
+        lines:
+        - 811.77
+        - 88.9656
+        - 1230.71
+        - 1153.67
+        - 1242.42
+        - 646.29
+        - 723.47
+        - 1065.14
+        - 1154.08
+        - 1079.16
+        probability:
+        - 0.09699999999999999
+        - 0.08439
+        - 0.07983
+        - 0.0679
+        - 0.06601
+        - 0.06279
+        - 0.05418
+        - 0.04922
+        - 0.04734
+        - 0.04589000000000001
+      145:
+        reaction: null
+        cross_section: null
+        half_life: 512352.0
+        decay_mode: EC
+        lines:
+        - 893.73
+        - 653.512
+        - 1658.53
+        - 1997.0
+        - 542.57
+        - 110.943
+        - 764.74
+        - 1876.67
+        - 1804.26
+        probability:
+        - 0.64971
+        - 0.14878
+        - 0.14748
+        - 0.07082
+        - 0.044180000000000004
+        - 0.01897
+        - 0.01663
+        - 0.01319
+        - 0.010589999999999999
+      147:
+        reaction: null
+        cross_section: null
+        half_life: 2073600.0
+        decay_mode: EC
+        lines:
+        - 197.299
+        - 121.22
+        - 677.516
+        - 1077.043
+        - 601.45
+        - 798.729
+        - 955.832
+        - 933.005
+        - 856.929
+        probability:
+        - 0.26451
+        - 0.2288
+        - 0.09759999999999999
+        - 0.061369999999999994
+        - 0.05872
+        - 0.0484
+        - 0.03835
+        - 0.034390000000000004
+        - 0.02698
+      152:
+        reaction: null
+        cross_section: null
+        half_life: 426902832.0
+        decay_mode: EC
+        lines:
+        - 121.7817
+        - 344.2785
+        - 1408.006
+        - 964.079
+        - 1112.069
+        - 778.904
+        - 1085.869
+        - 244.6975
+        - 867.373
+        - 443.965
+        - 411.1163
+        - 1089.737
+        - 1299.14
+        - 1212.948
+        probability:
+        - 0.28634
+        - 0.2652
+        - 0.21044000000000002
+        - 0.14632
+        - 0.13669
+        - 0.12942
+        - 0.10226
+        - 0.07597999999999999
+        - 0.04253
+        - 0.02827
+        - 0.02234
+        - 0.01727
+        - 0.01623
+        - 0.01425
+      154:
+        reaction: null
+        cross_section: null
+        half_life: 270988848.0
+        decay_mode: B-
+        lines:
+        - 123.071
+        - 1274.436
+        - 723.305
+        - 1004.725
+        - 873.19
+        - 996.262
+        - 247.93
+        - 591.762
+        - 756.804
+        - 692.425
+        probability:
+        - 0.40557000000000004
+        - 0.34993
+        - 0.20107
+        - 0.17906
+        - 0.12202
+        - 0.10533
+        - 0.06915
+        - 0.04962
+        - 0.045419999999999995
+        - 0.017920000000000002
+      150:
+        reaction: null
+        cross_section: null
+        half_life: 1163678400.0
+        decay_mode: EC
+        lines:
+        - 333.971
+        - 439.401
+        - 584.274
+        - 737.455
+        - 1049.043
+        - 748.057
+        - 505.521
+        - 1343.777
+        - 751.068
+        - 1246.968
+        probability:
+        - 0.98515
+        - 0.8245699999999999
+        - 0.53986
+        - 0.09852
+        - 0.055170000000000004
+        - 0.053200000000000004
+        - 0.04926
+        - 0.026600000000000002
+        - 0.02197
+        - 0.0196
+      148:
+        reaction: null
+        cross_section: null
+        half_life: 4708800.0
+        decay_mode: EC
+        lines:
+        - 550.284
+        - 629.987
+        - 611.293
+        - 553.231
+        - 725.673
+        - 414.028
+        - 414.057
+        - 571.962
+        - 1033.986
+        - 869.891
+        probability:
+        - 1.00136
+        - 0.73092
+        - 0.20831
+        - 0.13157
+        - 0.12864
+        - 0.10452
+        - 0.10233
+        - 0.09721
+        - 0.07894
+        - 0.05577
+      146:
+        reaction: null
+        cross_section: null
+        half_life: 396576.0
+        decay_mode: EC
+        lines:
+        - 747.159
+        - 634.137
+        - 633.083
+        - 665.424
+        - 1533.711
+        - 1297.028
+        - 430.386
+        - 1058.71
+        - 702.099
+        - 703.089
+        probability:
+        - 0.94147
+        - 0.43024999999999997
+        - 0.3427
+        - 0.0691
+        - 0.05809
+        - 0.051500000000000004
+        - 0.0451
+        - 0.03766
+        - 0.03653
+        - 0.03578
+  Gd:
+    name: Gadolinium
+    Z: 64
+    A:
+      151:
+        reaction: null
+        cross_section: null
+        half_life: 10713600.0
+        decay_mode: EC
+        lines:
+        - 153.6
+        - 243.29
+        - 174.7
+        - 21.517
+        - 307.5
+        probability:
+        - 0.06242
+        - 0.05636
+        - 0.02984
+        - 0.02871
+        - 0.01042
+      153:
+        reaction: null
+        cross_section: null
+        half_life: 20770560.0
+        decay_mode: EC
+        lines:
+        - 97.431
+        - 103.18012
+        - 69.673
+        probability:
+        - 0.29174
+        - 0.21239
+        - 0.024329999999999997
+      146:
+        reaction: null
+        cross_section: null
+        half_life: 4170528.0000000005
+        decay_mode: EC
+        lines:
+        - 154.57
+        - 114.71
+        - 115.51
+        probability:
+        - 0.46633
+        - 0.44067999999999996
+        - 0.44067999999999996
+      149:
+        reaction: null
+        cross_section: null
+        half_life: 801792.0
+        decay_mode: EC
+        lines:
+        - 149.735
+        - 298.634
+        - 346.651
+        - 748.601
+        - 788.876
+        - 272.321
+        - 534.295
+        - 516.545
+        - 938.61
+        - 496.383
+        probability:
+        - 0.51132
+        - 0.30372
+        - 0.25361
+        - 0.08718
+        - 0.07787
+        - 0.03411
+        - 0.03257
+        - 0.02858
+        - 0.02536
+        - 0.017589999999999998
+      147:
+        reaction: null
+        cross_section: null
+        half_life: 137160.0
+        decay_mode: EC
+        lines:
+        - 229.32
+        - 396.0
+        - 929.01
+        - 370.0
+        - 765.81
+        - 893.5
+        - 1069.35
+        - 559.07
+        - 1130.9
+        - 778.04
+        probability:
+        - 0.6405
+        - 0.34820999999999996
+        - 0.20471
+        - 0.17411000000000001
+        - 0.11502000000000001
+        - 0.0823
+        - 0.07281
+        - 0.06541999999999999
+        - 0.06541999999999999
+        - 0.05023
+  Tb:
+    name: Terbium
+    Z: 65
+    A:
+      161:
+        reaction: null
+        cross_section: null
+        half_life: 594432.0
+        decay_mode: B-
+        lines:
+        - 25.6515
+        - 48.91562
+        - 74.56711
+        - 57.196
+        probability:
+        - 0.23154
+        - 0.17034
+        - 0.102
+        - 0.017849999999999998
+      153:
+        reaction: null
+        cross_section: null
+        half_life: 202176.0
+        decay_mode: EC
+        lines:
+        - 212.0
+        - 109.758
+        - 102.255
+        - 170.42
+        - 82.86
+        - 41.56
+        - 249.55
+        - 87.63
+        - 87.63
+        - 210.27
+        probability:
+        - 0.31084
+        - 0.06776
+        - 0.06372
+        - 0.06341000000000001
+        - 0.059059999999999994
+        - 0.04352
+        - 0.02331
+        - 0.014610000000000001
+        - 0.014610000000000001
+        - 0.013680000000000001
+      155:
+        reaction: null
+        cross_section: null
+        half_life: 459648.0
+        decay_mode: EC
+        lines:
+        - 86.55
+        - 105.318
+        - 180.08
+        - 262.27
+        - 163.28
+        - 161.29
+        - 148.64
+        - 45.299
+        - 367.36
+        - 340.67
+        probability:
+        - 0.31704
+        - 0.24846000000000001
+        - 0.07379
+        - 0.052329999999999995
+        - 0.043949999999999996
+        - 0.027280000000000002
+        - 0.02621
+        - 0.015880000000000002
+        - 0.01466
+        - 0.011699999999999999
+      158:
+        reaction: null
+        cross_section: null
+        half_life: 5676480000.0
+        decay_mode: EC
+        lines:
+        - 944.189
+        - 962.126
+        - 79.513
+        - 181.944
+        - 780.183
+        - 98.918
+        - 1107.626
+        - 1187.143
+        probability:
+        - 0.43709000000000003
+        - 0.20193000000000003
+        - 0.11583
+        - 0.09878
+        - 0.09529
+        - 0.04295
+        - 0.02137
+        - 0.01678
+      160:
+        reaction: null
+        cross_section: null
+        half_life: 6246720.0
+        decay_mode: B-
+        lines:
+        - 879.383
+        - 298.58
+        - 966.171
+        - 1177.962
+        - 86.7882
+        - 962.317
+        - 1271.88
+        - 197.0352
+        - 215.6464
+        - 1312.14
+        probability:
+        - 0.301
+        - 0.26127
+        - 0.25103000000000003
+        - 0.14869
+        - 0.13154
+        - 0.09813000000000001
+        - 0.07444
+        - 0.05183
+        - 0.04018
+        - 0.02863
+      156:
+        reaction: null
+        cross_section: null
+        half_life: 462239.99999999994
+        decay_mode: EC
+        lines:
+        - 534.29
+        - 199.19
+        - 1222.44
+        - 88.97
+        - 356.38
+        - 1421.67
+        - 1065.11
+        - 1154.07
+        - 422.34
+        - 1159.03
+        probability:
+        - 0.6658799999999999
+        - 0.4092
+        - 0.31
+        - 0.17670000000000002
+        - 0.13612
+        - 0.12233000000000001
+        - 0.10772
+        - 0.10372999999999999
+        - 0.07955
+        - 0.07248
+  Dy:
+    name: Dysprosium
+    Z: 66
+    A:
+      166:
+        reaction: null
+        cross_section: null
+        half_life: 293760.0
+        decay_mode: B-
+        lines:
+        - 82.47
+        - 28.227
+        probability:
+        - 0.138
+        - 0.011319999999999998
+      159:
+        reaction: null
+        cross_section: null
+        half_life: 12476160.0
+        decay_mode: EC
+        lines:
+        - 58.0
+        probability:
+        - 0.0222
+  Ho:
+    name: Holmium
+    Z: 67
+    A:
+      166:
+        reaction: null
+        cross_section: null
+        half_life: 96480.0
+        decay_mode: B-
+        lines:
+        - 80.574
+        probability:
+        - 0.06709999999999999
+  Er:
+    name: Erbium
+    Z: 68
+    A:
+      160:
+        reaction: null
+        cross_section: null
+        half_life: 102888.0
+        decay_mode: EC
+        lines:
+        - 7.133
+        probability:
+        - 0.0495
+      172:
+        reaction: null
+        cross_section: null
+        half_life: 177480.0
+        decay_mode: B-
+        lines:
+        - 610.062
+        - 407.338
+        - 68.107
+        - 446.025
+        - 59.692
+        - 383.501
+        - 127.805
+        - 475.445
+        - 202.724
+        probability:
+        - 0.44205
+        - 0.42100000000000004
+        - 0.03292
+        - 0.02955
+        - 0.02694
+        - 0.02349
+        - 0.021259999999999998
+        - 0.0104
+        - 0.01031
+  Tm:
+    name: Thulium
+    Z: 69
+    A:
+      165:
+        reaction: null
+        cross_section: null
+        half_life: 108216.0
+        decay_mode: EC
+        lines:
+        - 242.917
+        - 47.155
+        - 297.369
+        - 806.372
+        - 54.415
+        - 460.263
+        - 296.119
+        - 218.859
+        - 1184.446
+        - 346.933
+        probability:
+        - 0.35863
+        - 0.17035
+        - 0.12839
+        - 0.09611
+        - 0.0728
+        - 0.0416
+        - 0.03916
+        - 0.03371
+        - 0.029769999999999998
+        - 0.02905
+      167:
+        reaction: null
+        cross_section: null
+        half_life: 799200.0
+        decay_mode: EC
+        lines:
+        - 207.8
+        - 57.1
+        - 531.5
+        probability:
+        - 0.41278
+        - 0.0464
+        - 0.016
+      172:
+        reaction: null
+        cross_section: null
+        half_life: 228960.0
+        decay_mode: B-
+        lines:
+        - 78.75
+        - 1093.59
+        - 1387.093
+        - 1529.64
+        - 1465.86
+        - 1608.37
+        - 181.52
+        - 1470.28
+        - 912.064
+        probability:
+        - 0.0654
+        - 0.06
+        - 0.0558
+        - 0.051
+        - 0.045
+        - 0.0414
+        - 0.02754
+        - 0.01866
+        - 0.014159999999999999
+      168:
+        reaction: null
+        cross_section: null
+        half_life: 8043839.999999999
+        decay_mode: EC
+        lines:
+        - 198.251
+        - 815.989
+        - 447.515
+        - 184.295
+        - 741.355
+        - 720.392
+        - 821.162
+        - 79.804
+        - 631.705
+        - 829.948
+        probability:
+        - 0.54366
+        - 0.50833
+        - 0.23921
+        - 0.18103999999999998
+        - 0.12775999999999998
+        - 0.12178000000000001
+        - 0.11961000000000001
+        - 0.10928
+        - 0.09242
+        - 0.06959
+      170:
+        reaction: null
+        cross_section: null
+        half_life: 11111040.0
+        decay_mode: B-
+        lines:
+        - 84.25474
+        probability:
+        - 0.02477
+  Yb:
+    name: Ytterbium
+    Z: 70
+    A:
+      169:
+        reaction: null
+        cross_section: null
+        half_life: 2767046.4000000004
+        decay_mode: EC
+        lines:
+        - 63.12077
+        - 197.95788
+        - 177.21402
+        - 109.77987
+        - 130.52368
+        - 307.73757
+        - 93.61514
+        - 63.012
+        - 118.19018
+        - 261.07857
+        probability:
+        - 0.44020000000000004
+        - 0.35644
+        - 0.22064
+        - 0.17393999999999998
+        - 0.11263
+        - 0.10009
+        - 0.02595
+        - 0.02139
+        - 0.01861
+        - 0.017070000000000002
+      175:
+        reaction: null
+        cross_section: null
+        half_life: 361583.99999999994
+        decay_mode: B-
+        lines:
+        - 396.329
+        - 282.522
+        - 113.805
+        probability:
+        - 0.064
+        - 0.03008
+        - 0.01882
+  Lu:
+    name: Lutetium
+    Z: 71
+    A:
+      171:
+        reaction: null
+        cross_section: null
+        half_life: 711936.0
+        decay_mode: EC
+        lines:
+        - 739.78
+        - 19.394
+        - 667.404
+        - 75.878
+        - 780.681
+        - 839.943
+        - 853.051
+        - 66.72
+        - 689.286
+        - 72.386
+        probability:
+        - 0.47700000000000004
+        - 0.1369
+        - 0.11019
+        - 0.06067
+        - 0.0435
+        - 0.03034
+        - 0.025419999999999998
+        - 0.02466
+        - 0.023610000000000003
+        - 0.01989
+      174:
+        reaction: null
+        cross_section: null
+        half_life: 104384160.0
+        decay_mode: EC
+        lines:
+        - 76.468
+        - 1241.847
+        probability:
+        - 0.05909
+        - 0.05125
+      173:
+        reaction: null
+        cross_section: null
+        half_life: 43204320.0
+        decay_mode: EC
+        lines:
+        - 272.105
+        - 78.63
+        - 100.724
+        - 171.393
+        - 636.11
+        - 179.365
+        probability:
+        - 0.21448
+        - 0.12011
+        - 0.05298
+        - 0.029380000000000003
+        - 0.014690000000000002
+        - 0.013919999999999998
+      172:
+        reaction: null
+        cross_section: null
+        half_life: 578880.0
+        decay_mode: EC
+        lines:
+        - 1093.63
+        - 900.724
+        - 181.525
+        - 810.064
+        - 912.079
+        - 78.7426
+        - 697.3
+        - 1002.74
+        - 203.433
+        - 90.644
+        probability:
+        - 0.6402899999999999
+        - 0.30542
+        - 0.21066
+        - 0.17032
+        - 0.15622999999999998
+        - 0.10821
+        - 0.06280999999999999
+        - 0.05378
+        - 0.05142
+        - 0.046490000000000004
+      170:
+        reaction: null
+        cross_section: null
+        half_life: 173836.8
+        decay_mode: EC
+        lines:
+        - 84.262
+        - 1280.25
+        - 2041.88
+        - 985.1
+        - 2126.11
+        - 1225.65
+        - 1054.28
+        - 1364.6
+        - 1138.65
+        - 1003.2
+        probability:
+        - 0.08728
+        - 0.07922
+        - 0.05908
+        - 0.05371000000000001
+        - 0.04968
+        - 0.048339999999999994
+        - 0.0461
+        - 0.04476
+        - 0.034910000000000004
+        - 0.034460000000000005
+      169:
+        reaction: null
+        cross_section: null
+        half_life: 122616.00000000001
+        decay_mode: EC
+        lines:
+        - 960.622
+        - 191.2137
+        - 1449.74
+        - 889.753
+        - 1466.84
+        - 87.3836
+        - 1184.88
+        - 378.624
+        - 1283.28
+        - 1379.04
+        probability:
+        - 0.25721
+        - 0.22635000000000002
+        - 0.10906
+        - 0.058899999999999994
+        - 0.036520000000000004
+        - 0.02701
+        - 0.02444
+        - 0.023170000000000003
+        - 0.02315
+        - 0.02315
+      176:
+        reaction: null
+        cross_section: null
+        half_life: 1.26144e+18
+        decay_mode: B-
+        lines:
+        - 306.84
+        - 201.83
+        - 88.36
+        probability:
+        - 0.9359999999999999
+        - 0.77969
+        - 0.14508
+      177:
+        reaction: null
+        cross_section: null
+        half_life: 581472.0
+        decay_mode: B-
+        lines:
+        - 208.3664
+        - 112.9498
+        probability:
+        - 0.11
+        - 0.064
+  Hf:
+    name: Hafnium
+    Z: 72
+    A:
+      172:
+        reaction: null
+        cross_section: null
+        half_life: 58972320.0
+        decay_mode: EC
+        lines:
+        - 23.9331
+        - 125.812
+        - 67.35
+        - 81.7513
+        - 114.061
+        - 127.91
+        - 122.916
+        - 60.65
+        probability:
+        - 0.23068000000000002
+        - 0.12815
+        - 0.06023
+        - 0.05126
+        - 0.02896
+        - 0.01653
+        - 0.01294
+        - 0.01282
+      175:
+        reaction: null
+        cross_section: null
+        half_life: 6048000.0
+        decay_mode: EC
+        lines:
+        - 343.4
+        - 89.36
+        - 433.0
+        probability:
+        - 0.87562
+        - 0.02504
+        - 0.01497
+      182:
+        reaction: null
+        cross_section: null
+        half_life: 283824000000000.0
+        decay_mode: B-
+        lines:
+        - 270.405
+        - 156.09
+        - 114.33
+        probability:
+        - 0.8
+        - 0.07
+        - 0.026000000000000002
+      181:
+        reaction: null
+        cross_section: null
+        half_life: 3662496.0
+        decay_mode: B-
+        lines:
+        - 482.18
+        - 133.021
+        - 345.93
+        - 136.26
+        probability:
+        - 0.805
+        - 0.43309
+        - 0.15118
+        - 0.05852
+  Ta:
+    name: Tantalum
+    Z: 73
+    A:
+      183:
+        reaction: null
+        cross_section: null
+        half_life: 440639.99999999994
+        decay_mode: B-
+        lines:
+        - 246.0587
+        - 353.9904
+        - 107.9318
+        - 161.3465
+        - 244.2649
+        - 99.0791
+        - 46.4838
+        - 52.5953
+        - 162.321
+        - 209.8658
+        probability:
+        - 0.268
+        - 0.11228999999999999
+        - 0.10961
+        - 0.08924
+        - 0.08496000000000001
+        - 0.06673
+        - 0.05762
+        - 0.05762
+        - 0.048780000000000004
+        - 0.04476
+      182:
+        reaction: null
+        cross_section: null
+        half_life: 9886752.0
+        decay_mode: B-
+        lines:
+        - 67.75001
+        - 1121.3008
+        - 1221.4066
+        - 1189.0503
+        - 100.1065
+        - 1231.0157
+        - 222.1096
+        - 152.4308
+        - 229.322
+        - 264.0752
+        probability:
+        - 0.41217
+        - 0.349
+        - 0.26978
+        - 0.16225
+        - 0.141
+        - 0.1144
+        - 0.07486
+        - 0.06928
+        - 0.0363
+        - 0.03605
+      177:
+        reaction: null
+        cross_section: null
+        half_life: 203616.0
+        decay_mode: EC
+        lines:
+        - 112.9
+        probability:
+        - 0.07228
+  W:
+    name: Tungsten
+    Z: 74
+    A:
+      181:
+        reaction: null
+        cross_section: null
+        half_life: 10471680.0
+        decay_mode: EC
+        lines:
+        - 6.24
+        probability:
+        - 0.01031
+  Re:
+    name: Rhenium
+    Z: 75
+    A:
+      183:
+        reaction: null
+        cross_section: null
+        half_life: 6048000.0
+        decay_mode: EC
+        lines:
+        - 162.3266
+        - 46.4842
+        - 291.7282
+        - 208.8107
+        - 109.7304
+        - 99.0804
+        - 52.5962
+        - 107.9347
+        - 246.062
+        probability:
+        - 0.23332999999999998
+        - 0.07980000000000001
+        - 0.03057
+        - 0.02954
+        - 0.028769999999999997
+        - 0.026949999999999998
+        - 0.022170000000000002
+        - 0.021720000000000003
+        - 0.01311
+      182:
+        reaction: null
+        cross_section: null
+        half_life: 230400.0
+        decay_mode: EC
+        lines:
+        - 229.32
+        - 67.85
+        - 1121.3
+        - 1221.4
+        - 100.1
+        - 1231.0
+        - 169.15
+        - 1076.2
+        - 351.07
+        - 1427.3
+        probability:
+        - 0.25432
+        - 0.21922999999999998
+        - 0.21745
+        - 0.17218
+        - 0.16226
+        - 0.14725
+        - 0.1119
+        - 0.10427
+        - 0.10173
+        - 0.0969
+      184:
+        reaction: null
+        cross_section: null
+        half_life: 3283200.0
+        decay_mode: EC
+        lines:
+        - 903.282
+        - 792.067
+        - 111.207
+        - 894.76
+        - 252.845
+        - 641.915
+        probability:
+        - 0.37804000000000004
+        - 0.37386
+        - 0.17104
+        - 0.15557
+        - 0.03011
+        - 0.01932
+      186:
+        reaction: null
+        cross_section: null
+        half_life: 321261.12
+        decay_mode: B-
+        lines:
+        - 137.157
+        probability:
+        - 0.0942
+      189:
+        reaction: null
+        cross_section: null
+        half_life: 87480.0
+        decay_mode: B-
+        lines:
+        - 216.68
+        - 219.4
+        - 245.08
+        - 185.89
+        - 147.09
+        probability:
+        - 0.055
+        - 0.04537
+        - 0.0352
+        - 0.01886
+        - 0.012430000000000002
+  Os:
+    name: Osmium
+    Z: 76
+    A:
+      194:
+        reaction: null
+        cross_section: null
+        half_life: 189216000.0
+        decay_mode: B-
+        lines:
+        - 43.1
+        probability:
+        - 0.054000000000000006
+      193:
+        reaction: null
+        cross_section: null
+        half_life: 108396.0
+        decay_mode: B-
+        lines:
+        - 138.92
+        - 460.49
+        - 73.04
+        - 557.36
+        - 321.59
+        - 387.48
+        - 280.444
+        probability:
+        - 0.042660000000000003
+        - 0.0395
+        - 0.03239
+        - 0.013040000000000001
+        - 0.01276
+        - 0.0126
+        - 0.01244
+      191:
+        reaction: null
+        cross_section: null
+        half_life: 1330560.0
+        decay_mode: B-
+        lines:
+        - 129.431
+        probability:
+        - 0.29
+      185:
+        reaction: null
+        cross_section: null
+        half_life: 8087039.999999999
+        decay_mode: EC
+        lines:
+        - 646.116
+        - 874.813
+        - 880.523
+        - 717.424
+        - 592.074
+        probability:
+        - 0.8082299999999999
+        - 0.06522
+        - 0.05359
+        - 0.040819999999999995
+        - 0.01366
+  Ir:
+    name: Iridium
+    Z: 77
+    A:
+      189:
+        reaction: null
+        cross_section: null
+        half_life: 1140480.0
+        decay_mode: EC
+        lines:
+        - 245.08
+        - 69.528
+        - 59.05
+        probability:
+        - 0.06023
+        - 0.035539999999999995
+        - 0.01205
+      188:
+        reaction: null
+        cross_section: null
+        half_life: 149400.0
+        decay_mode: EC
+        lines:
+        - 155.05
+        - 2214.59
+        - 633.02
+        - 477.99
+        - 2059.65
+        - 1209.77
+        - 1715.67
+        - 2096.9
+        - 829.42
+        - 634.91
+        probability:
+        - 0.31255
+        - 0.19649999999999998
+        - 0.18877
+        - 0.15473
+        - 0.07427
+        - 0.07272
+        - 0.06498999999999999
+        - 0.06034
+        - 0.054000000000000006
+        - 0.052610000000000004
+      190:
+        reaction: null
+        cross_section: null
+        half_life: 1017792.0
+        decay_mode: EC
+        lines:
+        - 186.68
+        - 605.14
+        - 518.55
+        - 557.95
+        - 569.3
+        - 407.22
+        - 371.24
+        - 361.09
+        - 294.75
+        - 397.36
+        probability:
+        - 0.5115500000000001
+        - 0.38921999999999995
+        - 0.33140000000000003
+        - 0.29359
+        - 0.27802
+        - 0.23353000000000002
+        - 0.22241
+        - 0.127
+        - 0.0645
+        - 0.06383
+      192:
+        reaction: null
+        cross_section: null
+        half_life: 6378652.8
+        decay_mode: EC
+        lines:
+        - 316.50618
+        - 468.0688
+        - 308.45507
+        - 295.9565
+        - 604.41105
+        - 612.4621
+        - 588.581
+        - 205.7943
+        - 484.5751
+        probability:
+        - 0.82711
+        - 0.4781
+        - 0.2968
+        - 0.2872
+        - 0.08199999999999999
+        - 0.053399999999999996
+        - 0.04517
+        - 0.032690000000000004
+        - 0.031200000000000002
+  Pt:
+    name: Platinum
+    Z: 78
+    A:
+      191:
+        reaction: null
+        cross_section: null
+        half_life: 242092.80000000002
+        decay_mode: EC
+        lines:
+        - 538.87
+        - 409.44
+        - 359.88
+        - 82.398
+        - 172.19
+        - 351.17
+        - 456.47
+        - 96.517
+        - 129.4
+        - 268.71
+        probability:
+        - 0.14991
+        - 0.08766
+        - 0.06575
+        - 0.05348
+        - 0.03857
+        - 0.03682
+        - 0.03682
+        - 0.03594
+        - 0.035070000000000004
+        - 0.01806
+      188:
+        reaction: null
+        cross_section: null
+        half_life: 881279.9999999999
+        decay_mode: EC
+        lines:
+        - 187.59
+        - 195.05
+        - 381.43
+        - 423.34
+        - 140.35
+        - 478.3
+        probability:
+        - 0.20157
+        - 0.1935
+        - 0.0776
+        - 0.04535
+        - 0.02419
+        - 0.01854
+  Au:
+    name: Gold
+    Z: 79
+    A:
+      195:
+        reaction: null
+        cross_section: null
+        half_life: 16078867.200000001
+        decay_mode: EC
+        lines:
+        - 98.88
+        probability:
+        - 0.10906
+      199:
+        reaction: null
+        cross_section: null
+        half_life: 271209.6
+        decay_mode: B-
+        lines:
+        - 158.37947
+        - 208.20597
+        probability:
+        - 0.4
+        - 0.0872
+      194:
+        reaction: null
+        cross_section: null
+        half_life: 136872.0
+        decay_mode: EC
+        lines:
+        - 328.5
+        - 293.58
+        - 1468.89
+        - 2043.67
+        - 948.29
+        - 645.18
+        - 1104.06
+        - 1175.34
+        - 1924.18
+        - 1885.9
+        probability:
+        - 0.61144
+        - 0.10394
+        - 0.0642
+        - 0.036070000000000005
+        - 0.022010000000000002
+        - 0.02146
+        - 0.020179999999999997
+        - 0.020179999999999997
+        - 0.020179999999999997
+        - 0.01895
+      196:
+        reaction: null
+        cross_section: null
+        half_life: 534211.2
+        decay_mode: EC
+        lines:
+        - 355.73
+        - 333.03
+        - 426.1
+        probability:
+        - 0.86744
+        - 0.22814
+        - 0.06631000000000001
+      198:
+        reaction: null
+        cross_section: null
+        half_life: 232862.688
+        decay_mode: B-
+        lines:
+        - 411.80205
+        probability:
+        - 0.9558
+  Hg:
+    name: Mercury
+    Z: 80
+    A:
+      197:
+        reaction: null
+        cross_section: null
+        half_life: 230904.0
+        decay_mode: EC
+        lines:
+        - 77.351
+        probability:
+        - 0.187
+      203:
+        reaction: null
+        cross_section: null
+        half_life: 4027276.8000000003
+        decay_mode: B-
+        lines:
+        - 279.1967
+        probability:
+        - 0.8146
+  Tl:
+    name: Thallium
+    Z: 81
+    A:
+      201:
+        reaction: null
+        cross_section: null
+        half_life: 262483.2
+        decay_mode: EC
+        lines:
+        - 167.43
+        - 135.34
+        probability:
+        - 0.10013
+        - 0.02568
+      200:
+        reaction: null
+        cross_section: null
+        half_life: 93960.0
+        decay_mode: EC
+        lines:
+        - 367.942
+        - 1205.7
+        - 579.28
+        - 828.32
+        - 1514.9
+        - 1362.9
+        - 1225.5
+        - 1273.52
+        - 661.35
+        - 886.15
+        probability:
+        - 0.8671800000000001
+        - 0.29744
+        - 0.13701
+        - 0.10753
+        - 0.03989
+        - 0.03382
+        - 0.03339
+        - 0.03295
+        - 0.022629999999999997
+        - 0.02012
+      202:
+        reaction: null
+        cross_section: null
+        half_life: 1056672.0
+        decay_mode: EC
+        lines:
+        - 439.56
+        probability:
+        - 0.91391
+  Pb:
+    name: Lead
+    Z: 82
+    A:
+      210:
+        reaction: null
+        cross_section: null
+        half_life: 703252800.0
+        decay_mode: B-
+        lines:
+        - 46.539
+        probability:
+        - 0.0425
+      203:
+        reaction: null
+        cross_section: null
+        half_life: 186742.8
+        decay_mode: EC
+        lines:
+        - 279.1967
+        - 401.325
+        probability:
+        - 0.82416
+        - 0.03412
+  Bi:
+    name: Bismuth
+    Z: 83
+    A:
+      206:
+        reaction: null
+        cross_section: null
+        half_life: 539395.2000000001
+        decay_mode: EC
+        lines:
+        - 803.1
+        - 881.01
+        - 516.18
+        - 1718.7
+        - 537.45
+        - 343.51
+        - 183.977
+        - 895.12
+        - 497.06
+        - 1098.26
+        probability:
+        - 1.00638
+        - 0.67327
+        - 0.41463
+        - 0.32405
+        - 0.30996
+        - 0.23851
+        - 0.16102
+        - 0.15930999999999998
+        - 0.15579
+        - 0.13737
+      205:
+        reaction: null
+        cross_section: null
+        half_life: 1322784.0
+        decay_mode: EC
+        lines:
+        - 1764.3
+        - 703.45
+        - 987.66
+        - 1043.75
+        - 1861.7
+        - 579.8
+        - 570.6
+        - 1775.8
+        - 549.84
+        - 1903.45
+        probability:
+        - 0.32936
+        - 0.31548
+        - 0.16367
+        - 0.07619
+        - 0.06259
+        - 0.05521
+        - 0.04398
+        - 0.04044
+        - 0.02994
+        - 0.025019999999999997
+      207:
+        reaction: null
+        cross_section: null
+        half_life: 994960800.0
+        decay_mode: EC
+        lines:
+        - 569.702
+        - 1063.662
+        - 1770.237
+        probability:
+        - 0.9775
+        - 0.74507
+        - 0.06871000000000001
+      208:
+        reaction: null
+        cross_section: null
+        half_life: 11605248000000.0
+        decay_mode: EC
+        lines:
+        - 2610.0
+        probability:
+        - 1.0
+  Po:
+    name: Polonium
+    Z: 84
+    A:
+      206:
+        reaction: null
+        cross_section: null
+        half_life: 760320.0000000001
+        decay_mode: EC
+        lines:
+        - 1032.26
+        - 511.36
+        - 286.41
+        - 807.38
+        - 338.44
+        - 522.47
+        - 980.23
+        - 311.56
+        - 860.93
+        - 1007.15
+        probability:
+        - 0.32903
+        - 0.24053999999999998
+        - 0.23827
+        - 0.22692
+        - 0.19175
+        - 0.15726
+        - 0.0708
+        - 0.04243
+        - 0.0354
+        - 0.03063
+  Ra:
+    name: Radium
+    Z: 88
+    A:
+      228:
+        reaction: null
+        cross_section: null
+        half_life: 181332000.0
+        decay_mode: B-
+        lines:
+        - 13.52
+        probability:
+        - 0.016
+      225:
+        reaction: null
+        cross_section: null
+        half_life: 1287360.0
+        decay_mode: B-
+        lines:
+        - 40.0
+        probability:
+        - 0.3
+      223:
+        reaction: null
+        cross_section: null
+        half_life: 987984.0
+        decay_mode: A
+        lines:
+        - 269.459
+        - 154.21
+        - 323.871
+        - 144.232
+        - 338.281
+        - 445.03
+        - 122.319
+        probability:
+        - 0.13699999999999998
+        - 0.05617
+        - 0.03932
+        - 0.0322
+        - 0.02795
+        - 0.01274
+        - 0.01192
+      226:
+        reaction: null
+        cross_section: null
+        half_life: 50457600000.0
+        decay_mode: A
+        lines:
+        - 186.211
+        probability:
+        - 0.0359
+      224:
+        reaction: null
+        cross_section: null
+        half_life: 316224.0
+        decay_mode: A
+        lines:
+        - 240.986
+        probability:
+        - 0.040999999999999995
+  Ac:
+    name: Actinium
+    Z: 89
+    A:
+      225:
+        reaction: null
+        cross_section: null
+        half_life: 864000.0
+        decay_mode: A
+        lines:
+        - 99.91
+        probability:
+        - 0.01014
+      226:
+        reaction: null
+        cross_section: null
+        half_life: 105732.0
+        decay_mode: B-
+        lines:
+        - 230.0
+        - 158.05
+        probability:
+        - 0.26892
+        - 0.1748
+  Th:
+    name: Thorium
+    Z: 90
+    A:
+      231:
+        reaction: null
+        cross_section: null
+        half_life: 91872.0
+        decay_mode: B-
+        lines:
+        - 25.64
+        - 84.214
+        probability:
+        - 0.145
+        - 0.066
+      229:
+        reaction: null
+        cross_section: null
+        half_life: 231474240000.0
+        decay_mode: A
+        lines:
+        - 193.509
+        - 210.853
+        - 86.4
+        - 86.25
+        - 31.5
+        - 156.409
+        - 136.99
+        probability:
+        - 0.04412
+        - 0.0277
+        - 0.02565
+        - 0.013340000000000001
+        - 0.011899999999999999
+        - 0.011899999999999999
+        - 0.0118
+      227:
+        reaction: null
+        cross_section: null
+        half_life: 1617408.0
+        decay_mode: A
+        lines:
+        - 235.971
+        - 50.13
+        - 256.25
+        - 329.851
+        - 300.0
+        - 79.72
+        - 286.122
+        - 93.93
+        - 304.519
+        - 210.65
+        probability:
+        - 0.12300000000000001
+        - 0.07995000000000001
+        - 0.07011
+        - 0.02694
+        - 0.023250000000000003
+        - 0.01894
+        - 0.01538
+        - 0.01365
+        - 0.0123
+        - 0.01107
+      234:
+        reaction: null
+        cross_section: null
+        half_life: 2082240.0000000002
+        decay_mode: B-
+        lines:
+        - 63.29
+        - 92.38
+        - 92.8
+        probability:
+        - 0.04838
+        - 0.02812
+        - 0.027719999999999998
+      228:
+        reaction: null
+        cross_section: null
+        half_life: 60296832.0
+        decay_mode: A
+        lines:
+        - 84.373
+        probability:
+        - 0.012199999999999999
+  Pa:
+    name: Protactinium
+    Z: 91
+    A:
+      231:
+        reaction: null
+        cross_section: null
+        half_life: 1033119360000.0
+        decay_mode: A
+        lines:
+        - 27.36
+        - 300.07
+        - 302.65
+        - 283.69
+        - 330.06
+        probability:
+        - 0.10285
+        - 0.02465
+        - 0.02193
+        - 0.017
+        - 0.013959999999999998
+      233:
+        reaction: null
+        cross_section: null
+        half_life: 2329948.8
+        decay_mode: B-
+        lines:
+        - 312.17
+        - 300.34
+        - 340.81
+        - 86.814
+        - 415.76
+        - 75.354
+        - 398.62
+        probability:
+        - 0.386
+        - 0.0662
+        - 0.0447
+        - 0.0197
+        - 0.01745
+        - 0.0139
+        - 0.0139
+      232:
+        reaction: null
+        cross_section: null
+        half_life: 113184.0
+        decay_mode: B-
+        lines:
+        - 969.315
+        - 894.351
+        - 150.059
+        - 453.655
+        - 819.187
+        - 387.884
+        - 581.398
+        - 866.76
+        - 515.607
+        - 472.39
+        probability:
+        - 0.41624
+        - 0.19844
+        - 0.10842
+        - 0.08615
+        - 0.07454
+        - 0.0697
+        - 0.06002
+        - 0.05808
+        - 0.05518
+        - 0.04162
+      230:
+        reaction: null
+        cross_section: null
+        half_life: 1503359.9999999998
+        decay_mode: EC
+        lines:
+        - 951.95
+        - 918.48
+        - 454.95
+        - 898.68
+        - 443.75
+        - 508.2
+        - 518.5
+        - 728.2
+        - 397.7
+        - 956.4
+        probability:
+        - 0.26705
+        - 0.07558
+        - 0.05744
+        - 0.05341
+        - 0.05039
+        - 0.03275
+        - 0.01814
+        - 0.01738
+        - 0.01713
+        - 0.014610000000000001
+  U:
+    name: Uranium
+    Z: 92
+    A:
+      231:
+        reaction: null
+        cross_section: null
+        half_life: 362880.0
+        decay_mode: EC
+        lines:
+        - 25.64
+        - 84.18
+        probability:
+        - 0.12086000000000001
+        - 0.0705
+      237:
+        reaction: null
+        cross_section: null
+        half_life: 583200.0
+        decay_mode: B-
+        lines:
+        - 59.536
+        - 208.0
+        - 26.348
+        - 164.61
+        - 64.83
+        - 332.36
+        probability:
+        - 0.345
+        - 0.212
+        - 0.024300000000000002
+        - 0.018600000000000002
+        - 0.01282
+        - 0.012
+      235:
+        reaction: null
+        cross_section: null
+        half_life: 2.21950368e+16
+        decay_mode: A
+        lines:
+        - 185.715
+        - 143.76
+        - 163.33
+        - 205.311
+        - 109.16
+        - 202.11
+        probability:
+        - 0.5720000000000001
+        - 0.1096
+        - 0.0508
+        - 0.0501
+        - 0.0154
+        - 0.0108
+  Np:
+    name: Neptunium
+    Z: 93
+    A:
+      237:
+        reaction: null
+        cross_section: null
+        half_life: 67487040000000.0
+        decay_mode: A
+        lines:
+        - 29.374
+        - 86.477
+        probability:
+        - 0.15
+        - 0.124
+      239:
+        reaction: null
+        cross_section: null
+        half_life: 203601.6
+        decay_mode: B-
+        lines:
+        - 106.123
+        - 277.599
+        - 228.183
+        - 209.753
+        - 334.31
+        - 315.88
+        - 61.46
+        probability:
+        - 0.272
+        - 0.1438
+        - 0.1076
+        - 0.0342
+        - 0.0207
+        - 0.016
+        - 0.0129
+      236:
+        reaction: null
+        cross_section: null
+        half_life: 4856544000000.0
+        decay_mode: EC
+        lines:
+        - 160.33
+        - 104.23
+        - 158.35
+        probability:
+        - 0.37889
+        - 0.08715
+        - 0.03959
+      234:
+        reaction: null
+        cross_section: null
+        half_life: 380160.00000000006
+        decay_mode: EC
+        lines:
+        - 1558.31
+        - 1527.21
+        - 1601.8
+        - 1435.36
+        - 1193.78
+        - 742.78
+        - 1570.68
+        - 786.28
+        - 1237.22
+        - 1391.87
+        probability:
+        - 0.18822
+        - 0.11260999999999999
+        - 0.09148999999999999
+        - 0.06415
+        - 0.06053
+        - 0.05299
+        - 0.05118
+        - 0.03207
+        - 0.023119999999999998
+        - 0.02282
+      238:
+        reaction: null
+        cross_section: null
+        half_life: 182908.8
+        decay_mode: B-
+        lines:
+        - 984.45
+        - 1028.54
+        - 1025.87
+        - 923.98
+        probability:
+        - 0.278
+        - 0.203
+        - 0.096
+        - 0.0286
+  Pu:
+    name: Plutonium
+    Z: 94
+    A:
+      246:
+        reaction: null
+        cross_section: null
+        half_life: 936576.0
+        decay_mode: B-
+        lines:
+        - 43.81
+        - 223.75
+        - 179.94
+        - 27.58
+        probability:
+        - 0.25
+        - 0.235
+        - 0.09699999999999999
+        - 0.03525
+      237:
+        reaction: null
+        cross_section: null
+        half_life: 3905280.0000000005
+        decay_mode: EC
+        lines:
+        - 59.5412
+        probability:
+        - 0.032850000000000004
+      242:
+        reaction: null
+        cross_section: null
+        half_life: 11772388800000.0
+        decay_mode: SF
+        lines:
+        - 151.8
+        - 326.2
+        - 486.5
+        - 630.1
+        - 1090.2
+        - 282.8
+        - 578.5
+        - 159.5
+        - 193.7
+        - 884.5
+        probability:
+        - 1.0
+        - 0.75
+        - 0.46
+        - 0.15
+        - 0.14
+        - 0.139
+        - 0.11699999999999999
+        - 0.077
+        - 0.053
+        - 0.049
+  Am:
+    name: Americium
+    Z: 95
+    A:
+      241:
+        reaction: null
+        cross_section: null
+        half_life: 13629859200.0
+        decay_mode: A
+        lines:
+        - 59.5412
+        - 26.3448
+        probability:
+        - 0.359
+        - 0.024
+      243:
+        reaction: null
+        cross_section: null
+        half_life: 232420320000.0
+        decay_mode: A
+        lines:
+        - 74.66
+        - 43.53
+        probability:
+        - 0.682
+        - 0.05933
+      240:
+        reaction: null
+        cross_section: null
+        half_life: 182880.0
+        decay_mode: EC
+        lines:
+        - 987.76
+        - 888.8
+        - 98.9
+        probability:
+        - 0.7696999999999999
+        - 0.26393
+        - 0.01577
+  Cm:
+    name: Curium
+    Z: 96
+    A:
+      248:
+        reaction: null
+        cross_section: null
+        half_life: 10974528000000.0
+        decay_mode: SF
+        lines:
+        - 109.4
+        - 146.6
+        - 172.0
+        - 318.6
+        - 401.3
+        - 229.3
+        - 454.2
+        - 332.7
+        - 102.6
+        - 119.4
+        - 128.2
+        - 136.0
+        - 140.3
+        - 141.8
+        - 152.2
+        - 158.9
+        - 163.3
+        - 181.1
+        - 192.2
+        - 192.7
+        - 199.2
+        - 370.9
+        - 391.7
+        - 393.2
+        - 403.5
+        - 414.6
+        - 449.2
+        - 515.8
+        - 527.0
+        - 529.5
+        - 585.2
+        - 590.1
+        - 605.91
+        - 915.8
+        - 370.1
+        - 256.0
+        - 330.7
+        - 423.0
+        - 312.5
+        - 457.6
+        - 281.3
+        - 431.3
+        - 348.4
+        - 224.9
+        - 352.2
+        - 368.6
+        - 490.4
+        - 384.8
+        - 487.9
+        - 218.7
+        - 138.5
+        - 555.8
+        - 251.1
+        - 582.4
+        - 444.7
+        - 473.7
+        - 123.4
+        - 276.8
+        - 509.3
+        - 202.6
+        - 551.1
+        - 748.7
+        - 144.3
+        - 197.1
+        - 519.4
+        - 217.2
+        - 253.7
+        - 456.8
+        - 566.6
+        - 110.3
+        - 363.1
+        - 150.6
+        - 164.0
+        - 306.5
+        - 524.2
+        - 414.6
+        - 359.5
+        - 406.0
+        - 324.6
+        - 330.7
+        - 681.8
+        - 393.7
+        - 473.9
+        - 672.7
+        - 475.0
+        - 230.7
+        - 302.1
+        - 410.8
+        - 301.7
+        - 203.4
+        - 338.4
+        - 557.5
+        - 248.6
+        - 428.5
+        - 506.1
+        - 510.9
+        - 659.1
+        - 463.9
+        - 164.5
+        - 154.6
+        - 503.1
+        - 607.1
+        - 241.0
+        - 447.8
+        - 185.4
+        - 307.5
+        - 397.0
+        - 415.3
+        - 250.5
+        - 112.7
+        - 192.1
+        - 255.4
+        - 364.0
+        - 380.2
+        - 417.7
+        - 485.9
+        - 561.9
+        - 569.4
+        - 374.3
+        - 365.9
+        - 738.6
+        - 343.3
+        - 350.0
+        - 98.4
+        - 433.3
+        - 573.5
+        - 610.4
+        - 641.6
+        - 314.6
+        - 508.7
+        - 631.1
+        - 217.0
+        - 618.9
+        - 624.8
+        - 381.4
+        - 239.9
+        - 493.1
+        - 679.1
+        - 535.7
+        - 478.3
+        - 376.6
+        - 472.3
+        - 540.1
+        - 717.6
+        - 564.2
+        - 490.6
+        - 133.7
+        - 291.6
+        - 412.8
+        - 683.4
+        - 90.7
+        - 146.7
+        - 767.7
+        - 601.9
+        - 625.6
+        - 487.0
+        - 104.3
+        - 169.3
+        - 276.9
+        - 244.1
+        - 223.0
+        - 528.3
+        - 394.9
+        - 176.3
+        - 232.0
+        - 800.1
+        - 873.1
+        - 91.6
+        - 693.4
+        - 185.6
+        - 456.7
+        - 152.1
+        - 931.7
+        - 75.7
+        - 300.2
+        - 752.8
+        - 224.4
+        - 529.8
+        - 418.2
+        - 469.2
+        - 593.6
+        - 671.7
+        - 561.1
+        - 267.1
+        - 380.9
+        - 193.7
+        - 293.7
+        - 603.8
+        - 706.8
+        - 81.4
+        - 585.7
+        - 420.7
+        - 354.3
+        - 343.5
+        - 691.5
+        - 481.8
+        - 807.8
+        - 733.8
+        probability:
+        - 8.0
+        - 4.8
+        - 1.92
+        - 1.76
+        - 1.6
+        - 1.52
+        - 1.36
+        - 1.02
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.98
+        - 0.96
+        - 0.95
+        - 0.94
+        - 0.93
+        - 0.9059999999999999
+        - 0.86
+        - 0.84
+        - 0.82
+        - 0.8
+        - 0.79
+        - 0.75
+        - 0.72
+        - 0.7
+        - 0.68
+        - 0.67
+        - 0.61
+        - 0.59
+        - 0.58
+        - 0.5526599999999999
+        - 0.52
+        - 0.46
+        - 0.45
+        - 0.45
+        - 0.45
+        - 0.43
+        - 0.39
+        - 0.37
+        - 0.36
+        - 0.36
+        - 0.36
+        - 0.35
+        - 0.35
+        - 0.35
+        - 0.34428
+        - 0.34
+        - 0.34
+        - 0.32
+        - 0.32
+        - 0.32
+        - 0.31
+        - 0.29
+        - 0.272
+        - 0.27
+        - 0.26
+        - 0.26
+        - 0.26
+        - 0.24
+        - 0.24
+        - 0.24
+        - 0.23120000000000002
+        - 0.23
+        - 0.23
+        - 0.23
+        - 0.22
+        - 0.21
+        - 0.21
+        - 0.2
+        - 0.198
+        - 0.19
+        - 0.19
+        - 0.19
+        - 0.19
+        - 0.18
+        - 0.1782
+        - 0.17226
+        - 0.17
+        - 0.16308
+        - 0.16
+        - 0.16
+        - 0.15246
+        - 0.15
+        - 0.15
+        - 0.15
+        - 0.1425
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.14
+        - 0.13068
+        - 0.13
+        - 0.12683999999999998
+        - 0.126
+        - 0.12078
+        - 0.12
+        - 0.12
+        - 0.12
+        - 0.12
+        - 0.12
+        - 0.11
+        - 0.11
+        - 0.10880000000000001
+        - 0.1032
+        - 0.1
+        - 0.1
+        - 0.09966
+        - 0.09405
+        - 0.09198
+        - 0.0906
+        - 0.09
+        - 0.08316000000000001
+        - 0.08122
+        - 0.08
+        - 0.08
+        - 0.08
+        - 0.06732
+        - 0.06555
+        - 0.0636
+        - 0.06
+        - 0.06
+        - 0.06
+        - 0.05985
+        - 0.0552
+        - 0.05436
+        - 0.0525
+        - 0.051660000000000005
+        - 0.04896
+        - 0.046799999999999994
+        - 0.045599999999999995
+        - 0.04356
+        - 0.043
+        - 0.042
+        - 0.042
+        - 0.041580000000000006
+        - 0.0408
+        - 0.0408
+        - 0.04
+        - 0.04
+        - 0.039599999999999996
+        - 0.03536
+        - 0.0342
+        - 0.0315
+        - 0.031200000000000002
+        - 0.03
+        - 0.02992
+        - 0.027719999999999998
+        - 0.02718
+        - 0.02666
+        - 0.02625
+        - 0.02537
+        - 0.0252
+        - 0.02268
+        - 0.022000000000000002
+        - 0.02
+        - 0.01978
+        - 0.01768
+        - 0.0172
+        - 0.0171
+        - 0.016319999999999998
+        - 0.016319999999999998
+        - 0.01567
+        - 0.01496
+        - 0.01462
+        - 0.01387
+        - 0.013859999999999999
+        - 0.0126
+        - 0.012350000000000002
+        - 0.01208
+        - 0.01
+      241:
+        reaction: null
+        cross_section: null
+        half_life: 2833919.9999999995
+        decay_mode: EC
+        lines:
+        - 471.805
+        - 430.634
+        - 132.413
+        - 165.049
+        - 205.879
+        - 636.88
+        - 463.273
+        probability:
+        - 0.72367
+        - 0.041210000000000004
+        - 0.0392
+        - 0.03015
+        - 0.02714
+        - 0.01558
+        - 0.01246
+      245:
+        reaction: null
+        cross_section: null
+        half_life: 268056000000.0
+        decay_mode: A
+        lines:
+        - 174.94
+        - 132.99
+        probability:
+        - 0.095
+        - 0.02774
+      243:
+        reaction: null
+        cross_section: null
+        half_life: 917697600.0
+        decay_mode: A
+        lines:
+        - 277.599
+        - 228.184
+        - 209.753
+        probability:
+        - 0.13966
+        - 0.10575
+        - 0.03292
+      247:
+        reaction: null
+        cross_section: null
+        half_life: 491961600000000.0
+        decay_mode: A
+        lines:
+        - 402.4
+        - 278.0
+        - 287.5
+        - 346.0
+        probability:
+        - 0.72
+        - 0.034
+        - 0.02
+        - 0.013000000000000001
+  Bk:
+    name: Berkelium
+    Z: 97
+    A:
+      247:
+        reaction: null
+        cross_section: null
+        half_life: 43519680000.0
+        decay_mode: A
+        lines:
+        - 84.0
+        - 265.0
+        probability:
+        - 0.4
+        - 0.3
+      245:
+        reaction: null
+        cross_section: null
+        half_life: 426816.00000000006
+        decay_mode: EC
+        lines:
+        - 252.85
+        - 380.8
+        probability:
+        - 0.29068
+        - 0.02396
+      246:
+        reaction: null
+        cross_section: null
+        half_life: 155520.0
+        decay_mode: EC
+        lines:
+        - 798.7
+        - 1081.4
+        - 833.5
+        - 1124.3
+        - 1078.8
+        - 734.3
+        - 1062.0
+        - 1036.0
+        probability:
+        - 0.6562399999999999
+        - 0.062400000000000004
+        - 0.05379
+        - 0.04734
+        - 0.0398
+        - 0.03335
+        - 0.031200000000000002
+        - 0.01883
+  Cf:
+    name: Californium
+    Z: 98
+    A:
+      252:
+        reaction: null
+        cross_section: null
+        half_life: 83412720.0
+        decay_mode: SF
+        lines:
+        - 1221.0
+        - 76.5
+        - 400.1
+        - 96.1
+        - 58.0
+        - 314.1
+        - 56.0
+        - 154.7
+        - 89.9
+        - 54.7
+        - 117.7
+        - 407.8
+        - 105.8
+        - 185.1
+        - 68.8
+        - 289.4
+        - 48.5
+        - 332.7
+        - 46.6
+        - 98.2
+        - 144.6
+        - 167.1
+        - 167.5
+        - 181.1
+        - 182.5
+        - 242.0
+        - 330.7
+        - 409.6
+        - 457.6
+        - 475.1
+        - 483.7
+        - 528.1
+        - 1222.5
+        - 162.0
+        - 433.3
+        - 141.1
+        - 274.4
+        - 250.0
+        - 422.5
+        - 258.1
+        - 431.4
+        - 482.0
+        - 144.9
+        - 355.5
+        - 81.9
+        - 333.8
+        - 620.3
+        - 104.1
+        - 582.3
+        - 530.1
+        - 631.3
+        - 444.7
+        - 109.9
+        - 222.7
+        - 566.2
+        - 344.1
+        - 575.5
+        - 271.0
+        - 502.8
+        - 522.7
+        - 410.8
+        - 566.4
+        - 646.8
+        - 509.3
+        - 729.6
+        - 339.4
+        - 426.3
+        - 147.8
+        - 374.8
+        - 123.8
+        - 472.8
+        - 524.2
+        - 232.8
+        - 688.0
+        - 324.6
+        - 808.2
+        - 424.2
+        - 60.5
+        - 540.7
+        - 583.0
+        - 203.4
+        - 481.8
+        - 112.4
+        - 155.0
+        - 303.3
+        - 428.5
+        - 510.9
+        - 172.2
+        - 514.8
+        - 132.2
+        - 302.3
+        - 607.0
+        - 250.1
+        - 393.8
+        - 417.8
+        - 307.5
+        - 487.8
+        - 693.5
+        - 250.4
+        - 379.5
+        - 569.4
+        - 732.6
+        - 487.0
+        - 506.2
+        - 725.7
+        - 117.1
+        - 702.2
+        - 521.1
+        - 701.6
+        - 565.2
+        - 604.0
+        - 158.7
+        - 198.0
+        - 403.5
+        - 465.5
+        - 689.5
+        - 342.9
+        - 307.1
+        - 149.4
+        - 130.5
+        - 475.0
+        - 599.2
+        - 1800.7
+        - 538.3
+        - 227.1
+        - 352.0
+        - 499.1
+        - 142.2
+        - 707.5
+        - 752.5
+        - 769.8
+        - 706.9
+        - 135.6
+        - 282.2
+        - 573.6
+        - 636.5
+        - 547.8
+        - 609.8
+        - 382.2
+        - 508.3
+        - 584.5
+        - 1039.3
+        - 307.9
+        - 492.9
+        - 763.7
+        - 781.2
+        - 1054.3
+        - 154.4
+        - 164.3
+        - 248.2
+        - 205.0
+        - 769.9
+        - 383.6
+        - 428.0
+        - 467.8
+        - 189.5
+        - 211.1
+        - 349.5
+        - 240.8
+        - 543.0
+        - 185.2
+        - 373.8
+        - 578.6
+        - 569.1
+        - 478.0
+        - 394.5
+        - 452.4
+        - 276.9
+        - 771.2
+        - 111.8
+        - 423.0
+        - 625.5
+        - 299.8
+        - 456.4
+        - 130.4
+        - 576.1
+        - 469.0
+        probability:
+        - 5.3
+        - 4.96
+        - 4.64
+        - 4.26
+        - 4.21
+        - 3.44
+        - 3.05
+        - 2.8
+        - 1.84
+        - 1.83
+        - 1.67
+        - 1.44
+        - 1.27
+        - 1.26
+        - 1.14
+        - 1.12
+        - 1.03
+        - 1.02
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.99
+        - 0.93
+        - 0.78
+        - 0.75
+        - 0.7425
+        - 0.74
+        - 0.73
+        - 0.73
+        - 0.71
+        - 0.68
+        - 0.68
+        - 0.66
+        - 0.6335999999999999
+        - 0.633
+        - 0.61
+        - 0.61
+        - 0.6
+        - 0.568
+        - 0.52
+        - 0.5
+        - 0.49
+        - 0.47
+        - 0.46
+        - 0.46
+        - 0.44
+        - 0.419
+        - 0.41
+        - 0.40590000000000004
+        - 0.4
+        - 0.38299999999999995
+        - 0.37
+        - 0.37
+        - 0.36
+        - 0.36
+        - 0.355
+        - 0.355
+        - 0.32
+        - 0.31
+        - 0.31
+        - 0.305
+        - 0.29
+        - 0.26
+        - 0.25
+        - 0.24
+        - 0.2379
+        - 0.22
+        - 0.217
+        - 0.21
+        - 0.2079
+        - 0.198
+        - 0.195
+        - 0.195
+        - 0.19
+        - 0.19
+        - 0.188
+        - 0.188
+        - 0.187
+        - 0.18
+        - 0.18
+        - 0.17
+        - 0.165
+        - 0.151
+        - 0.15
+        - 0.15
+        - 0.147
+        - 0.1425
+        - 0.141
+        - 0.14
+        - 0.14
+        - 0.13699999999999998
+        - 0.13699999999999998
+        - 0.127
+        - 0.126
+        - 0.122
+        - 0.12
+        - 0.12
+        - 0.113
+        - 0.111
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.09526
+        - 0.095
+        - 0.09300000000000001
+        - 0.09
+        - 0.09
+        - 0.09
+        - 0.09
+        - 0.087
+        - 0.08649
+        - 0.0855
+        - 0.084
+        - 0.08151
+        - 0.08
+        - 0.08
+        - 0.08
+        - 0.079
+        - 0.07882
+        - 0.075
+        - 0.07200000000000001
+        - 0.07
+        - 0.0693
+        - 0.068
+        - 0.067
+        - 0.065
+        - 0.065
+        - 0.061
+        - 0.059519999999999997
+        - 0.05934999999999999
+        - 0.057999999999999996
+        - 0.057999999999999996
+        - 0.057999999999999996
+        - 0.05742
+        - 0.05623
+        - 0.05564
+        - 0.05
+        - 0.05
+        - 0.04650000000000001
+        - 0.045599999999999995
+        - 0.044000000000000004
+        - 0.038610000000000005
+        - 0.037000000000000005
+        - 0.03524
+        - 0.035
+        - 0.034
+        - 0.03267
+        - 0.03267
+        - 0.03
+        - 0.027000000000000003
+        - 0.02218
+        - 0.02198
+        - 0.02046
+        - 0.020390000000000002
+        - 0.02029
+        - 0.019
+        - 0.019
+        - 0.01877
+        - 0.01575
+        - 0.01436
+        - 0.013000000000000001
+        - 0.011899999999999999
+        - 0.010329999999999999
+      251:
+        reaction: null
+        cross_section: null
+        half_life: 28319328000.0
+        decay_mode: A
+        lines:
+        - 176.6
+        - 227.0
+        - 285.0
+        probability:
+        - 0.177
+        - 0.063
+        - 0.013999999999999999
+      249:
+        reaction: null
+        cross_section: null
+        half_life: 11069136000.0
+        decay_mode: A
+        lines:
+        - 388.16
+        - 333.37
+        - 252.8
+        probability:
+        - 0.66
+        - 0.14586
+        - 0.025009999999999998
+  Es:
+    name: Einsteinium
+    Z: 99
+    A:
+      254:
+        reaction: null
+        cross_section: null
+        half_life: 23820480.0
+        decay_mode: A
+        lines:
+        - 63.0
+        probability:
+        - 0.02
+      252:
+        reaction: null
+        cross_section: null
+        half_life: 40754880.0
+        decay_mode: EC
+        lines:
+        - 785.1
+        - 139.03
+        - 924.1
+        - 102.33
+        - 800.0
+        probability:
+        - 0.18173999999999998
+        - 0.1376
+        - 0.023889999999999998
+        - 0.01869
+        - 0.0148
+      251:
+        reaction: null
+        cross_section: null
+        half_life: 118800.0
+        decay_mode: EC
+        lines:
+        - 177.6
+        probability:
+        - 0.024
+  Fm:
+    name: Fermium
+    Z: 100
+    A:
+      257:
+        reaction: null
+        cross_section: null
+        half_life: 8683200.0
+        decay_mode: A
+        lines:
+        - 241.0
+        - 179.4
+        - 61.6
+        probability:
+        - 0.10977
+        - 0.08682000000000001
+        - 0.01447
+      253:
+        reaction: null
+        cross_section: null
+        half_life: 259200.0
+        decay_mode: A
+        lines:
+        - 271.8
+        probability:
+        - 0.0264

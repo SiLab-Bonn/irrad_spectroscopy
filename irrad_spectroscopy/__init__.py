@@ -9,14 +9,22 @@ examples_path = os.path.join(package_path, 'examples')
 
 testing_path = os.path.join(package_path, 'testing')
 
-static_path = os.path.join(package_path, 'static')
+tables_path = os.path.join(package_path, 'tables')
 
-# load files
-with open(os.path.join(static_path, 'isotope_lib.yaml'), 'r') as il:
-    isotope_lib = yaml.safe_load(il)
+# table files paths
+gamma_table_file = os.path.join(tables_path, 'gamma_table.yaml')
 
-with open(os.path.join(static_path, 'element_lib.yaml'), 'r') as el:
-    element_lib = yaml.safe_load(el)
+element_table_file = os.path.join(tables_path, 'element_table.yaml')
 
-with open(os.path.join(static_path, 'xray_coefficients.yaml'), 'r') as xc:
-    xray_coeffs = yaml.safe_load(xc)
+xray_coefficient_table_file = os.path.join(tables_path, 'xray_coefficient_table.yaml')
+
+
+# load tables
+with open(gamma_table_file, 'r') as gt:
+    gamma_table = yaml.safe_load(gt)
+
+with open(element_table_file, 'r') as et:
+    element_table = yaml.safe_load(et)
+
+with open(xray_coefficient_table_file, 'r') as xct:
+    xray_coefficient_table = yaml.safe_load(xct)

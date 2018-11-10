@@ -6,7 +6,7 @@ import unittest
 import irrad_spectroscopy.spectroscopy as sp
 from irrad_spectroscopy.spec_utils import get_measurement_time, source_to_dict
 from irrad_spectroscopy.physics import decay_law
-from irrad_spectroscopy import testing_path, isotope_lib
+from irrad_spectroscopy import testing_path, gamma_table
 
 
 test_data_path = os.path.join(testing_path, 'test_data')
@@ -48,7 +48,7 @@ class TestSpectroscopy(unittest.TestCase):
         # variables
         cls.energy_calibration = None
         cls.efficiency_calibration = None
-        cls.isotope_lib = isotope_lib
+        cls.gamma_table = gamma_table
         cls.accuracy = 1e-3
                 
     @classmethod
@@ -166,7 +166,7 @@ class TestSpectroscopy(unittest.TestCase):
                 self.assertTrue(low <= Na22_peaks[na22_peak]['peak_fit']['popt'][0] <= high)
             
         # check for correct activity from library
-        Na22_activity_meas = sp.calc_activity(Na22_peaks)
+        Na22_activity_meas = sp.get_activity(Na22_peaks)
         Na22_activity_theo = decay_law(t=self.Na22_source_specs['timestamp_measurement']-self.Na22_source_specs['timestamp_calibration'],
                                        x0=np.array(self.Na22_source_specs['activity']), half_life=self.Na22_source_specs['half_life'])
 
@@ -200,7 +200,7 @@ class TestSpectroscopy(unittest.TestCase):
                 self.assertTrue(low <= Ba133_peaks[ba133_peak]['peak_fit']['popt'][0] <= high, msg=str(self.energy_calibration['accuracy']))
             
         # check for correct activity
-        Ba133_activity_meas = sp.calc_activity(Ba133_peaks)
+        Ba133_activity_meas = sp.get_activity(Ba133_peaks)
         Ba133_activity_theo = decay_law(t=self.Ba133_source_specs['timestamp_measurement']-self.Ba133_source_specs['timestamp_calibration'],
                                         x0=np.array(self.Ba133_source_specs['activity']),
                                         half_life=self.Ba133_source_specs['half_life'])

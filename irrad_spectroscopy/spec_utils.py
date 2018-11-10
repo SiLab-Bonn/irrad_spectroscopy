@@ -56,18 +56,28 @@ def date_to_posix(year, month, day, hour=0, minute=0, second=0):
     return time.mktime(datetime.datetime(year, month, day, hour, minute, second).timetuple())
 
 
-def isotopes_to_dict(lib, info='lines', fltr=None):
+def get_isotope_info(table=isp.gamma_table, info='lines', iso_filter=None):
     """
-    Method to return dict of isotope keys and info. Info
-    can either be 'lines' or 'probability'
+    Method to return dict of isotope info from gamma table. Info can either be 'lines', 'probability', 'half_life',
+    'decay_mode', 'name', 'A', or 'Z'. Keys of result dict are element symbols.
+
+    Parameters
+    ----------
+    table : dict
+        gamma table of isotopes with additional info. Default is isp.gamma_table
+    info : str
+        information which is needed. Default is 'lines' which corresponds to gamma energies. Can be either of the ones
+        listed above
+    iso_filter : str
+        string of certain isotope whichs info you want to filter e.g. '65_Zn' or '65' or 'Zn'
     """
 
-    if not isinstance(lib, dict):
-        raise TypeError('Isotope library must be dict.')
-    if 'isotopes' not in lib:
-        raise ValueError('Isotope library must contain isotopes.')
+    if not isinstance(table, dict):
+        raise TypeError('Gamma table must be dict.')
+    if 'isotopes' not in table:
+        raise ValueError('Gamma table must contain isotopes.')
     else:
-        isotopes = lib['isotopes']
+        isotopes = table['isotopes']
 
         # init result dict and loop over different isotopes
         result = {}
@@ -91,10 +101,10 @@ def isotopes_to_dict(lib, info='lines', fltr=None):
                             result[identifier] = mass_number[A][info]
 
         if not result:
-            raise ValueError('Isotope library does not contain info %s.' % info)
+            raise ValueError('Gamma table does not contain info %s.' % info)
 
-        if fltr:
-            sortout = [k for k in result if fltr not in k]
+        if iso_filter:
+            sortout = [k for k in result if iso_filter not in k]
             for s in sortout:
                 del result[s]
 
@@ -103,7 +113,7 @@ def isotopes_to_dict(lib, info='lines', fltr=None):
 
 def source_to_dict(source, info='lines'):
     """
-    Method to convert a source dict to a dict containing isotpe keys and info.
+    Method to convert a source dict to a dict containing isotope keys and info.
     """
 
     reqs = ('A', 'symbol', info)
@@ -112,20 +122,20 @@ def source_to_dict(source, info='lines'):
     return dict(('%i_%s_%i' % (source['A'], source['symbol'], i) , l) for i, l in enumerate(source[info]))
 
 
-def create_isotope_library(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0, n_lines=10, prob_lim=1e-2):
+def create_gamma_table(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0, n_lines=10, prob_lim=1e-2):
     """
-    Method that creates a library yaml file of radiactive isotopes from http://atom.kaeri.re.kr:8080/gamrays.html.
+    Method that creates a table of gammas from radiactive isotopes from http://atom.kaeri.re.kr:8080/gamrays.html.
     The data is structured in OrderedDicts and dumped into a yaml. Pandas needs to be installed.
 
     Parameters
     ----------
 
     outfile: str
-        path to output yaml or None; if None only return lib dict
+        path to output yaml or None; if None only return table dict
     e_min: float
-        minimum energy in keV to include into the lib file
+        minimum energy in keV to include into the table file
     e_max: float
-        maximum energy in keV to include into the lib file
+        maximum energy in keV to include into the table file
     half_life: float
         minimum half life in days the isotopes need to have
     n_lines:
@@ -137,7 +147,7 @@ def create_isotope_library(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0
     -------
 
     res: dict
-        result dict with isotope info
+        result dict with gammas lines and info
     """
 
     # check wheter pandas is installed
@@ -188,8 +198,8 @@ def create_isotope_library(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0
         # make entries
         if tmp_symb not in res:
             res[tmp_symb] = OrderedDict()
-            res[tmp_symb]['name'] = isp.element_lib['names'][tmp_symb]
-            res[tmp_symb]['Z'] = isp.element_lib['Z'][tmp_symb]
+            res[tmp_symb]['name'] = isp.element_table['names'][tmp_symb]
+            res[tmp_symb]['Z'] = isp.element_table['Z'][tmp_symb]
             res[tmp_symb]['A'] = OrderedDict()
 
         # make entries for mass numbers
@@ -223,7 +233,7 @@ def create_isotope_library(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0
     res_sort = OrderedDict()
 
     # add meta data
-    meta_data = 'Automated library created on {}. '.format(time.asctime())
+    meta_data = 'Automated gamma table created on {}. '.format(time.asctime())
     meta_data += 'Contains gammas with energies between {} keV and {} keV with half life greater than {} days.' \
                  'The {} most prominent lines with probabilities above {} % are included.'.format(e_min, e_max,
                                                                                                   half_life, n_lines,
