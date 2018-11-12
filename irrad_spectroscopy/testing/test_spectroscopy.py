@@ -4,7 +4,7 @@ import yaml
 import numpy as np
 import unittest
 import irrad_spectroscopy.spectroscopy as sp
-from irrad_spectroscopy.spec_utils import get_measurement_time, source_to_dict
+from irrad_spectroscopy.spec_utils import get_measurement_time, source_to_dict, select_peaks
 from irrad_spectroscopy.physics import decay_law
 from irrad_spectroscopy import testing_path, gamma_table
 
@@ -201,8 +201,47 @@ class TestSpectroscopy(unittest.TestCase):
         
         # check to see at least 90% of the expected activity; only order of magnitude relevant
         self.assertTrue(0.9 <= Ba133_activity_meas['133_Ba']['nominal'] / Ba133_activity_theo[0] <= 1.0)
-        
-            
+
+    def test_dose(self):
+        """Testing the dose calculations on the example spectrum"""
+
+        # test are run sorted by the string representations of the test methods; we need this to be run first
+        if self.energy_calibration is None:
+            self.test_energy_calibration()
+
+        # test are run sorted by the string representations of the test methods; we need this to be run first
+        if self.efficiency_calibration is None:
+            self.test_efficiency_calibration()
+
+        peaks_sample, bkg_sample = sp.fit_spectrum(counts=self.sample_spectrum[1],
+                                                   energy_cal=self.energy_calibration['func'],
+                                                   efficiency_cal=self.efficiency_calibration['func'],
+                                                   t_spec=self.t_sample)
+
+        dose = sp.get_dose(peaks_sample, distance=50, time=2000)
+
+        self.assertTrue(np.isclose(dose['nominal'], 1.1330667863561383))
+        self.assertTrue(np.isclose(dose['sigma'], 0.03766586624214202))
+        self.assertTrue(dose['unit']=='uSv')
+
+        dose = sp.get_dose(peaks_sample, distance=1)
+
+        self.assertTrue(np.isclose(dose['nominal'], 1.8437455480798448))
+        self.assertTrue(np.isclose(dose['sigma'], 0.05874337083851746))
+        self.assertTrue(dose['unit'] == 'uSv/h')
+
+        selected_peaks = select_peaks(['65_Zn', '48_V', '7_Be'], peaks_sample)
+
+        self.assertEqual(len(selected_peaks), 4)
+
+        selected_dose = sp.get_dose(selected_peaks, distance=50, time=2000)
+        self.assertTrue(np.isclose(selected_dose['nominal'], 0.5343614796430098))
+
+        selected_dose_time_1 = sp.get_dose(selected_peaks, distance=50, time=1e6)['nominal']
+        selected_dose_time_2 = sp.get_dose(selected_peaks, distance=50, time=1e7)['nominal']
+
+        self.assertTrue(np.isclose(selected_dose_time_1,selected_dose_time_2))
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - [%(levelname)-8s] (%(threadName)-10s) %(message)s")
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSpectroscopy)
