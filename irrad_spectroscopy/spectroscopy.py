@@ -770,9 +770,9 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
     # identify wrongly assigned isotopes and remove
     if reliable:
         logging.info('Validate identified isotopes...')
-        validate_isotopes(peaks=peaks, table=isp.gamma_table)
+        validate_isotopes(peaks=peaks, table=isp.gamma_table, e_max=_chnnls[-1] if energy_cal is not None else None)
     else:
-        msg = 'Isotopes not validated. Set "reliabe_only=True" to validate!'
+        msg = 'Isotopes not validated. Set "reliable=True" to validate!'
         logging.warning(msg)
 
     # remove info from result dict
@@ -786,7 +786,7 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
 # result checking
 
 
-def validate_isotopes(peaks, table=isp.gamma_table):
+def validate_isotopes(peaks, table=isp.gamma_table, e_max=None):
     """
     Methods that validates identified isotopes from fit_spectrum. It uses the gamma table in order to perform
     the following check: For each isotope in peaks, the respective line with the lowest probability per isotope is
@@ -796,10 +796,12 @@ def validate_isotopes(peaks, table=isp.gamma_table):
     Parameters
     ----------
 
-    peaks: dict
+    peaks : dict
         return value of irrad_spectroscopy.fit_spectrum
-    table: dict
+    table : dict
         gamma table dictionary loaded from gamma_table.yaml
+    e_max : float
+        maximum energy of spectrum
 
     """
 
@@ -819,6 +821,16 @@ def validate_isotopes(peaks, table=isp.gamma_table):
         if not current_in_table:
             not_in_table.append(isotope)
             continue
+
+        # exclude out-of-range gamma lines from validation procedure
+        if e_max is not None:
+            # get all lines of isotope from gamma table
+            tmp_e = get_isotope_info(table, info='lines', iso_filter=isotope)
+            # find keys for which line not in energy range
+            lines_not_in_e_range = [k for k in tmp_e if tmp_e[k] > e_max]
+            # remove lines from current in table
+            for l in lines_not_in_e_range:
+                del current_in_table[l]
 
         # get all lines' probabilities of current isotope in sample
         current_in_sample = dict((peak, current_in_table[peak]) for peak in peaks if isotope in peak)
