@@ -281,7 +281,7 @@ def interpolate_bkg(counts, channels=None, window=5, order=3, scale=0.5, energy_
     return bkg_estimates[idx]
 
 
-def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energy_cal=None, efficiency_cal=None, t_spec=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable=True, full_output=True):
+def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, ch_sigma=5, energy_cal=None, efficiency_cal=None, t_spec=None, expected_peaks=None, expected_accuracy=5e-3, peak_fit=gauss, energy_range=None, reliable=True, xray=False):
     """
     Method that identifies the first n_peaks peaks in a spectrum. They are identified in descending order from highest
     to lowest peak. A Gaussian is fitted to each peak within a fit region of +- ch_sigma of its peak center.
@@ -320,8 +320,9 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
         iterable (of iterables) with two values (per element) one for lower and upper limit. Is only applied when energy calibration is provided.
     reliable: bool
         whether to accept peaks with unreliable fits
-    full_output : bool
-        whether to return dict with all info
+    xray : bool
+        whether or not the spectrum is pure xray, If False, spectrum is assumed to be gammas & xray from radioactive decays
+        which causes validation of identified isotopes. Default is False
 
     Returns
     -------
@@ -387,9 +388,14 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
 
     # make tmp variable for n_peaks in order to not change input
     if n_peaks is None and expected_peaks is None:
-        expected_peaks = get_isotope_info(isp.gamma_table, info='lines')
+        if not xray:
+            expected_peaks = get_isotope_info(isp.gamma_table, info='lines')
+            gx_msg = 'Finding isotopes from gamma table file %s...' % isp.gamma_table_file
+        else:
+            expected_peaks = isp.xray_table['xrays']
+            gx_msg = 'Finding x-rays from x-ray table file %s...' % isp.xray_table_file
         tmp_n_peaks = total_n_peaks = len(expected_peaks)
-        logging.info('Finding isotopes from gamma table file %s...' % isp.gamma_table_file)
+        logging.info(gx_msg)
     else:
         # expected peaks are checked first
         tmp_n_peaks = n_peaks if expected_peaks is None else len(expected_peaks)
@@ -768,18 +774,13 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
     logging.info('Finished fitting.')
 
     # identify wrongly assigned isotopes and remove
-    if reliable:
-        logging.info('Validate identified isotopes...')
-        validate_isotopes(peaks=peaks, table=isp.gamma_table, e_max=_chnnls[-1] if energy_cal is not None else None)
-    else:
-        msg = 'Isotopes not validated. Set "reliable=True" to validate!'
-        logging.warning(msg)
-
-    # remove info from result dict
-    if not full_output:
-        for iso in peaks:
-            del peaks[iso]['background']
-            del peaks[iso]['peak_fit']
+    if not xray:
+        if reliable:
+            logging.info('Validate identified isotopes...')
+            validate_isotopes(peaks=peaks, table=isp.gamma_table, e_max=_chnnls[-1] if energy_cal is not None else None)
+        else:
+            msg = 'Isotopes not validated. Set "reliable=True" to validate!'
+            logging.warning(msg)
 
     return peaks if bkg is not None else (peaks, _bkg)
 
