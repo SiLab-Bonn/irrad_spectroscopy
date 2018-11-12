@@ -7,6 +7,7 @@ import logging
 import irrad_spectroscopy as isp
 import numpy as np
 from collections import OrderedDict
+from copy import deepcopy
 
 # try importing pandas
 try:
@@ -120,6 +121,40 @@ def source_to_dict(source, info='lines'):
     if not all(req in source for req in reqs):
         raise ValueError('Missing reuqired data in source dict: %s' % ', '.join(req for req in reqs if req not in source))
     return dict(('%i_%s_%i' % (source['A'], source['symbol'], i) , l) for i, l in enumerate(source[info]))
+
+
+def select_peaks(selection, peaks):
+    """
+    Convenience function to remove certain lines from peaks dictionary. Returns copy in order to avoid mutating.
+
+    Parameters
+    ----------
+
+    selection : iterable of keys
+        list or iterable of keys which are in peaks which should be selected
+    peaks : dict
+        return value of irrad_spectroscopy.spectroscopy.fit_spectrum
+
+    Returns
+    -------
+
+    selected_peaks : dict
+        copy of peaks with every key removed except for the ones contained in selection
+    """
+
+    # sanity checks
+    check = [s in k for s in selection for k in peaks]
+    if not any(check):
+        raise ValueError('None of the selection criteria matches any peaks!')
+
+    selected_peaks = deepcopy(peaks)
+
+    # remove
+    for k in peaks:
+        if not any(s in k for s in selection):
+            del selected_peaks[k]
+
+    return selected_peaks
 
 
 def create_gamma_table(outfile=None, e_min=1.0, e_max=20000.0, half_life=1.0, n_lines=10, prob_lim=1e-2):
