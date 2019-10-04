@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages  # This setup relies on setuptools since distutils is insufficient and badly hacked code
 
-version = '0.0.1'
+version = '0.1.0'
 author = 'Pascal Wolf'
 author_email = 'wolf@physik.uni-bonn.de'
 
