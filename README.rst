@@ -1,5 +1,5 @@
 ==================================
-Irrad_Spectroscopy |travis-status|
+Irrad_Spectroscopy |test-status|
 ==================================
 
 Introduction
@@ -54,6 +54,6 @@ two calibrated, radioactive sources, namely 22-Na and 133-Ba. The activity recon
 tested data sets are tested to be above 90%.
  
 
-.. |travis-status| image:: https://api.travis-ci.com/SiLab-Bonn/irrad_spectroscopy.svg?branch=master
-    :target: https://travis-ci.com/SiLab-Bonn/irrad_spectroscopy
+.. |test-status| image:: https://github.com/Silab-Bonn/irrad_spectroscopy/actions/workflows/main.yml/badge.svg?branch=development
+    :target: https://github.com/SiLab-Bonn/irrad_spectroscopy/actions
     :alt: Build status
