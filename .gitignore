@@ -1,7 +1,7 @@
 # example checkpoints
-irrad_spectroscopy/examples/.ipynb_checkpoints/
+examples/.ipynb_checkpoints/
 # example output folder
-irrad_spectroscopy/examples/output/
+examples/output/
 # pyc
 *.pyc
 # pycharm

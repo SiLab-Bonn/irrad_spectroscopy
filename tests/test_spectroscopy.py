@@ -6,10 +6,10 @@ import unittest
 import irrad_spectroscopy.spectroscopy as sp
 from irrad_spectroscopy.spec_utils import get_measurement_time, source_to_dict, select_peaks
 from irrad_spectroscopy.physics import decay_law
-from irrad_spectroscopy import testing_path, gamma_table
+from irrad_spectroscopy import gamma_table
 
 
-test_data_path = os.path.join(testing_path, 'test_data')
+test_data_path = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
 class TestSpectroscopy(unittest.TestCase):
