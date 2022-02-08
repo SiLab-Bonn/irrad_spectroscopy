@@ -62,7 +62,11 @@ Calculating the gamma dose rate of a single gamma line
 
    # Get dose rate of single gamma line in uSv/h
    # Zn65 line at 1115.564 keV, prob 50.60%, activity of 20 kBq at a distance of 100 cm in air
-   gamma_dose_rate(energy=1115.546, probability=0.506, activity=20e3, distance=100, material='air')
+   gamma_dose_rate(energy=1115.546,
+                   probability=0.506,
+                   activity=20e3,
+                   distance=100,
+                   material='air')
    # Prints 1.515e-3  # uSv/h
 
 Calculating the (integrated) gamma dose rate of (an) isotope(s)
@@ -74,15 +78,26 @@ Calculating the (integrated) gamma dose rate of (an) isotope(s)
 
    # Get dose rate of isotope in uSv/h
    # Zn65 with activity of 20 kBq at a distance of 100 cm in air
-   isotope_dose_rate(isotope='65_Zn', activity=20e3, distance=100, material='air')
+   isotope_dose_rate(isotope='65_Zn',
+                     activity=20e3,
+                     distance=100,
+                     material='air')
    # Prints {'65_Zn': 1.515e-3}  # uSv/h
 
    # Multiple isotopes with different activities at a distance of 100 cm in air
-   isotope_dose_rate(isotope=('65_Zn', '7_Be'), activity=(20e3, 100e3), distance=100, material='air')
+   isotope_dose_rate(isotope=('65_Zn', '7_Be'),
+                     activity=(20e3, 100e3),
+                     distance=100,
+                     material='air')
    # Prints {'65_Zn': 1.515e-3, '7_Be': 0.73e-3}  # uSv/h
 
-   # Multiple isotopes with different activities at a distance of 100 cm in air integrated over 2000 hours
-   isotope_dose_rate(isotope=('65_Zn', '7_Be'), activity=(20e3, 100e3), distance=100, material='air', time=2000)
+   # Multiple isotopes with different activities at a distance of 100 cm in air
+   # integrated over 2000 hours
+   isotope_dose_rate(isotope=('65_Zn', '7_Be'),
+                     activity=(20e3, 100e3),
+                     distance=100,
+                     material='air',
+                     time=2000)
    # Prints {'65_Zn': 2.66, '7_Be': 0.89}  # uSv/h
 
 Testing
