@@ -85,26 +85,6 @@ Calculating the (integrated) gamma dose rate of (an) isotope(s)
    isotope_dose_rate(isotope=('65_Zn', '7_Be'), activity=(20e3, 100e3), distance=100, material='air', time=2000)
    # Prints {'65_Zn': 2.66, '7_Be': 0.89}  # uSv/h
 
-Structure
-=========
-
-The general approach to perform a spectroscopy is divided into the following steps:
-
-Energy calibartion with a known source
---------------------------------------
-
-.. image:: static/figs/energy_calib_eu152.png
-  
-Efficiency calibration with a known source
-------------------------------------------
-
-.. image:: static/figs/efficiency_calib_eu152.png
-
-Fitting of spectrum of unknown sample
--------------------------------------
-
-.. image:: static/figs/sample_spectrum.png
-
 Testing
 =======
 
@@ -115,3 +95,11 @@ tested data sets are tested to be above 90%.
 .. |test-status| image:: https://github.com/Silab-Bonn/irrad_spectroscopy/actions/workflows/main.yml/badge.svg?branch=development
     :target: https://github.com/SiLab-Bonn/irrad_spectroscopy/actions
     :alt: Build status
+
+Example spectrum
+================
+
+Generated spectrum, including background and identified peaks, of a radiactive sample. Multiple isotopes can be assigned to one peak due
+to the uncertaiunty of the energy calibration.
+
+.. image:: static/figs/sample_spectrum.png
