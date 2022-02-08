@@ -76,7 +76,6 @@ Calculating the (integrated) gamma dose rate of (an) isotope(s)
    # Import 
    from irrad_spectroscopy.physics import isotope_dose_rate
 
-   # Get dose rate of isotope in uSv/h
    # Zn65 with activity of 20 kBq at a distance of 100 cm in air
    isotope_dose_rate(isotope='65_Zn',
                      activity=20e3,
@@ -98,7 +97,7 @@ Calculating the (integrated) gamma dose rate of (an) isotope(s)
                      distance=100,
                      material='air',
                      time=2000)
-   # Prints {'65_Zn': 2.66, '7_Be': 0.89}  # uSv/h
+   # Prints {'65_Zn': 2.66, '7_Be': 0.89}  # uSv
 
 Testing
 =======
