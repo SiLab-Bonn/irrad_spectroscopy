@@ -67,12 +67,13 @@ Calculating dose rate of an individual gamma line in air:
 
    # Get dose rate of single gamma line in uSv/h
    # Zn65 line at 1115.564 keV, prob 50.60%, activity of 20 kBq at a distance of 100 cm in air
-   gamma_dose_rate(energy=1115.546,
-                   probability=0.506,
-                   activity=20e3,
-                   distance=100,
-                   material='air')
-   # Prints 1.515e-3  # uSv/h
+   res = gamma_dose_rate(energy=1115.546,
+                         probability=0.506,
+                         activity=20e3,
+                         distance=100,
+                         material='air')
+
+   print(res)  # Prints 1.515e-3  # uSv/h
 
 Calculating the (integrated) gamma dose rate of an isotope in air:
 
@@ -99,9 +100,11 @@ Calculating the (integrated) gamma dose rate of an isotope in air:
    
    print(res)  # Prints {'65_Zn': 2.66}  # uSv
 
-Calculating the gamma dose rate of multiple isotope in air:
+Calculating the gamma dose rate of multiple isotopes in air:
 
-   # Multiple isotopes (ZN65 and Be7) with different activities
+.. code-block:: python
+
+   # Multiple isotopes (Zn65 and Be7) with different activities
    # (20 kBq, 100kBq) at a distance of 100 cm in air
    res = isotope_dose_rate(isotope=('65_Zn', '7_Be'),
                            activity=(20e3, 100e3),
