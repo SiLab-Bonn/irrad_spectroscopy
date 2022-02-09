@@ -2,14 +2,7 @@ import os
 import yaml
 
 
-# paths
-package_path = os.path.dirname(__file__)
-
-examples_path = os.path.join(package_path, 'examples')
-
-testing_path = os.path.join(package_path, 'testing')
-
-tables_path = os.path.join(package_path, 'tables')
+tables_path = os.path.join(os.path.dirname(__file__), 'tables')
 
 # table files paths
 gamma_table_file = os.path.join(tables_path, 'gamma_table.yaml')
