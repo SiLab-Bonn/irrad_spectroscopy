@@ -104,6 +104,9 @@ Calculating the gamma dose rate of multiple isotopes in air:
 
 .. code-block:: python
 
+   # Import 
+   from irrad_spectroscopy.physics import isotope_dose_rate
+
    # Multiple isotopes (Zn65 and Be7) with different activities
    # (20 kBq, 100kBq) at a distance of 100 cm in air
    res = isotope_dose_rate(isotope=('65_Zn', '7_Be'),
