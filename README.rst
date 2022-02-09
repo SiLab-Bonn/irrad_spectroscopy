@@ -7,7 +7,8 @@ Introduction
 
 ``ìrrad_spectroscopy`` is a package which provides functions for gamma and X-ray spectroscopy, including isotope identification, activity determination and spectral dose calculations.
 Furthermore, it offers functions for calculating the gamma equivalent dose for given isotopes as a function of their initial activity.
-The package was developed for spectroscopic analysis or proton-irradiated semiconductoir detector devices but can be used to analyze various samples
+
+The package was developed for spectroscopic analysis or proton-irradiated semiconductor devices but can be used to analyze various samples,
 from radioactive sources to activated machine parts. It consits of few independent methods which togehter allow for a complete spectroscopic analysis, including plotting, of
 radioactive gamma-spectra. A step-by-step full spectroscopy of an example spectrum can be found in the ``examples`` folder.
 
@@ -50,10 +51,14 @@ with a step-by-step analysis of an example spectrum of an irradiated chip is pro
 
 in order to open the web interface.
 
-Eqivalent dose calculation
+Equivalent dose calculation
 --------------------------
 
-Calculating the gamma dose rate of a single gamma line
+The package implements dose rate calculations for individual gamma lines as well as full gamma spectra of isotopes
+for various materials (search materials in `this table <https://github.com/SiLab-Bonn/irrad_spectroscopy/blob/development/irrad_spectroscopy/tables/xray_coefficient_table.yaml>`_)
+Dose rate calculations are implemented, assuming a point-like source!
+
+Calculating dose rate of an individual gamma line in air:
 
 .. code-block:: python
 
@@ -69,7 +74,7 @@ Calculating the gamma dose rate of a single gamma line
                    material='air')
    # Prints 1.515e-3  # uSv/h
 
-Calculating the (integrated) gamma dose rate of (an) isotope(s)
+Calculating the (integrated) gamma dose rate of an isotope in air:
 
 .. code-block:: python
 
@@ -77,27 +82,33 @@ Calculating the (integrated) gamma dose rate of (an) isotope(s)
    from irrad_spectroscopy.physics import isotope_dose_rate
 
    # Zn65 with activity of 20 kBq at a distance of 100 cm in air
-   isotope_dose_rate(isotope='65_Zn',
-                     activity=20e3,
-                     distance=100,
-                     material='air')
-   # Prints {'65_Zn': 1.515e-3}  # uSv/h
+   res = isotope_dose_rate(isotope='65_Zn',
+                           activity=20e3,
+                           distance=100,
+                           material='air')
+   
+   print(res)  # Prints {'65_Zn': 1.515e-3}  # uSv/h
 
-   # Multiple isotopes with different activities at a distance of 100 cm in air
-   isotope_dose_rate(isotope=('65_Zn', '7_Be'),
-                     activity=(20e3, 100e3),
-                     distance=100,
-                     material='air')
-   # Prints {'65_Zn': 1.515e-3, '7_Be': 0.73e-3}  # uSv/h
-
-   # Multiple isotopes with different activities at a distance of 100 cm in air
+   # Zn65 with activity of 20 kBq at a distance of 100 cm in air
    # integrated over 2000 hours
-   isotope_dose_rate(isotope=('65_Zn', '7_Be'),
-                     activity=(20e3, 100e3),
-                     distance=100,
-                     material='air',
-                     time=2000)
-   # Prints {'65_Zn': 2.66, '7_Be': 0.89}  # uSv
+   res = isotope_dose_rate(isotope='65_Zn',
+                           activity=20e3,
+                           distance=100,
+                           material='air',
+                           time=2000)
+   
+   print(res)  # Prints {'65_Zn': 2.66}  # uSv
+
+Calculating the gamma dose rate of multiple isotope in air:
+
+   # Multiple isotopes (ZN65 and Be7) with different activities
+   # (20 kBq, 100kBq) at a distance of 100 cm in air
+   res = isotope_dose_rate(isotope=('65_Zn', '7_Be'),
+                           activity=(20e3, 100e3),
+                           distance=100,
+                           material='air')
+   
+   print(res)  # Prints {'65_Zn': 1.515e-3, '7_Be': 0.73e-3}  # uSv/h
 
 Testing
 =======
@@ -113,7 +124,7 @@ tested data sets are tested to be above 90%.
 Example spectrum
 ================
 
-Generated spectrum, including background and identified peaks, of a radiactive sample. Multiple isotopes can be assigned to one peak due
-to the uncertaiunty of the energy calibration.
+Generated spectrum, including background and identified peaks, of a radioactive sample after proton irradiation.
+Multiple isotopes can be assigned to one peak due to the uncertaiunty of the energy calibration.
 
 .. image:: static/figs/sample_spectrum.png
