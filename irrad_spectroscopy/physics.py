@@ -167,7 +167,7 @@ def fluence_from_activity(isotope, acticity, cross_section, molar_mass, sample_m
         The default value of 1.0 assumes that either the samples atoms are 100% producing *isotope* with given *cross_section*
         or that the given *cross_section* is an effective cross-section.
     cooldown_time : float, optional
-        Time in seconds elapsed since *activity* was generated; used to correct for decay
+        Time in hours elapsed since *activity* was generated; used to correct for decay
 
     Returns
     -------
@@ -185,6 +185,6 @@ def fluence_from_activity(isotope, acticity, cross_section, molar_mass, sample_m
     dc = decay_constant(half_life)
 
     fluence = acticity / cross_section_in_cm_square * molar_mass / (sample_mass_in_grams * 6.02214076e23) * 1 / dc
-    fluence *= np.exp(-dc * cooldown_time)  # Correct for time passed since activity was produced
+    fluence *= np.exp(-dc * cooldown_time * 60**2)  # Correct for time passed since activity was produced
 
     return fluence
