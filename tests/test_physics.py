@@ -58,7 +58,7 @@ class TestPhysics(unittest.TestCase):
         
         for isotope, data in self.isotope_dose_rates.items():
             test_result = physics.isotope_dose_rate(isotope=isotope, **data['kwargs'])[isotope]
-            assert math.isclose(test_result, data['result'], rel_tol=0.25)  # Check with 25% tolerance (this is no exact science anyway ;) )
+            assert math.isclose(test_result, data['result'], rel_tol=0.20)  # Check with 20% tolerance (this is no exact science anyway ;) )
 
     def test_fluence_from_activity(self):
         pass
