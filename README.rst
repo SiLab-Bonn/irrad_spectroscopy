@@ -120,10 +120,10 @@ Calculating the gamma dose rate of multiple isotopes in air:
 Particle fluence calculation from isotope activity
 --------------------------------------------------
 
-It is possible to calculate the number of particles :math:: `p` per unit area, which penetrated a given sample material,
-by knowing their producion cross-section :math:: `\\Omega^X_p` for activating an isotope :math:: `X` in the material.
-Given the activity of the isotope :math:: `A_X`, its molar mass :math:: `m^{\\text{mol}}_X` as well as the mass of the sample
-:math:: `m^{\\text{sample}}`, the ``irrad_spectroscopy.physics`` module provides a function for the calclulation:
+It is possible to calculate the number of particles per unit area, which penetrated a given sample material,
+by knowing their producion cross-section for activating an isotope in the material.
+Given the activity of the isotope, its molar mass as well as the mass of the sample
+, the ``irrad_spectroscopy.physics`` submodule provides a function for the calculation:
 
 .. code-block:: python
 
@@ -139,9 +139,9 @@ Given the activity of the isotope :math:: `A_X`, its molar mass :math:: `m^{\\te
     
     print(res)  # Prints 1.062e15 protons/cm²
 
-You can add a cooldown time to correct for the decay of isotope :math:: `X` bewteen isotope activation and activity measurement.
-Furthermore, if the production cross-section is not "effective" but rather resolved specifically for isotope :math:: `X`,
-you can pass the abundance of parent of :math:: `X` in the sample material to get the effective production:
+You can add a cooldown time to correct for the decay of isotope bewteen isotope activation and activity measurement.
+Furthermore, if the production cross-section is not "effective" but rather resolved specifically for the specific isotope,
+you can pass the abundance of the isotope's parent in the sample material to get the effective production:
 
 .. code-block:: python
 
