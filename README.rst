@@ -166,7 +166,7 @@ The code in this package has unit-tests. These tests contain a benchmark with ac
 two calibrated, radioactive sources, namely 22-Na and 133-Ba. The activity reconstruction efficiencies for the 
 tested data sets are tested to be above 90%.
 Furthermore, the ``irrad_spectroscopy.physics.isotope_dose_rate`` function is cross-checked with results from
-`RadCalculatorPro <http://www.radprocalculator.com/Gamma.aspx>`_ for a handful of isotopes to be in agreement,
+`RadProCalculator <http://www.radprocalculator.com/Gamma.aspx>`_ for a handful of isotopes to be in agreement,
 with a maximum deviation of 20%.
  
 .. |test-status| image:: https://github.com/Silab-Bonn/irrad_spectroscopy/actions/workflows/main.yml/badge.svg?branch=development
