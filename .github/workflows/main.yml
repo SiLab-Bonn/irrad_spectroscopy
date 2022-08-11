@@ -41,7 +41,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda info -a
-          conda install numpy scipy pyyaml matplotlib nose jupyter pandas
+          conda install numpy scipy pyyaml matplotlib pytest jupyter pandas
           pip install -r requirements.txt
 
       - name: Package installation
@@ -51,4 +51,4 @@ jobs:
 
       - name: Testing
         shell: bash -l {0}
-        run: nosetests
+        run: pytest
