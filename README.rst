@@ -53,7 +53,7 @@ with a step-by-step analysis of an example spectrum of an irradiated chip is pro
 in order to open the web interface.
 
 Equivalent dose calculation
---------------------------
+---------------------------
 
 The package implements dose rate calculations for individual gamma lines as well as full gamma spectra of isotopes
 for various materials (search materials in `this table <https://github.com/SiLab-Bonn/irrad_spectroscopy/blob/development/irrad_spectroscopy/tables/xray_coefficient_table.yaml>`_)
@@ -117,12 +117,57 @@ Calculating the gamma dose rate of multiple isotopes in air:
    
    print(res)  # Prints {'65_Zn': 1.515e-3, '7_Be': 0.73e-3}  # uSv/h
 
+Particle fluence calculation from isotope activity
+--------------------------------------------------
+
+It is possible to calculate the number of particles :math:: `p` per unit area, which penetrated a given sample material,
+by knowing their producion cross-section :math:: `\\Omega^X_p` for activating an isotope :math:: `X` in the material.
+Given the activity of the isotope :math:: `A_X`, its molar mass :math:: `m^{\\text{mol}}_X` as well as the mass of the sample
+:math:: `m^{\\text{sample}}`, the ``irrad_spectroscopy.physics`` module provides a function for the calclulation:
+
+.. code-block:: python
+
+    # Import
+    from irrad_spectroscopy.physics import fluence_from_activity
+
+    # Vanadium 48, generated with ~380 mb effective cross section from proton irradiation of Titanium foil, weighing 11 mg.
+    res = fluence_from_activity(isotope='48_V',  # needed for half-life determination
+                                activity=28e3,  # Bq
+                                cross_section=380,  # mb Ti -> 48 V, effective cross section
+                                molar_mass=47.952, # g/mol
+                                sample_mass=11)  # mg
+    
+    print(res)  # Prints 1.062e15 protons/cm²
+
+You can add a cooldown time to correct for the decay of isotope :math:: `X` bewteen isotope activation and activity measurement.
+Furthermore, if the production cross-section is not "effective" but rather resolved specifically for isotope :math:: `X`,
+you can pass the abundance of parent of :math:: `X` in the sample material to get the effective production:
+
+.. code-block:: python
+
+    # Import
+    from irrad_spectroscopy.physics import fluence_from_activity
+
+    # Vanadium 48, generated with ~380 mb effective cross section from proton irradiation of Titanium foil, weighing 11 mg.
+    res = fluence_from_activity(isotope='48_V',  # needed for half-life determination
+                                activity=28e3,  # Bq
+                                cross_section=550,  # mb for 48 Ti -> (p,n) -> 48 V, dedicated cross section
+                                molar_mass=47.952, # g/mol
+                                sample_mass=11,  # mg
+                                abundance=0.7372,  # % of stable Titanium
+                                cooldown_time=48)  # hours between activation and measurement of activity
+    
+    print(res)  # Prints 9.1226e14 protons/cm²
+
 Testing
 =======
 
 The code in this package has unit-tests. These tests contain a benchmark with actual gamma-spectroscopy data of
 two calibrated, radioactive sources, namely 22-Na and 133-Ba. The activity reconstruction efficiencies for the 
 tested data sets are tested to be above 90%.
+Furthermore, the ``irrad_spectroscopy.physics.isotope_dose_rate`` function is cross-checked with results from
+`RadCalculatorPro <http://www.radprocalculator.com/Gamma.aspx>`_ for a handful of isotopes to be in agreement,
+with a maximum deviation of 20%.
  
 .. |test-status| image:: https://github.com/Silab-Bonn/irrad_spectroscopy/actions/workflows/main.yml/badge.svg?branch=development
     :target: https://github.com/SiLab-Bonn/irrad_spectroscopy/actions
