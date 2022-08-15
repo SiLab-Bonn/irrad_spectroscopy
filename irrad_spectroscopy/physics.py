@@ -140,3 +140,51 @@ def isotope_dose_rate(isotope, activity, distance, material='air', time=None):
             total_dose_rate[iso], _ = quad(decay_law, 0, time, args=(total_dose_rate[iso], half_lifes[iso]/60.**2))
 
     return total_dose_rate
+
+
+def fluence_from_activity(isotope, acticity, cross_section, molar_mass, sample_mass, abundance=1.0, cooldown_time=0.0):
+    """
+    Calculation of the theoretical particle fluence [# particles / cm^2] which produced a given *activity* of
+    an *isotope* with a production *cross_section* in a given, thin (e.g. *cross_section* const.) *sample_mass*.
+    The *isotope* has *molar_mass* and the *sample_mass* has an *abundance* of atoms that produce said *isotope* with
+    *cross_section*.
+    The return value is a scalar and contains no information about the distribution of the particles on the sample area.
+
+    Parameters
+    ----------
+    isotope : str
+        identifier in the form of *NNN_XX* where NNN is the mass number and XX the abbreviation of the element e.g. '65_Zn'
+    activity : float
+        disintegrations per second (Bq)
+    cross_section : float
+        Production cross-section for the process: particle -> sample => isotope in milli-barn (mb) 
+    molar_mass : float
+        Molar mass of the isotope in g/mol
+    sample_mass : float
+        Mass of the sample in milligram (mg)
+    abundance : float, optional
+        Abundance of the atoms in samples that produced *isotope* with *cross_section*, by default 1.0
+        The default value of 1.0 assumes that either the samples atoms are 100% producing *isotope* with given *cross_section*
+        or that the given *cross_section* is an effective cross-section.
+    cooldown_time : float, optional
+        Time in hours elapsed since *activity* was generated; used to correct for decay
+
+    Returns
+    -------
+    fluence : float
+        Particle fluence in # particles / cm^2 which
+    """
+
+    # Get isotope half life
+    half_life = get_isotope_info(info='half_life')[isotope]
+
+    # Conversions
+    cross_section_in_cm_square = cross_section * 1e-27  # Convert mb to cm^2
+    sample_mass_in_grams = sample_mass * 1e-3  # Convert mg to g
+    sample_mass_in_grams *= abundance  # Correct for abundance in material
+    dc = decay_constant(half_life)
+
+    fluence = acticity / cross_section_in_cm_square * molar_mass / (sample_mass_in_grams * 6.02214076e23) * 1 / dc
+    fluence *= np.exp(-dc * cooldown_time * 60**2)  # Correct for time passed since activity was produced
+
+    return fluence
