@@ -142,7 +142,7 @@ def isotope_dose_rate(isotope, activity, distance, material='air', time=None):
     return total_dose_rate
 
 
-def fluence_from_activity(isotope, acticity, cross_section, molar_mass, sample_mass, abundance=1.0, cooldown_time=0.0):
+def fluence_from_activity(isotope, activity, cross_section, molar_mass, sample_mass, abundance=1.0, cooldown_time=0.0):
     """
     Calculation of the theoretical particle fluence [# particles / cm^2] which produced a given *activity* of
     an *isotope* with a production *cross_section* in a given, thin (e.g. *cross_section* const.) *sample_mass*.
@@ -184,7 +184,7 @@ def fluence_from_activity(isotope, acticity, cross_section, molar_mass, sample_m
     sample_mass_in_grams *= abundance  # Correct for abundance in material
     dc = decay_constant(half_life)
 
-    fluence = acticity / cross_section_in_cm_square * molar_mass / (sample_mass_in_grams * 6.02214076e23) * 1 / dc
-    fluence *= np.exp(-dc * cooldown_time * 60**2)  # Correct for time passed since activity was produced
+    fluence = activity / cross_section_in_cm_square * molar_mass / (sample_mass_in_grams * 6.02214076e23) / dc
+    fluence /= np.exp(-dc * cooldown_time * 60**2)  # Correct for time passed since activity was produced
 
     return fluence
