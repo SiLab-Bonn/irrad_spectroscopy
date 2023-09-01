@@ -248,7 +248,7 @@ def interpolate_bkg(counts, channels=None, window=5, order=3, scale=0.5, energy_
         dy_mv_avg = [np.mean(dy_mv_avg[i:i + (window * (order - o))]) for i in range(dy.shape[0])]
 
         # make mask
-        bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=np.bool))
+        bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=bool))
 
         # interpolate the masked array into array, then create function and append to estimates
         bkg_estimates.append(interp1d(_chnnls, np.interp(_chnnls, _chnnls[bkg_mask], _cnts[bkg_mask]), kind='quadratic'))
@@ -371,7 +371,7 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
     # boolean masks
     # masking regions due to failing general conditions (peak_mask)
     # masking successfully fitted regions (peak_mask_fitted)
-    peak_mask, peak_mask_fitted = np.ones_like(_cnts, dtype=np.bool), np.ones_like(_cnts, dtype=np.bool)
+    peak_mask, peak_mask_fitted = np.ones_like(_cnts, dtype=bool), np.ones_like(_cnts, dtype=bool)
 
     # flag whether expected peaks have been checked
     checked_expected = False
