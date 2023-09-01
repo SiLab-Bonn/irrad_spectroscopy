@@ -12,7 +12,8 @@ import numpy as np
 import irrad_spectroscopy as isp
 from irrad_spectroscopy.spec_utils import get_isotope_info, source_to_dict
 from irrad_spectroscopy.physics import decay_law, gamma_dose_rate
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
