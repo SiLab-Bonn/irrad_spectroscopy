@@ -18,6 +18,11 @@ from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
 
+try:
+    from inspect import getfullargspec as get_args
+except ImportError:
+    from inspect import getargspec as get_args
+
 
 # set logging level when doing import
 logging.getLogger().setLevel(logging.INFO)
@@ -529,7 +534,7 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
                     finally:
                         k += .5
                 _p0 = {'mu': _mu, 'sigma': _sigma, 'h': y_peak}
-                fit_args = inspect.getargspec(peak_fit)[0][1:]
+                fit_args = get_args(peak_fit)[0][1:]
                 p0 = tuple(_p0[arg] if arg in _p0 else 1 for arg in fit_args)
                 popt, pcov = curve_fit(tmp_fit, x_fit, y_fit, p0=p0, sigma=np.sqrt(y_fit), absolute_sigma=True, maxfev=5000)
                 perr = np.sqrt(np.diag(pcov))  # get std deviation
