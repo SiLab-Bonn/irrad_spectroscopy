@@ -18,13 +18,13 @@ jobs:
   # This workflow contains a single job called "build"
   tests:
     name: Testing on Python ${{matrix.python-version}} | ${{matrix.sim}}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.10, 3.11]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
