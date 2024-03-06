@@ -6,16 +6,22 @@
 
 # Imports
 import logging
-import inspect
 import warnings
 import numpy as np
 import irrad_spectroscopy as isp
 from irrad_spectroscopy.spec_utils import get_isotope_info, source_to_dict
 from irrad_spectroscopy.physics import decay_law, gamma_dose_rate
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
+
+# Fix for Python >= 3.11
+try:
+    from inspect import getfullargspec as get_args
+except ImportError:
+    from inspect import getargspec as get_args
 
 
 # set logging level when doing import
@@ -248,7 +254,7 @@ def interpolate_bkg(counts, channels=None, window=5, order=3, scale=0.5, energy_
         dy_mv_avg = [np.mean(dy_mv_avg[i:i + (window * (order - o))]) for i in range(dy.shape[0])]
 
         # make mask
-        bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=np.bool))
+        bkg_mask = np.append(np.abs(dy_mv_avg) <= scale * np.mean(np.abs(dy_mv_avg)), np.array([0], dtype=bool))
 
         # interpolate the masked array into array, then create function and append to estimates
         bkg_estimates.append(interp1d(_chnnls, np.interp(_chnnls, _chnnls[bkg_mask], _cnts[bkg_mask]), kind='quadratic'))
@@ -371,7 +377,7 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
     # boolean masks
     # masking regions due to failing general conditions (peak_mask)
     # masking successfully fitted regions (peak_mask_fitted)
-    peak_mask, peak_mask_fitted = np.ones_like(_cnts, dtype=np.bool), np.ones_like(_cnts, dtype=np.bool)
+    peak_mask, peak_mask_fitted = np.ones_like(_cnts, dtype=bool), np.ones_like(_cnts, dtype=bool)
 
     # flag whether expected peaks have been checked
     checked_expected = False
@@ -528,7 +534,7 @@ def fit_spectrum(counts, channels=None, bkg=None, local_bkg=True, n_peaks=None, 
                     finally:
                         k += .5
                 _p0 = {'mu': _mu, 'sigma': _sigma, 'h': y_peak}
-                fit_args = inspect.getargspec(peak_fit)[0][1:]
+                fit_args = get_args(peak_fit)[0][1:]
                 p0 = tuple(_p0[arg] if arg in _p0 else 1 for arg in fit_args)
                 popt, pcov = curve_fit(tmp_fit, x_fit, y_fit, p0=p0, sigma=np.sqrt(y_fit), absolute_sigma=True, maxfev=5000)
                 perr = np.sqrt(np.diag(pcov))  # get std deviation
