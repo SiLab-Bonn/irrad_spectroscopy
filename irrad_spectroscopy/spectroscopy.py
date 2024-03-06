@@ -6,7 +6,6 @@
 
 # Imports
 import logging
-import inspect
 import warnings
 import numpy as np
 import irrad_spectroscopy as isp
@@ -18,6 +17,7 @@ from scipy.optimize import curve_fit, fsolve, OptimizeWarning
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
 
+# Fix for Python >= 3.11
 try:
     from inspect import getfullargspec as get_args
 except ImportError:
